@@ -1,0 +1,35 @@
+# Maven / Build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Jar / War files
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs/
+
+# Environment / Secrets
+*.env
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.eclipse/
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
