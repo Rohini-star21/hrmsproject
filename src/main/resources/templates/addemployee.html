@@ -1,0 +1,3775 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee - Menti's IT Solutions</title>
+
+    <!-- CSS/JS libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
+
+    <style>
+        /* Global Black Scrollbar - SINGLE SCROLLBAR FOR ENTIRE PAGE */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* === SIDEBAR STYLES (EXACT COPY FROM DASHBOARD.HTML) === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,.2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+      .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary); /* Makes the section icon blue */
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px); /* Adds the nice slide effect on hover */
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary); /* Makes the link icons blue */
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff; /* Turns icon white when hovered or active */
+        }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge.success { background: var(--success); }
+        .nav-badge.warning { background: var(--warning); }
+
+        .sidebar-content {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* === TOP HEADER (EXACT COPY FROM DASHBOARD.HTML) === */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: .75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: .6rem .75rem .6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: .875rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--sidebar-hover);
+        }
+
+        .dropdown-item:active {
+            background: var(--primary);
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            margin-top: 8px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .empty-notifications {
+            padding: 24px;
+            text-align: center;
+            color: var(--dark-text-secondary);
+            font-size: 13px;
+        }
+
+        .notification-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--dark-border);
+            text-align: center;
+        }
+
+        /* === PAGE SPECIFIC STYLES (PRESERVED FROM ORIGINAL) === */
+        .content-area {
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .add-employee-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: var(--transition);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0 0 .25rem 0;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: .875rem;
+        }
+
+        .breadcrumb-item { color: var(--dark-text-secondary); }
+        .breadcrumb-item.active { color: var(--primary); }
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--dark-text-secondary); }
+
+        .btn-header {
+            padding: .6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: .875rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,.05);
+            color: var(--dark-text);
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--dark-border);
+            z-index: 1;
+        }
+
+        .process-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: .5rem;
+            transition: var(--transition);
+            border: 2px solid var(--dark-border);
+        }
+
+        .process-step.active .step-number {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .process-step.completed .step-number {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .step-label {
+            font-size: .8rem;
+            font-weight: 500;
+            color: var(--dark-text-secondary);
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .process-step.active .step-label { color: var(--primary); }
+
+        /* Form Container */
+        .employee-form-container {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .form-section {
+            padding: 1.5rem;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .form-section.active {
+            display: block;
+            animation: slideIn .3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: .75rem;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: .5rem;
+            display: block;
+            font-size: .9rem;
+        }
+
+        .required::after { content: " *"; color: var(--danger); }
+
+        .form-control {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            border-radius: 8px;
+            padding: .75rem;
+            font-size: .9rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+            outline: none;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .form-control::placeholder { color: var(--dark-text-secondary); }
+
+        .form-control[readonly] {
+            background: rgba(255,255,255,0.05);
+            color: var(--dark-text-secondary);
+        }
+
+        /* Date Input */
+        input[type="date"] {
+            position: relative;
+            background: var(--dark-bg) !important;
+            padding-right: 2.5rem !important;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        input[type="date"]::before {
+            content: "\f073";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            pointer-events: none;
+            font-size: 0.9rem;
+            z-index: 0;
+        }
+
+        input[type="date"]:hover::before { color: var(--primary); }
+        input[type="date"]:focus::before { color: var(--primary); }
+
+        /* Select Dropdown */
+        .form-select {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            border-radius: 8px;
+            padding: .75rem;
+            font-size: .9rem;
+            transition: var(--transition);
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-right: 2.5rem;
+            cursor: pointer;
+            background-image: none;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+            outline: none;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .form-group.select-group::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 0.75rem;
+            top: 2.7rem;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            pointer-events: none;
+            font-size: 0.85rem;
+            z-index: 3;
+            transition: color 0.3s ease;
+        }
+
+        .form-group.select-group:hover::after {
+            color: var(--primary);
+        }
+
+        /* Compensation Grid */
+        .compensation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            grid-column: 1 / -1;
+        }
+
+        #section2 .form-grid {
+            display: contents;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--dark-border);
+            background: rgba(255,255,255,0.02);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            padding: .75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+            font-size: .9rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99,102,241,.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            padding: .75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+            font-size: .9rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,.05);
+            color: var(--dark-text);
+        }
+
+        /* Avatar Upload */
+        .profile-upload-wrap {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .avatar-shell {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            padding: 6px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(79,70,229,0.06));
+            box-shadow: 0 6px 20px rgba(5,8,15,0.6);
+            transition: transform .18s ease, box-shadow .18s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #141824, #161b2a);
+            border: 2px solid rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: transform .18s ease;
+        }
+
+        .avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar-placeholder {
+            color: white;
+            font-size: 2.6rem;
+            opacity: .95;
+        }
+
+        .avatar-actions {
+            position: absolute;
+            right: -6px;
+            bottom: -6px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .avatar-overlay-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: 3px solid var(--dark-card);
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(79,70,229,0.18);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .12s ease;
+        }
+
+        .avatar-overlay-btn:active { transform: scale(.97); }
+
+        .avatar-delete-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--danger), #c53030);
+            color: white;
+            border: 3px solid var(--dark-card);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(239,68,68,0.18);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .12s ease;
+        }
+
+        .avatar-delete-btn:active { transform: scale(.97); }
+
+        .profile-file-input {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        /* Benefits Toggle */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .benefit-toggle-item {
+            padding: 1rem;
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .benefit-toggle-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--primary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .benefit-toggle {
+            display: none;
+        }
+
+        .toggle-label {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark-border);
+            border-radius: 34px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-label::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            background-color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .benefit-toggle:checked + .toggle-label {
+            background-color: var(--success);
+        }
+
+        .benefit-toggle:checked + .toggle-label::after {
+            transform: translateX(26px);
+        }
+
+        /* Address Section */
+        .address-type-selection {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            flex-wrap: wrap;
+        }
+
+        .address-section-title {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            font-size: 1.1rem;
+        }
+
+        #residentialAddressSection {
+            display: none;
+            grid-column: 1 / -1;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        #residentialAddressSection.show {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .residential-fields-title {
+            grid-column: 1 / -1;
+            color: var(--info);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            font-size: 1.1rem;
+        }
+
+        /* Review Card */
+        .info-card {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--dark-text);
+        }
+
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: .5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .info-item:last-child { border-bottom: none; }
+
+        .info-label {
+            color: var(--dark-text-secondary);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .info-value {
+            color: var(--dark-text);
+            font-weight: 600;
+            flex: 2;
+            text-align: right;
+        }
+
+        /* Overview Header */
+        .overview-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            flex-wrap: wrap;
+        }
+
+        .profile-preview-small {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            flex-shrink: 0;
+        }
+
+        .overview-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .overview-id {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .currency-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 4px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Validation */
+        .is-invalid {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        /* Success Popup */
+        .success-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .success-popup {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--success);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-header i {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        .popup-header h3 {
+            color: var(--success);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .popup-content {
+            margin: 1.5rem 0;
+            color: var(--dark-text);
+        }
+
+        .popup-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+/* Success Popup Button Hover Effects */
+#successPopup .btn {
+    transition: all 0.2s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#successPopup .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#successPopup .btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+#successPopup .btn-info:hover {
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}
+
+/* Animation for popup */
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#successPopup .modal-content {
+    animation: popupSlideIn 0.4s ease-out;
+}
+        .popup-actions .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Document Checklist Styles */
+        .document-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .document-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .document-item:hover::before {
+            opacity: 1;
+        }
+
+        .document-item.uploaded {
+            border-color: var(--success) !important;
+            background: rgba(16, 185, 129, 0.05) !important;
+        }
+
+        .document-item.uploaded::before {
+            background: var(--success);
+            opacity: 1;
+        }
+
+        #progressBar {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #popupStep1, #popupStep2 {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #documentChecklist::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #documentChecklist::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+            border-radius: 3px;
+        }
+
+        #documentChecklist::-webkit-scrollbar-thumb {
+            background: var(--dark-border);
+            border-radius: 3px;
+        }
+
+        #documentChecklist::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Phone Input Styles */
+        .iti {
+            width: 100%;
+        }
+
+        .iti input {
+            width: 100%;
+        }
+
+        .iti__country-list {
+            background-color: var(--dark-bg) !important;
+            color: var(--dark-text) !important;
+            border: 1px solid var(--dark-border);
+        }
+
+        .iti__country {
+            color: var(--dark-text) !important;
+        }
+
+        .iti__country:hover,
+        .iti__country.iti__highlight {
+            background-color: var(--sidebar-hover) !important;
+        }
+
+        .iti__dial-code {
+            color: var(--dark-text-secondary) !important;
+        }
+
+        .iti__search-input {
+            background-color: var(--dark-bg) !important;
+            color: var(--dark-text) !important;
+            border: 1px solid var(--dark-border) !important;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            position: absolute;
+            right: 2.5rem;
+            top: 2.7rem;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            z-index: 10;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .compensation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #residentialAddressSection.show {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .process-steps {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .process-steps::before {
+                display: none;
+            }
+
+            .process-step {
+                flex: 0 0 calc(50% - 0.5rem);
+            }
+
+            .compensation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .address-type-selection {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #residentialAddressSection.show {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-actions > div {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn-primary, .btn-outline {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-label, .info-value {
+                width: 100%;
+                text-align: left;
+            }
+
+            .overview-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-title {
+                font-size: 1.2rem;
+            }
+
+            .breadcrumb {
+                font-size: 0.8rem;
+            }
+
+            .process-step {
+                flex: 0 0 100%;
+                margin-bottom: 1rem;
+            }
+
+            .step-label {
+                font-size: 0.7rem;
+            }
+
+            .avatar-shell {
+                width: 90px;
+                height: 90px;
+            }
+
+            .avatar-placeholder {
+                font-size: 2rem;
+            }
+
+            .avatar-overlay-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .avatar-delete-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .toggle-switch {
+                width: 40px;
+                height: 20px;
+            }
+
+            .toggle-label::after {
+                width: 16px;
+                height: 16px;
+            }
+
+            .benefit-toggle:checked + .toggle-label::after {
+                transform: translateX(20px);
+            }
+
+            .success-popup {
+                padding: 1rem;
+            }
+
+            .popup-actions .btn {
+                min-width: 120px;
+                padding: 0.6rem 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .page-title {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+                gap: 0.5rem;
+            }
+
+            .form-control, .form-select {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .btn-primary, .btn-outline {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .process-step {
+                min-width: 100%;
+            }
+
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('job-postings')}"></div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <div class="add-employee-container">
+            <!-- Page Title and Breadcrumb -->
+            <div style="margin-bottom: 1.5rem;">
+                <h1 class="page-title">Add New Employee</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard/hr" style="color: var(--dark-text-secondary); text-decoration: none;">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/dashboard/hr/employees" style="color: var(--dark-text-secondary); text-decoration: none;">Employees</a></li>
+                        <li class="breadcrumb-item active" style="color: var(--primary);">Add Employee</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Process Steps -->
+            <div class="process-steps">
+                <div class="process-step active" id="step1"><div class="step-number">1</div><div class="step-label">Job Details</div></div>
+                <div class="process-step" id="step2"><div class="step-number">2</div><div class="step-label">Compensation</div></div>
+                <div class="process-step" id="step3"><div class="step-number">3</div><div class="step-label">Personal Info</div></div>
+                <div class="process-step" id="step4"><div class="step-number">4</div><div class="step-label">Review & Save</div></div>
+            </div>
+
+            <!-- Form Container -->
+            <form id="employeeForm" method="POST" action="/dashboard/hr/save-employee" enctype="multipart/form-data">
+                <input type="hidden" name="originalEmployeeId"
+                       th:value="${employee != null ? employee.employeeId : ''}"
+                       id="originalEmployeeId">
+                <div class="employee-form-container">
+                    <!-- ========== STEP 1: JOB DETAILS ========== -->
+                    <div class="form-section active" id="section1">
+                        <h2 class="section-title"><i class="fas fa-briefcase"></i>Job Details</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="firstNameJob" class="form-label required">First Name</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="firstNameJob"
+                                       placeholder="Enter first name"
+                                       th:value="${prefillFirstName}"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastNameJob" class="form-label required">Last Name</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="lastNameJob"
+                                       placeholder="Enter last name"
+                                       th:value="${prefillLastName}"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="employeeId" class="form-label required">Employee ID</label>
+                                <input type="text" class="form-control" id="employeeId" name="employeeId" placeholder="Auto-generated" readonly>
+                            </div>
+                            <!-- FIXED DEPARTMENT DROPDOWN -->
+                            <div class="form-group select-group">
+                                <label for="department" class="form-label required">Department</label>
+                                <select class="form-select" id="department" name="department" required>
+                                    <option value="">Select Department</option>
+                                    <!-- Dynamic API options go here -->
+                                </select>
+                                <input type="hidden" id="prefillDepartment" th:value="${prefillDepartment}">
+                            </div>
+                            <!-- FIXED DESIGNATION DROPDOWN -->
+                            <div class="form-group select-group">
+                                <label for="designation" class="form-label required">Designation</label>
+                                <select class="form-select" id="designation" name="designation" required disabled>
+                                    <option value="">Select Department First</option>
+                                    <!-- Dynamic API options go here -->
+                                </select>
+                                <input type="hidden" id="prefillDesignation" th:value="${prefillDesignation}">
+                            </div>
+                            <div class="form-group select-group">
+                                <label for="workLocation" class="form-label required">Work Location</label>
+                                <select class="form-select" id="workLocation" name="workLocation" required>
+                                    <option value="">Select Location</option>
+                                    <option>Hyderabad Office</option>
+                                    <option>Bangalore Office</option>
+                                    <option>Singapore Office</option>
+                                    <option>London Office</option>
+                                    <option>New York Office</option>
+                                    <option>San Francisco Office</option>
+                                    <option>Remote</option>
+                                    <option>Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="form-group select-group">
+                                <label for="employmentType" class="form-label required">Employment Type</label>
+                                <select class="form-select" id="employmentType" name="employmentType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Full-time" th:selected="${prefillEmploymentType == 'Full-time'}">Full-time</option>
+                                    <option value="Part-time" th:selected="${prefillEmploymentType == 'Part-time'}">Part-time</option>
+                                    <option value="Contract" th:selected="${prefillEmploymentType == 'Contract'}">Contract</option>
+                                    <option value="Internship" th:selected="${prefillEmploymentType == 'Internship'}">Internship</option>
+                                </select>
+                            </div>
+                            <div class="form-group select-group">
+                                <label for="workType" class="form-label required">Work Type</label>
+                                <select class="form-select" id="workType" name="workType" required>
+                                    <option value="">Select Work Type</option>
+                                    <option>Remote</option>
+                                    <option>On-site</option>
+                                    <option>Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="startDate" class="form-label required">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" required>
+                            </div>
+                            <div class="form-group select-group">
+                                <label for="manager" class="form-label required">Reporting Manager</label>
+                                <select class="form-select" id="manager" name="manager" required>
+                                    <option value="">Select Manager</option>
+                                    <option>Vijay</option>
+                                    <option>Sireesha</option>
+                                    <option>Rohini</option>
+                                    <option>David Wilson</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-outline" id="cancelButton">
+                                <i class="fas fa-times"></i>Cancel
+                            </button>
+                            <div style="margin-left: auto; display: flex; gap: 1rem;">
+                                <button type="button" class="btn-outline" id="saveJobDetailsBtn">
+                                    <i class="fas fa-save"></i>Save Job Details
+                                </button>
+                                <button type="button" class="btn-primary" id="nextToCompensation">
+                                    Next: Compensation<i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== STEP 2: COMPENSATION & BENEFITS ========== -->
+                    <div class="form-section" id="section2">
+                        <h2 class="section-title"><i class="fas fa-money-bill-wave"></i>Compensation & Benefits</h2>
+                        <div class="form-grid">
+                            <div class="compensation-grid">
+                                <div class="form-group select-group">
+                                    <label for="currency" class="form-label required">Currency</label>
+                                    <select class="form-select" id="currency" name="currency" required>
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                        <option value="INR">INR (₹)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="salary" class="form-label required">Annual Salary</label>
+                                    <input type="number" class="form-control" id="salary" name="salary" placeholder="50000" min="0" step="1000" required>
+                                </div>
+                                <div class="form-group select-group">
+                                    <label for="payFrequency" class="form-label required">Pay Frequency</label>
+                                    <select class="form-select" id="payFrequency" name="payFrequency" required>
+                                        <option value="">Select Frequency</option>
+                                        <option>Monthly</option>
+                                        <option>Bi-weekly</option>
+                                        <option>Weekly</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">Department Benefits</label>
+                                <div id="benefitsContainer" class="benefits-grid">
+                                    <div class="text-center py-3">
+                                        <i class="fas fa-info-circle text-muted"></i>
+                                        <p class="text-muted mt-2">Select a department to view benefits</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-outline" id="prevToJobDetails">
+                                <i class="fas fa-arrow-left"></i>Previous
+                            </button>
+                            <div style="margin-left: auto; display: flex; gap: 1rem;">
+                                <button type="button" class="btn-outline" id="saveCompensationBtn">
+                                    <i class="fas fa-save"></i>Save Compensation
+                                </button>
+                                <button type="button" class="btn-primary" id="nextToPersonalInfo">
+                                    Next: Personal Info<i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== STEP 3: PERSONAL INFORMATION ========== -->
+                    <div class="form-section" id="section3">
+                        <h2 class="section-title"><i class="fas fa-user"></i>Personal Information</h2>
+
+                        <!-- Profile Picture -->
+                        <div class="form-group full-width">
+                            <label class="form-label">Profile Picture</label>
+                            <div class="profile-upload-wrap">
+                                <input type="file" accept="image/*" id="profilePicture" name="profilePicture" class="profile-file-input">
+                                <div class="avatar-shell" id="profileAvatarContainer">
+                                    <div class="avatar-inner" id="profileAvatar">
+                                        <span class="avatar-placeholder"><i class="fas fa-user"></i></span>
+                                    </div>
+                                    <div class="avatar-actions">
+                                        <button type="button" class="avatar-delete-btn" id="removePhotoBtn" style="display:none;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <button type="button" class="avatar-overlay-btn" id="openFilePickerBtn">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="firstName" class="form-label required">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastNamePersonal" class="form-label required">Last Name</label>
+                                <input type="text" class="form-control" id="lastNamePersonal" name="lastName" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="personalEmail" class="form-label required">Personal Email</label>
+                                <input type="email" class="form-control" id="personalEmail" name="personalEmail" placeholder="Enter personal email" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required">Phone Number</label>
+                                <input type="tel"
+                                       id="phone"
+                                       name="phone"
+                                       class="form-control"
+                                       placeholder="Enter phone number">
+                            </div>
+                            <div class="form-group">
+                                <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth">
+                            </div>
+                            <div class="form-group select-group">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                    <option>Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyContact" class="form-label">Emergency Contact</label>
+                                <input type="text" class="form-control" id="emergencyContact" name="emergencyContact" placeholder="Name & phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                                <input type="url" class="form-control" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/username">
+                            </div>
+                        </div>
+
+                        <!-- Permanent Address Section -->
+                        <div style="margin-top: 2rem;">
+                            <h4 class="address-section-title">
+                                <i class="fas fa-home text-primary"></i> Permanent Address
+                            </h4>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="permanentAddress" class="form-label">Address</label>
+                                <textarea class="form-control" id="permanentAddress" name="permanentAddress" rows="3" placeholder="Enter permanent address"></textarea>
+                            </div>
+
+                            <!-- Country Dropdown -->
+                            <div class="form-group select-group">
+                                <label for="permanentCountry" class="form-label">Country</label>
+                                <select class="form-select" id="permanentCountry" name="permanentCountry">
+                                    <option value="">Select Country</option>
+                                </select>
+                                <div class="loading-spinner" id="loadingCountriesPerm" style="display: none;"></div>
+                            </div>
+
+                            <!-- State Dropdown -->
+                            <div class="form-group select-group">
+                                <label for="permanentState" class="form-label">State</label>
+                                <select class="form-select" id="permanentState" name="permanentState" disabled>
+                                    <option value="">Select Country First</option>
+                                </select>
+                                <div class="loading-spinner" id="loadingStatesPerm" style="display: none;"></div>
+                            </div>
+
+                            <!-- City Dropdown -->
+                            <div class="form-group select-group">
+                                <label for="permanentCity" class="form-label">City</label>
+                                <select class="form-select" id="permanentCity" name="permanentCity" disabled>
+                                    <option value="">Select State First</option>
+                                </select>
+                                <div class="loading-spinner" id="loadingCitiesPerm" style="display: none;"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="permanentZipCode" class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" id="permanentZipCode" name="permanentZipCode" placeholder="Enter ZIP code">
+                            </div>
+                        </div>
+
+                        <!-- Address Type Selection -->
+                        <div class="address-type-selection">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="addressType" id="sameAddress" value="same" checked>
+                                <label class="form-check-label" for="sameAddress" style="color: var(--dark-text);">
+                                    <i class="fas fa-home"></i> Same as Permanent Address
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="addressType" id="differentAddress" value="different">
+                                <label class="form-check-label" for="differentAddress" style="color: var(--dark-text);">
+                                    <i class="fas fa-building"></i> Different Residential Address
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Residential Address Section -->
+                        <div id="residentialAddressSection">
+                            <h4 class="residential-fields-title">
+                                <i class="fas fa-building text-info"></i> Residential Address
+                            </h4>
+
+                            <div class="form-group full-width">
+                                <label for="residentialAddress" class="form-label">Address</label>
+                                <textarea class="form-control" id="residentialAddress" name="residentialAddress" rows="3" placeholder="Enter residential address"></textarea>
+                            </div>
+
+                            <!-- Country Dropdown -->
+                            <div class="form-group select-group">
+                                <label for="residentialCountry" class="form-label">Country</label>
+                                <select class="form-select" id="residentialCountry" name="residentialCountry">
+                                    <option value="">Select Country</option>
+                                </select>
+                                <div class="loading-spinner" id="loadingCountriesRes" style="display: none;"></div>
+                            </div>
+
+                            <!-- State Dropdown -->
+                            <div class="form-group select-group">
+                                <label for="residentialState" class="form-label">State</label>
+                                <select class="form-select" id="residentialState" name="residentialState" disabled>
+                                    <option value="">Select Country First</option>
+                                </select>
+                                <div class="loading-spinner" id="loadingStatesRes" style="display: none;"></div>
+                            </div>
+
+                            <!-- City Dropdown -->
+                            <div class="form-group select-group">
+                                <label for="residentialCity" class="form-label">City</label>
+                                <select class="form-select" id="residentialCity" name="residentialCity" disabled>
+                                    <option value="">Select State First</option>
+                                </select>
+                                <div class="loading-spinner" id="loadingCitiesRes" style="display: none;"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="residentialZipCode" class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" id="residentialZipCode" name="residentialZipCode" placeholder="Enter ZIP code">
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-outline" id="prevToCompensation">
+                                <i class="fas fa-arrow-left"></i>Previous
+                            </button>
+                            <div style="margin-left: auto; display: flex; gap: 1rem;">
+                                <button type="button" class="btn-outline" id="savePersonalInfoBtn">
+                                    <i class="fas fa-save"></i>Save Personal Info
+                                </button>
+                                <button type="button" class="btn-primary" id="nextToReview">
+                                    Next: Review<i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== STEP 4: REVIEW & SAVE ========== -->
+                    <div class="form-section" id="section4">
+                        <h2 class="section-title"><i class="fas fa-clipboard-check"></i>Review & Save</h2>
+                        <div class="info-card">
+                            <h4 class="card-title">Employee Overview</h4>
+                            <div class="info-grid" id="reviewSummary">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-outline" id="prevToPersonalInfo">
+                                <i class="fas fa-arrow-left"></i>Previous
+                            </button>
+                            <div style="margin-left: auto; display: flex; gap: 1rem;">
+                                <button type="button" class="btn-outline" id="cancelButtonFinal">
+                                    <i class="fas fa-times"></i>Cancel
+                                </button>
+                                <button type="submit" class="btn-primary" id="submitEmployeeBtn">
+                                    <i class="fas fa-check"></i> Save Employee
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Popup with Start Onboarding Option -->
+<div class="success-popup-overlay" id="successPopup" style="display: none;"
+     th:data-show="${showSuccessPopup}"
+     th:data-employee-id="${employeeId}"
+     th:data-employee-name="${employeeName}">
+    <div class="success-popup" style="max-width: 600px;">
+        <div class="popup-header">
+            <i class="fas fa-check-circle"></i>
+            <h3>Employee Added Successfully!</h3>
+        </div>
+
+        <!-- Step 1: Initial Success Message -->
+        <div id="popupStep1" class="popup-content">
+            <p th:text="${message}">Employee added successfully!</p>
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin: 1.5rem 0; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                    <i class="fas fa-id-card" style="color: var(--success); font-size: 1.5rem;"></i>
+                    <div>
+                        <p style="margin: 0; color: var(--dark-text-secondary); font-size: 0.85rem;">Employee ID</p>
+                        <p style="margin: 0; color: var(--dark-text); font-weight: 600; font-size: 1.1rem;" th:text="${employeeId}">MENTI1234</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <i class="fas fa-user" style="color: var(--success); font-size: 1.5rem;"></i>
+                    <div>
+                        <p style="margin: 0; color: var(--dark-text-secondary); font-size: 0.85rem;">Employee Name</p>
+                        <p style="margin: 0; color: var(--dark-text); font-weight: 600; font-size: 1.1rem;" th:text="${employeeName}">John Doe</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid rgba(99, 102, 241, 0.3);">
+                <p style="margin: 0; color: var(--primary); font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i>
+                    Next step: Complete document onboarding for this employee
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 2: Document Checklist (Hidden initially) -->
+        <div id="popupStep2" class="popup-content" style="display: none;">
+            <h4 style="color: var(--primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-clipboard-list"></i>
+                Required Documents Checklist
+            </h4>
+            <p style="color: var(--dark-text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                Please upload the following documents for <strong th:text="${employeeName}">John Doe</strong>:
+            </p>
+
+            <div id="documentChecklist" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
+                <!-- Documents will be loaded here dynamically -->
+                <div style="text-align: center; padding: 2rem; color: var(--dark-text-secondary);">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 0.5rem;">Loading document checklist...</p>
+                </div>
+            </div>
+
+            <div id="uploadProgress" style="display: none; margin-top: 1rem;">
+                <div style="background: var(--dark-bg); border-radius: 8px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--dark-text-secondary); font-size: 0.85rem;">Upload Progress</span>
+                        <span id="progressText" style="color: var(--primary); font-weight: 600; font-size: 0.85rem;">0/0</span>
+                    </div>
+                    <div style="background: var(--dark-border); border-radius: 4px; height: 8px; overflow: hidden;">
+                        <div id="progressBar" style="background: linear-gradient(90deg, var(--primary), var(--success)); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="popup-actions" id="popupActionsStep1">
+            <button class="btn-primary" onclick="startOnboarding()" style="background: linear-gradient(135deg, var(--primary), var(--success));">
+                <i class="fas fa-rocket"></i> Start Onboarding
+            </button>
+            <button class="btn-outline" onclick="skipOnboarding()">
+                <i class="fas fa-arrow-right"></i> Skip & Go to Employees
+            </button>
+        </div>
+
+        <div class="popup-actions" id="popupActionsStep2" style="display: none;">
+            <button class="btn-outline" onclick="backToSuccess()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button class="btn-primary" onclick="completeOnboardingAndRedirect()">
+                <i class="fas fa-check"></i> Complete & View Employee
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Success Popup with Navigation Options -->
+<div th:if="${showSuccessPopup}" class="modal fade show" id="successPopup"
+     style="display: block; background: rgba(0,0,0,0.8); z-index: 9999;" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+
+            <!-- Header -->
+            <div class="modal-header" style="border-bottom: 1px solid var(--dark-border); padding: 1.25rem;">
+                <h5 class="modal-title" style="color: var(--success); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${successMessage}">Success!</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" onclick="closeSuccessPopup()"
+                        style="opacity: 0.8;"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body" style="color: var(--dark-text); padding: 2rem; text-align: center;">
+                <div style="margin-bottom: 1.5rem;">
+                    <i class="fas fa-user-check" style="font-size: 4rem; color: var(--success);"></i>
+                </div>
+
+                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                    Employee <strong th:text="${employeeName}" style="color: var(--primary);">Name</strong> has been added successfully.
+                </p>
+
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin: 1.5rem 0; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <div style="display: flex; align-items: center; gap: 1rem; justify-content: center;">
+                        <i class="fas fa-id-card" style="color: var(--success); font-size: 1.5rem;"></i>
+                        <div style="text-align: left;">
+                            <p style="margin: 0; color: var(--dark-text-secondary); font-size: 0.85rem;">Employee ID</p>
+                            <p style="margin: 0; color: var(--dark-text); font-weight: 600; font-size: 1.1rem;" th:text="${employeeId}">EMP001</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="color: var(--dark-text-secondary); margin-bottom: 0;">What would you like to do next?</p>
+            </div>
+
+            <!-- Footer with Navigation Buttons -->
+            <div class="modal-footer" style="border-top: 1px solid var(--dark-border); justify-content: center; gap: 0.75rem; padding: 1.25rem; flex-wrap: wrap;">
+
+                <!-- Go to Offer Candidates -->
+                <a th:href="@{/dashboard/hr/offer-candidates}"
+                   class="btn"
+                   style="background: linear-gradient(135deg, var(--info), #0d9488); color: white; border: none; min-width: 160px; border-radius: 8px; padding: 0.6rem 1rem; text-decoration: none;">
+                    <i class="fas fa-file-contract"></i> Offer Candidates
+                </a>
+
+                <!-- Go to All Employees -->
+                <a th:href="@{/dashboard/hr/employees}"
+                   class="btn"
+                   style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; min-width: 160px; border-radius: 8px; padding: 0.6rem 1rem; text-decoration: none;">
+                    <i class="fas fa-users"></i> All Employees
+                </a>
+
+                <!-- Add Another Employee -->
+                <button type="button"
+                        onclick="closeSuccessPopupAndReset()"
+                        class="btn"
+                        style="background: transparent; border: 1px solid var(--dark-border); color: var(--dark-text-secondary); min-width: 160px; border-radius: 8px; padding: 0.6rem 1rem;">
+                    <i class="fas fa-plus"></i> Add Another
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Countdown Timer Script -->
+<script th:if="${showSuccessPopup}">
+    let countdown = 3;
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        const element = document.getElementById('countdown');
+        if (element) element.textContent = countdown;
+        if (countdown <= 0) clearInterval(countdownInterval);
+    }, 1000);
+</script>
+
+<!-- Call the common scripts fragment -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
+
+<script>
+    /* ========== NOTIFICATION FUNCTIONS (EXACT COPY FROM DASHBOARD.HTML) ========== */
+    function toggleHRNotificationDropdown() {
+        const dropdown = document.getElementById('hrNotificationDropdownMenu');
+        if (dropdown) {
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+                const otherDropdown = document.getElementById('notificationDropdownMenu');
+                if (otherDropdown) otherDropdown.style.display = 'none';
+            }
+        }
+    }
+
+    function markAllHRNotificationsRead() {
+        const badge = document.getElementById('hrNotificationBadge');
+        if (badge) {
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+        const dropdown = document.getElementById('hrNotificationDropdownMenu');
+        if (dropdown) {
+            dropdown.style.display = 'none';
+        }
+        showNotification('All notifications marked as read', 'success');
+    }
+
+    /* ========== MOBILE SIDEBAR TOGGLE ========== */
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuToggle && sidebar) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (sidebar.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768 &&
+                    sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) &&
+                    !mobileMenuToggle.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                    mobileMenuToggle.querySelector('i').classList.remove('fa-times');
+                    mobileMenuToggle.querySelector('i').classList.add('fa-bars');
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('active');
+                    if (mobileMenuToggle.querySelector('i')) {
+                        mobileMenuToggle.querySelector('i').classList.remove('fa-times');
+                        mobileMenuToggle.querySelector('i').classList.add('fa-bars');
+                    }
+                }
+            });
+        }
+
+        // Close notification dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('hrNotificationDropdownMenu');
+            const trigger = document.querySelector('.notification-trigger');
+            if (dropdown && trigger && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Initialize everything
+        initForm();
+    });
+
+    /* ========== LEAVE COUNT BADGE MANAGER (INTEGRATED FROM DASHBOARD) ========== */
+    class HRLeaveBadgeManager {
+        constructor() {
+            this.badgeElement = document.getElementById('leaveCountBadge');
+            this.linkElement = document.getElementById('attendanceLeaveLink');
+            this.currentCount = 0;
+            this.init();
+        }
+
+        init() {
+            this.fetchAndUpdateBadge();
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'hr_leave_count_updated' || e.key === 'menti_leave_requests') {
+                    this.fetchAndUpdateBadge();
+                }
+            });
+            setInterval(() => {
+                if (!document.hidden) {
+                    this.fetchAndUpdateBadge();
+                }
+            }, 30000);
+        }
+
+        async fetchAndUpdateBadge() {
+            try {
+                const response = await fetch('/api/leaves/pending');
+                const data = await response.json();
+                if (data.success) {
+                    const count = data.count || 0;
+                    this.updateBadgeDisplay(count);
+                    localStorage.setItem('hr_pending_leave_count', count);
+                    localStorage.setItem('hr_leave_count_updated', Date.now().toString());
+                }
+            } catch (error) {
+                console.error('Error fetching pending count:', error);
+                const fallbackCount = parseInt(localStorage.getItem('hr_pending_leave_count')) || 0;
+                this.updateBadgeDisplay(fallbackCount);
+            }
+        }
+
+        updateBadgeDisplay(count) {
+            this.currentCount = count;
+            if (this.badgeElement) {
+                if (count > 0) {
+                    this.badgeElement.textContent = count > 99 ? '99+' : count;
+                    this.badgeElement.style.display = 'flex';
+                    this.badgeElement.classList.remove('zero');
+                } else {
+                    this.badgeElement.style.display = 'none';
+                    this.badgeElement.classList.add('zero');
+                }
+            }
+        }
+    }
+
+    // Initialize badge manager
+    document.addEventListener('DOMContentLoaded', function() {
+        window.hrBadgeManager = new HRLeaveBadgeManager();
+    });
+
+    /* ========== GLOBAL DATA MAPPINGS ========== */
+    let departmentsData =[];
+
+    const departmentBenefits = {
+        "Engineering":[
+            { id: "eng_health", name: "Health Insurance", default: true },
+            { id: "eng_dental", name: "Dental Insurance", default: true },
+            { id: "eng_retirement", name: "Retirement Plan", default: true },
+            { id: "eng_pto", name: "Paid Time Off", default: true },
+            { id: "eng_flexible", name: "Flexible Hours", default: true },
+            { id: "eng_training", name: "Training Budget", default: true },
+            { id: "eng_remote", name: "Remote Work Allowance", default: true },
+            { id: "eng_equipment", name: "Equipment Allowance", default: true }
+        ],
+        "Sales":[
+            { id: "sales_health", name: "Health Insurance", default: true },
+            { id: "sales_commission", name: "Commission", default: true },
+            { id: "sales_bonus", name: "Performance Bonus", default: true },
+            { id: "sales_car", name: "Car Allowance", default: true },
+            { id: "sales_travel", name: "Travel Allowance", default: true },
+            { id: "sales_retirement", name: "Retirement Plan", default: true },
+            { id: "sales_phone", name: "Phone Allowance", default: true },
+            { id: "sales_entertainment", name: "Entertainment Budget", default: false }
+        ],
+        "Marketing":[
+            { id: "mkt_health", name: "Health Insurance", default: true },
+            { id: "mkt_dental", name: "Dental Insurance", default: true },
+            { id: "mkt_creative", name: "Creative Budget", default: true },
+            { id: "mkt_conference", name: "Conference Allowance", default: true },
+            { id: "mkt_pto", name: "Paid Time Off", default: true },
+            { id: "mkt_bonus", name: "Performance Bonus", default: true },
+            { id: "mkt_social", name: "Social Media Budget", default: true },
+            { id: "mkt_training", name: "Marketing Training", default: true }
+        ],
+        "Human Resources":[
+            { id: "hr_health", name: "Health Insurance", default: true },
+            { id: "hr_dental", name: "Dental Insurance", default: true },
+            { id: "hr_retirement", name: "Retirement Plan", default: true },
+            { id: "hr_pto", name: "Paid Time Off", default: true },
+            { id: "hr_training", name: "Professional Development", default: true },
+            { id: "hr_flexible", name: "Flexible Schedule", default: true },
+            { id: "hr_wellness", name: "Wellness Program", default: true },
+            { id: "hr_insurance", name: "Life Insurance", default: true }
+        ],
+        "Finance":[
+            { id: "fin_health", name: "Health Insurance", default: true },
+            { id: "fin_dental", name: "Dental Insurance", default: true },
+            { id: "fin_retirement", name: "Retirement Plan", default: true },
+            { id: "fin_bonus", name: "Annual Bonus", default: true },
+            { id: "fin_insurance", name: "Life Insurance", default: true },
+            { id: "fin_flexible", name: "Flexible Hours", default: true },
+            { id: "fin_tuition", name: "Tuition Reimbursement", default: false },
+            { id: "fin_stock", name: "Stock Options", default: false }
+        ],
+        "Operations":[
+            { id: "ops_health", name: "Health Insurance", default: true },
+            { id: "ops_dental", name: "Dental Insurance", default: true },
+            { id: "ops_retirement", name: "Retirement Plan", default: true },
+            { id: "ops_pto", name: "Paid Time Off", default: true },
+            { id: "ops_transport", name: "Transport Allowance", default: true },
+            { id: "ops_overtime", name: "Overtime Pay", default: true },
+            { id: "ops_uniform", name: "Uniform Allowance", default: false },
+            { id: "ops_safety", name: "Safety Gear", default: true }
+        ]
+    };
+
+    const currencySymbols = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'INR': '₹'
+    };
+
+    /* ===================== LOCATION DATA MANAGER ===================== */
+    class LocationDataManager {
+        constructor() {
+            this.countries = [];
+            this.states = [];
+            this.cities =[];
+            this.baseUrl = '/data';
+        }
+
+        async init() {
+            if (this.countries.length) return;
+            try {
+                [this.countries, this.states, this.cities] = await Promise.all([
+                    fetch(this.baseUrl + '/countries.json').then(r => r.json()),
+                    fetch(this.baseUrl + '/states.json').then(r => r.json()),
+                    fetch(this.baseUrl + '/cities.json').then(r => r.json())
+                ]);
+            } catch (error) {
+                console.error('Failed to load location data:', error);
+            }
+        }
+
+        getStates(countryId) {
+            return this.states.filter(s => s.country_id == countryId);
+        }
+
+        getCities(stateId) {
+            return this.cities.filter(c => c.state_id == stateId);
+        }
+    }
+
+    const locationManager = new LocationDataManager();
+
+    /* ===================== HELPERS ===================== */
+    function fillSelect(select, list, valueKey, textKey, placeholder) {
+        select.innerHTML = `<option value="">${placeholder}</option>`;
+        list.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item[valueKey];
+            opt.textContent = item[textKey];
+            select.appendChild(opt);
+        });
+    }
+
+    /* ===================== ADDRESS INIT ===================== */
+    async function initAddress(type) {
+        await locationManager.init();
+
+        const country = document.getElementById(type + 'Country');
+        const state = document.getElementById(type + 'State');
+        const city = document.getElementById(type + 'City');
+
+        fillSelect(country, locationManager.countries, 'id', 'name', 'Select Country');
+
+        country.onchange = () => {
+            state.disabled = true;
+            city.disabled = true;
+            fillSelect(state,
+                locationManager.getStates(country.value),
+                'id', 'name', 'Select State');
+            state.disabled = false;
+        };
+
+        state.onchange = () => {
+            fillSelect(city,
+                locationManager.getCities(state.value),
+                'id', 'name', 'Select City');
+            city.disabled = false;
+        };
+    }
+
+    /* ===================== CURRENCY FROM JSON ===================== */
+    async function loadCurrencies() {
+        try {
+            const res = await fetch("/data/currencies.json");
+            const currencies = await res.json();
+
+            const select = document.getElementById("currency");
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Select Currency</option>';
+
+            currencies.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.code;
+                opt.textContent = `${c.code} (${c.symbol}) - ${c.name}`;
+                select.appendChild(opt);
+            });
+        } catch (e) {
+            console.error("Currency load failed", e);
+        }
+    }
+
+    /* ===================== PHONE INPUT ===================== */
+    function initPhoneInput() {
+        const phoneInput = document.querySelector("#phone");
+        if (phoneInput) {
+            const iti = window.intlTelInput(phoneInput, {
+                initialCountry: "in",
+                separateDialCode: true,
+                preferredCountries: ["in", "us", "gb", "ae"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+            });
+
+            document.getElementById("employeeForm").addEventListener("submit", function () {
+                const fullPhone = iti.getNumber();
+                if (fullPhone) {
+                    phoneInput.value = fullPhone;
+                }
+            });
+        }
+    }
+
+    /* ===================== FORM INITIALIZATION ===================== */
+   function initForm() {
+    generateEmployeeId();
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('startDate').valueAsDate = tomorrow;
+
+   const today = new Date();
+
+// Max date: exactly 18 years ago (user must be at least 18)
+const maxDOB = new Date(today);
+maxDOB.setFullYear(maxDOB.getFullYear() - 18);
+document.getElementById('dateOfBirth').max = maxDOB.toISOString().split('T')[0];
+
+// Min date: 100 years ago (reasonable upper age limit)
+const minDOB = new Date(today);
+minDOB.setFullYear(minDOB.getFullYear() - 100);
+document.getElementById('dateOfBirth').min = minDOB.toISOString().split('T')[0];
+
+    loadDepartments(); // Dynamically load departments
+    initDepartmentListeners();
+    initNameAutoFill();
+    initFormNavigation();
+    initValidation();
+    initAddressListeners();
+    initProfilePicture();
+
+    handlePrefillData(); // Only sync names, dropdowns handle themselves now
+
+    loadCurrencies();
+    initAddress('permanent');
+    initAddress('residential');
+    initPhoneInput();
+}
+
+    /* ========== EMPLOYEE ID GENERATION ========== */
+   function generateEmployeeId() {
+    // If in edit mode and employee already has ID, don't generate new one
+    const isEditMode = /*[[${isEditMode != null ? isEditMode : false}]]*/ false;
+    const existingEmployeeId = /*[[${employee != null ? employee.employeeId : ''}]]*/ '';
+
+    if (isEditMode && existingEmployeeId) {
+        document.getElementById('employeeId').value = existingEmployeeId;
+        return;
+    }
+
+    // Otherwise fetch new ID for add mode
+    fetch('/dashboard/hr/api/next-employee-id')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('employeeId').value = data.employeeId;
+            } else {
+                document.getElementById('employeeId').value = 'EMP001';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching employee ID:', error);
+            document.getElementById('employeeId').value = 'EMP001';
+        });
+}
+
+function handlePrefillData() {
+    // Sync prefill names to personal info section
+    const firstNameJob = document.getElementById('firstNameJob');
+    const lastNameJob = document.getElementById('lastNameJob');
+    const firstNamePersonal = document.getElementById('firstName');
+    const lastNamePersonal = document.getElementById('lastNamePersonal');
+
+    if (firstNameJob && firstNameJob.value) {
+        if(firstNamePersonal) firstNamePersonal.value = firstNameJob.value;
+    }
+    if (lastNameJob && lastNameJob.value) {
+        if(lastNamePersonal) lastNamePersonal.value = lastNameJob.value;
+    }
+}
+
+    /* ========== DYNAMIC DEPARTMENT & DESIGNATION FUNCTIONS ========== */
+    async function loadDepartments() {
+        console.log('🔄 Loading departments from API...');
+        try {
+            const response = await fetch('/api/departments/all');
+            const data = await response.json();
+
+            if (data.success && data.departments && data.departments.length > 0) {
+                departmentsData = data.departments;
+                const deptSelect = document.getElementById('department');
+                const prefillDept = document.getElementById('prefillDepartment') ? document.getElementById('prefillDepartment').value : '';
+
+                if (deptSelect) {
+                    deptSelect.innerHTML = '<option value="">Select Department</option>';
+
+                    departmentsData.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.name;
+                        option.textContent = dept.name;
+                        option.dataset.id = dept.id;
+
+                        if (dept.name === prefillDept) {
+                            option.selected = true;
+                        }
+
+                        deptSelect.appendChild(option);
+                    });
+
+                    if (prefillDept) {
+                        deptSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+            } else {
+                useFallbackDepartments();
+            }
+        } catch (error) {
+            console.error('❌ API call failed:', error);
+            useFallbackDepartments();
+        }
+    }
+
+    function useFallbackDepartments() {
+        const fallbackDepts =[
+            { name: "Engineering", designations: [] },
+            { name: "Marketing", designations:[] },
+            { name: "Human Resources", designations: [] },
+            { name: "Sales", designations:[] },
+            { name: "Finance", designations: [] },
+            { name: "Operations", designations:[] }
+        ];
+
+        departmentsData = fallbackDepts;
+        const deptSelect = document.getElementById('department');
+        const prefillDept = document.getElementById('prefillDepartment') ? document.getElementById('prefillDepartment').value : '';
+
+        if (deptSelect) {
+            deptSelect.innerHTML = '<option value="">Select Department</option>';
+            fallbackDepts.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.name;
+                option.textContent = dept.name;
+                if (dept.name === prefillDept) option.selected = true;
+                deptSelect.appendChild(option);
+            });
+            if (prefillDept) deptSelect.dispatchEvent(new Event('change'));
+        }
+    }
+
+    function initDepartmentListeners() {
+        const departmentSelect = document.getElementById('department');
+        if (departmentSelect) {
+            departmentSelect.addEventListener('change', function() {
+                const selectedDeptName = this.value;
+                const selectedOption = this.options[this.selectedIndex];
+                const deptId = selectedOption ? selectedOption.dataset.id : null;
+
+                const designationSelect = document.getElementById('designation');
+
+                if (deptId) {
+                    loadDesignationsForDepartment(deptId, selectedDeptName);
+                } else if (selectedDeptName) {
+                    loadDesignationsForDepartment(null, selectedDeptName);
+                } else {
+                    designationSelect.innerHTML = '<option value="">Select Department First</option>';
+                    designationSelect.disabled = true;
+                }
+
+                updateBenefits(selectedDeptName);
+            });
+        }
+    }
+
+    async function loadDesignationsForDepartment(deptId, departmentName) {
+        const designationSelect = document.getElementById('designation');
+        if (!designationSelect) return;
+
+        designationSelect.innerHTML = '<option value="">Loading designations...</option>';
+        designationSelect.disabled = true;
+
+        if (deptId) {
+            try {
+                const response = await fetch(`/api/departments/${deptId}/designations`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.designations) {
+                        populateDesignationDropdown(data.designations, designationSelect);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading designations:', error);
+            }
+        }
+
+        // Fallback
+        const fallbackNames = getFallbackDesignations(departmentName);
+        if (fallbackNames.length > 0) {
+            const fallbackDesignations = fallbackNames.map(name => ({ name: name }));
+            populateDesignationDropdown(fallbackDesignations, designationSelect);
+        } else {
+            designationSelect.innerHTML = '<option value="">No designations available</option>';
+            designationSelect.disabled = true;
+        }
+    }
+
+    function populateDesignationDropdown(designations, designationSelect) {
+        designationSelect.innerHTML = '<option value="">Select Designation</option>';
+        const prefillDesig = document.getElementById('prefillDesignation') ? document.getElementById('prefillDesignation').value : '';
+
+        designations.forEach(des => {
+            const option = document.createElement('option');
+            option.value = des.name;
+            option.textContent = des.name;
+            if (des.name === prefillDesig) {
+                option.selected = true;
+            }
+            designationSelect.appendChild(option);
+        });
+
+        // If prefill designation isn't in the list (legacy data), add it
+        if (prefillDesig && !Array.from(designationSelect.options).some(opt => opt.value === prefillDesig)) {
+            const option = document.createElement('option');
+            option.value = prefillDesig;
+            option.textContent = prefillDesig;
+            option.selected = true;
+            designationSelect.appendChild(option);
+        }
+
+        designationSelect.disabled = false;
+    }
+
+    function getFallbackDesignations(departmentName) {
+        const fallbackData = {
+            "Engineering": ["Software Engineer", "Senior Software Engineer", "Lead Engineer"],
+            "Marketing":["Marketing Executive", "Digital Marketing Specialist"],
+            "Human Resources":["HR Executive", "HR Manager"],
+            "Sales": ["Sales Executive", "Sales Manager"],
+            "Finance": ["Accountant", "Finance Manager"],
+            "Operations":["Operations Executive", "Operations Manager"]
+        };
+        return fallbackData[departmentName] ||[];
+    }
+
+    function updateBenefits(department) {
+        const benefitsContainer = document.getElementById('benefitsContainer');
+        if (!benefitsContainer) return;
+
+        benefitsContainer.innerHTML = '';
+
+        if (department && departmentBenefits[department]) {
+            departmentBenefits[department].forEach(benefit => {
+                const benefitDiv = document.createElement('div');
+                benefitDiv.className = 'benefit-toggle-item';
+                benefitDiv.innerHTML = `
+                    <div class="form-check" style="display: flex; align-items: center; gap: 10px; margin: 0;">
+                        <div class="toggle-switch">
+                            <input type="checkbox" class="benefit-toggle" id="${benefit.id}"
+                                   name="benefits" value="${benefit.name}"
+                                   ${benefit.default ? 'checked' : ''}>
+                            <label for="${benefit.id}" class="toggle-label"></label>
+                        </div>
+                        <label class="form-check-label" for="${benefit.id}" style="flex: 1; margin: 0; color: var(--dark-text);">
+                            ${benefit.name}
+                        </label>
+                    </div>
+                `;
+                benefitsContainer.appendChild(benefitDiv);
+            });
+        } else {
+            benefitsContainer.innerHTML = `
+                <div class="text-center py-3" style="grid-column: 1 / -1;">
+                    <i class="fas fa-info-circle text-muted fa-2x"></i>
+                    <p class="text-muted mt-2">Select a department to view benefits</p>
+                </div>
+            `;
+        }
+    }
+
+    /* ========== NAME AUTO-FILL ========== */
+  function initNameAutoFill() {
+    const firstNameJobInput = document.getElementById('firstNameJob');
+    const lastNameJobInput = document.getElementById('lastNameJob');
+    const firstNamePersonalInput = document.getElementById('firstName');
+    const lastNamePersonalInput = document.getElementById('lastNamePersonal');
+
+    if (firstNameJobInput && lastNameJobInput && firstNamePersonalInput && lastNamePersonalInput) {
+        function syncNames() {
+            if (firstNameJobInput.value.trim()) {
+                firstNamePersonalInput.value = firstNameJobInput.value;
+            }
+            if (lastNameJobInput.value.trim()) {
+                lastNamePersonalInput.value = lastNameJobInput.value;
+            }
+        }
+
+        // Sync on blur events
+        firstNameJobInput.addEventListener('blur', syncNames);
+        lastNameJobInput.addEventListener('blur', syncNames);
+
+        // Sync on navigation buttons
+        document.getElementById('nextToCompensation')?.addEventListener('click', syncNames);
+        document.getElementById('nextToReview')?.addEventListener('click', syncNames);
+
+        // Initial sync if values exist (prefill)
+        if (firstNameJobInput.value || lastNameJobInput.value) {
+            syncNames();
+        }
+    }
+}
+
+    /* ========== ADDRESS FUNCTIONS ========== */
+    function initAddressListeners() {
+        const sameAddressRadio = document.getElementById('sameAddress');
+        const differentAddressRadio = document.getElementById('differentAddress');
+        const residentialSection = document.getElementById('residentialAddressSection');
+
+        if (sameAddressRadio && differentAddressRadio && residentialSection) {
+            sameAddressRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    residentialSection.classList.remove('show');
+                    copyAddressToResidential();
+                    disableResidentialFields();
+                }
+            });
+
+            differentAddressRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    residentialSection.classList.add('show');
+                    clearResidentialFields();
+                    enableResidentialFields();
+                }
+            });
+
+            if (sameAddressRadio.checked) {
+                copyAddressToResidential();
+                disableResidentialFields();
+            }
+        }
+
+        const permanentFields = ['permanentAddress', 'permanentCity', 'permanentState',
+                                'permanentZipCode', 'permanentCountry'];
+        permanentFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('blur', function() {
+                    if (document.getElementById('sameAddress').checked) {
+                        copyAddressToResidential();
+                    }
+                });
+            }
+        });
+    }
+
+    function clearResidentialFields() {
+        document.getElementById('residentialAddress').value = '';
+        document.getElementById('residentialZipCode').value = '';
+
+        const resCountry = document.getElementById('residentialCountry');
+        const resState = document.getElementById('residentialState');
+        const resCity = document.getElementById('residentialCity');
+
+        resCountry.value = '';
+        resState.innerHTML = '<option value="">Select Country First</option>';
+        resState.disabled = true;
+        resCity.innerHTML = '<option value="">Select State First</option>';
+        resCity.disabled = true;
+    }
+
+    function copyAddressToResidential() {
+        document.getElementById('residentialAddress').value = document.getElementById('permanentAddress').value;
+        document.getElementById('residentialZipCode').value = document.getElementById('permanentZipCode').value;
+
+        const permCountry = document.getElementById('permanentCountry');
+        const permState = document.getElementById('permanentState');
+        const permCity = document.getElementById('permanentCity');
+
+        const resCountry = document.getElementById('residentialCountry');
+        const resState = document.getElementById('residentialState');
+        const resCity = document.getElementById('residentialCity');
+
+        resCountry.value = permCountry.value;
+
+        if (permCountry.value) {
+            resCountry.dispatchEvent(new Event('change'));
+
+            setTimeout(() => {
+                resState.value = permState.value;
+
+                if (permState.value) {
+                    resState.dispatchEvent(new Event('change'));
+
+                    setTimeout(() => {
+                        resCity.value = permCity.value;
+                    }, 200);
+                }
+            }, 300);
+        }
+    }
+
+    function disableResidentialFields() {
+        const fields =['residentialAddress', 'residentialCountry', 'residentialState', 'residentialCity', 'residentialZipCode'];
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.disabled = true;
+                field.style.backgroundColor = 'rgba(255,255,255,0.05)';
+            }
+        });
+    }
+
+    function enableResidentialFields() {
+        const fields =['residentialAddress', 'residentialCountry', 'residentialState', 'residentialCity', 'residentialZipCode'];
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.disabled = false;
+                field.style.backgroundColor = '';
+            }
+        });
+    }
+
+    /* ========== FORM NAVIGATION ========== */
+    function initFormNavigation() {
+        let currentStep = 1;
+        const totalSteps = 4;
+        const steps = document.querySelectorAll('.process-step');
+        const sections = document.querySelectorAll('.form-section');
+
+        document.getElementById('nextToCompensation')?.addEventListener('click', () => navigateToStep(2));
+        document.getElementById('nextToPersonalInfo')?.addEventListener('click', () => navigateToStep(3));
+        document.getElementById('nextToReview')?.addEventListener('click', () => {
+            if (validateStep(3)) {
+                updateReviewSummary();
+                navigateToStep(4);
+            }
+        });
+
+        document.getElementById('prevToJobDetails')?.addEventListener('click', () => navigateToStep(1));
+        document.getElementById('prevToCompensation')?.addEventListener('click', () => navigateToStep(2));
+        document.getElementById('prevToPersonalInfo')?.addEventListener('click', () => navigateToStep(3));
+
+        document.querySelectorAll('#cancelButton, #cancelButtonFinal').forEach(btn => {
+            btn.addEventListener('click', handleCancel);
+        });
+
+        document.getElementById('saveJobDetailsBtn')?.addEventListener('click', saveJobDetails);
+        document.getElementById('saveCompensationBtn')?.addEventListener('click', saveCompensation);
+        document.getElementById('savePersonalInfoBtn')?.addEventListener('click', savePersonalInfo);
+
+        document.getElementById('submitEmployeeBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            submitEmployeeForm();
+        });
+
+        function navigateToStep(step) {
+            if (step < 1 || step > totalSteps) return;
+
+            if (step > currentStep && !validateStep(currentStep)) {
+                return;
+            }
+
+            steps.forEach((s, index) => {
+                s.classList.remove('active', 'completed');
+                if (index + 1 < step) s.classList.add('completed');
+                else if (index + 1 === step) s.classList.add('active');
+            });
+
+            sections.forEach(s => s.classList.remove('active'));
+            document.getElementById(`section${step}`)?.classList.add('active');
+
+            currentStep = step;
+            document.querySelector('.employee-form-container').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+
+    /* ========== VALIDATION ========== */
+    function initValidation() {
+        const requiredFields = document.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            field.addEventListener('blur', function() {
+                validateField(this);
+            });
+        });
+    }
+
+    function validateField(field) {
+        const errorDiv = field.parentNode.querySelector('.error-message');
+        field.classList.remove('is-invalid');
+        if (errorDiv) errorDiv.remove();
+
+        if (field.hasAttribute('required') && !field.value.trim()) {
+            field.classList.add('is-invalid');
+            const error = document.createElement('div');
+            error.className = 'error-message';
+            error.textContent = 'This field is required';
+            field.parentNode.appendChild(error);
+            return false;
+        }
+
+        if (field.type === 'email' && field.value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(field.value)) {
+                field.classList.add('is-invalid');
+                const error = document.createElement('div');
+                error.className = 'error-message';
+                error.textContent = 'Please enter a valid email address';
+                field.parentNode.appendChild(error);
+                return false;
+            }
+        }
+// 18+ validation for date of birth
+if (field.id === 'dateOfBirth' && field.value) {
+    const dob = new Date(field.value);
+    const today = new Date();
+    const minAge = new Date(today);
+    minAge.setFullYear(minAge.getFullYear() - 18);
+
+    if (dob > minAge) {
+        field.classList.add('is-invalid');
+        const error = document.createElement('div');
+        error.className = 'error-message';
+        error.textContent = 'Employee must be at least 18 years old';
+        field.parentNode.appendChild(error);
+        return false;
+    }
+}
+
+
+        return true;
+    }
+
+    function validateStep(step) {
+        let isValid = true;
+        const section = document.getElementById(`section${step}`);
+        section.querySelectorAll('.is-invalid').forEach(f => f.classList.remove('is-invalid'));
+        section.querySelectorAll('.error-message').forEach(e => e.remove());
+
+        const requiredFields = section.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!validateField(field)) isValid = false;
+        });
+
+        if (!isValid) {
+            const firstError = section.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+
+        return isValid;
+    }
+
+    /* ========== SAVE INDIVIDUAL SECTIONS ========== */
+    function saveJobDetails() {
+        if (validateStep(1)) showNotification('Job details saved successfully!', 'success');
+    }
+
+    function saveCompensation() {
+        if (validateStep(2)) showNotification('Compensation details saved successfully!', 'success');
+    }
+
+    function savePersonalInfo() {
+        if (validateStep(3)) showNotification('Personal information saved successfully!', 'success');
+    }
+
+    /* ========== UPDATE REVIEW SUMMARY ========== */
+    function updateReviewSummary() {
+        const container = document.getElementById('reviewSummary');
+        if (!container) return;
+
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastNamePersonal').value;
+        const fullName = firstName + ' ' + lastName;
+        const employeeId = document.getElementById('employeeId').value;
+        const personalEmail = document.getElementById('personalEmail').value;
+        const phone = document.getElementById('phone').value;
+        const department = document.getElementById('department').value;
+        const designation = document.getElementById('designation').value;
+        const workLocation = document.getElementById('workLocation').value;
+        const employmentType = document.getElementById('employmentType').value;
+        const startDate = document.getElementById('startDate').value;
+        const salary = document.getElementById('salary').value;
+        const currency = document.getElementById('currency').value;
+        const manager = document.getElementById('manager').value;
+        const gender = document.getElementById('gender').value;
+        const permanentAddress = document.getElementById('permanentAddress').value;
+        const permanentCity = document.getElementById('permanentCity');
+        const permanentState = document.getElementById('permanentState');
+        const permanentCountry = document.getElementById('permanentCountry');
+        const permanentZipCode = document.getElementById('permanentZipCode').value;
+        const emergencyContact = document.getElementById('emergencyContact').value;
+        const linkedin = document.getElementById('linkedin').value;
+        const addressType = document.querySelector('input[name="addressType"]:checked').value;
+
+        const profilePicture = document.getElementById('profilePicture').files[0];
+        const selectedBenefits =[];
+        document.querySelectorAll('.benefit-toggle:checked').forEach(checkbox => {
+            selectedBenefits.push(checkbox.value);
+        });
+
+        const currencySymbol = currencySymbols[currency] || currency;
+        const formattedSalary = salary ? `<span class="currency-display"><span class="currency-symbol">${currencySymbol}</span>${Number(salary).toLocaleString()}</span>` : '';
+        const formattedStartDate = startDate ? new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        const dateOfBirth = document.getElementById('dateOfBirth').value;
+        const formattedDateOfBirth = dateOfBirth ? new Date(dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+
+        const permCityText = permanentCity?.options[permanentCity.selectedIndex]?.text || '';
+        const permStateText = permanentState?.options[permanentState.selectedIndex]?.text || '';
+        const permCountryText = permanentCountry?.options[permanentCountry.selectedIndex]?.text || '';
+
+        let addressDisplay = '';
+        if (permanentAddress) {
+            addressDisplay = `${permanentAddress}, ${permCityText || ''}, ${permStateText || ''} ${permanentZipCode || ''}, ${permCountryText || ''}`;
+        }
+
+        let residentialDisplay = '';
+        if (addressType === 'different') {
+            const resAddress = document.getElementById('residentialAddress').value;
+            const resCity = document.getElementById('residentialCity');
+            const resState = document.getElementById('residentialState');
+            const resCountry = document.getElementById('residentialCountry');
+            const resZip = document.getElementById('residentialZipCode').value;
+
+            const resCityText = resCity?.options[resCity.selectedIndex]?.text || '';
+            const resStateText = resState?.options[resState.selectedIndex]?.text || '';
+            const resCountryText = resCountry?.options[resCountry.selectedIndex]?.text || '';
+
+            if (resAddress) {
+                residentialDisplay = `<div class="info-item">
+                    <span class="info-label">Residential Address</span>
+                    <span class="info-value">${resAddress}, ${resCityText || ''}, ${resStateText || ''} ${resZip || ''}, ${resCountryText || ''}</span>
+                </div>`;
+            }
+        } else {
+            residentialDisplay = `<div class="info-item">
+                <span class="info-label">Residential Address</span>
+                <span class="info-value">Same as Permanent Address</span>
+            </div>`;
+        }
+
+        let profileImgHtml = '';
+        if (profilePicture) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const profileImgElement = document.getElementById('profilePreview');
+                if (profileImgElement) {
+                    profileImgElement.src = e.target.result;
+                }
+            };
+            reader.readAsDataURL(profilePicture);
+            profileImgHtml = `<img id="profilePreview" class="profile-preview-small" src="" alt="${fullName}">`;
+        } else {
+            profileImgHtml = `<div class="profile-preview-small" style="background: var(--dark-bg); border: 2px solid var(--dark-border); display: flex; align-items: center; justify-content: center; color: var(--dark-text-secondary); font-size: 1.5rem;">
+                <i class="fas fa-user"></i>
+            </div>`;
+        }
+
+        container.innerHTML = `
+            <div class="overview-header">
+                ${profileImgHtml}
+                <div>
+                    <div class="overview-name">${fullName}</div>
+                    <div class="overview-id">Employee ID: ${employeeId}</div>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Employee ID</span>
+                    <span class="info-value">${employeeId}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">First Name</span>
+                    <span class="info-value">${firstName || 'Not provided'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Last Name</span>
+                    <span class="info-value">${lastName || 'Not provided'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Personal Email</span>
+                    <span class="info-value">${personalEmail || 'Not provided'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">${phone || 'Not provided'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value">${formattedDateOfBirth || 'Not provided'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value">${gender || 'Not specified'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Emergency Contact</span>
+                    <span class="info-value">${emergencyContact || 'Not provided'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">LinkedIn</span>
+                    <span class="info-value">${linkedin || 'Not provided'}</span>
+                </div>
+
+                <div class="info-item" style="border-top: 2px solid var(--dark-border); padding-top: 1rem;">
+                    <span class="info-label">Department</span>
+                    <span class="info-value">${department || 'Not assigned'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Designation</span>
+                    <span class="info-value">${designation || 'Not assigned'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Work Location</span>
+                    <span class="info-value">${workLocation || 'Not assigned'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Employment Type</span>
+                    <span class="info-value">${employmentType || 'Not specified'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Start Date</span>
+                    <span class="info-value">${formattedStartDate || 'Not specified'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Reporting Manager</span>
+                    <span class="info-value">${manager || 'Not assigned'}</span>
+                </div>
+
+                <div class="info-item" style="border-top: 2px solid var(--dark-border); padding-top: 1rem;">
+                    <span class="info-label">Annual Salary</span>
+                    <span class="info-value">${formattedSalary || 'Not specified'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Currency</span>
+                    <span class="info-value">${currency || 'Not specified'}</span>
+                </div>
+
+                <div class="info-item" style="border-top: 2px solid var(--dark-border); padding-top: 1rem;">
+                    <span class="info-label">Permanent Address</span>
+                    <span class="info-value">${addressDisplay || 'Not provided'}</span>
+                </div>
+                ${residentialDisplay}
+
+                <div class="info-item" style="border-top: 2px solid var(--dark-border); padding-top: 1rem; display: block;">
+                    <span class="info-label" style="display: block; margin-bottom: 0.5rem;">Benefits</span>
+                    <div class="info-value" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem;">
+                        ${selectedBenefits.length > 0
+                            ? selectedBenefits.map(benefit => `
+                                <span style="
+                                    background: rgba(99, 102, 241, 0.15);
+                                    color: var(--primary);
+                                    padding: 0.35rem 0.75rem;
+                                    border-radius: 20px;
+                                    font-size: 0.85rem;
+                                    font-weight: 500;
+                                    border: 1px solid rgba(99, 102, 241, 0.3);
+                                ">${benefit}</span>
+                            `).join('')
+                            : '<span style="color: var(--dark-text-secondary); font-style: italic;">No benefits selected</span>'
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /* ========== SUBMIT FORM ========== */
+    function submitEmployeeForm() {
+        if (!validateStep(4)) return;
+
+        const submitBtn = document.getElementById('submitEmployeeBtn');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Employee...';
+        submitBtn.disabled = true;
+
+        const dateOfBirthInput = document.getElementById('dateOfBirth');
+        if (dateOfBirthInput.value) {
+            const date = new Date(dateOfBirthInput.value);
+            dateOfBirthInput.value = date.toISOString().split('T')[0];
+        }
+
+        const startDateInput = document.getElementById('startDate');
+        if (startDateInput.value) {
+            const date = new Date(startDateInput.value);
+            startDateInput.value = date.toISOString().split('T')[0];
+        }
+
+        const selectedBenefits =[];
+        document.querySelectorAll('.benefit-toggle:checked').forEach(checkbox => {
+            selectedBenefits.push(checkbox.value);
+        });
+
+        selectedBenefits.forEach((benefit, index) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'benefits';
+            input.value = benefit;
+            document.getElementById('employeeForm').appendChild(input);
+        });
+
+        document.getElementById('employeeForm').submit();
+    }
+
+    /* ========== PROFILE PICTURE ========== */
+    function initProfilePicture() {
+        const profileInput = document.getElementById('profilePicture');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const profileAvatarContainer = document.getElementById('profileAvatarContainer');
+        const openFilePickerBtn = document.getElementById('openFilePickerBtn');
+        const removePhotoBtn = document.getElementById('removePhotoBtn');
+
+        if (profileAvatarContainer) {
+            profileAvatarContainer.addEventListener('click', e => {
+                if (!e.target.closest('.avatar-actions')) profileInput.click();
+            });
+        }
+
+        if (openFilePickerBtn) {
+            openFilePickerBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                profileInput.click();
+            });
+        }
+
+        if (profileInput) {
+            profileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const allowed =['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+                if (!allowed.includes(file.type)) {
+                    alert('Only JPG, PNG, or WEBP images are allowed.');
+                    e.target.value = '';
+                    return;
+                }
+
+                removePhotoBtn.style.display = 'inline-flex';
+
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    profileAvatar.innerHTML = '';
+                    const img = new Image();
+                    img.src = ev.target.result;
+                    img.alt = 'Profile';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    profileAvatar.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        if (removePhotoBtn) {
+            removePhotoBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileInput.value = '';
+                profileAvatar.innerHTML = '<span class="avatar-placeholder"><i class="fas fa-user"></i></span>';
+                this.style.display = 'none';
+            });
+        }
+    }
+
+    /* ========== SUCCESS POPUP ========== */
+    function showSuccessPopup() {
+        const successPopup = document.getElementById('successPopup');
+        if (successPopup) {
+            const shouldShow = successPopup.getAttribute('data-show') === 'true';
+            if (shouldShow) {
+                successPopup.style.display = 'flex';
+
+                setTimeout(() => {
+                    closeSuccessPopup();
+                    const employeeId = successPopup.getAttribute('data-employee-id');
+                    const employeeName = successPopup.getAttribute('data-employee-name');
+
+                    const redirectUrl = '/dashboard/hr/employees?success=true' +
+                        '&employeeId=' + encodeURIComponent(employeeId) +
+                        '&employeeName=' + encodeURIComponent(employeeName);
+
+                    window.location.href = redirectUrl;
+                }, 3000);
+            }
+        }
+    }
+
+    function closeSuccessPopup() {
+        const successPopup = document.getElementById('successPopup');
+        if (successPopup) {
+            successPopup.style.display = 'none';
+        }
+    }
+
+    function immediateRedirect() {
+        const successPopup = document.getElementById('successPopup');
+        const employeeId = successPopup.getAttribute('data-employee-id');
+        const employeeName = successPopup.getAttribute('data-employee-name');
+
+        closeSuccessPopup();
+        window.location.href = '/dashboard/hr/employees?success=true' +
+            '&employeeId=' + encodeURIComponent(employeeId) +
+            '&employeeName=' + encodeURIComponent(employeeName);
+    }
+
+    /* ========== CANCEL HANDLER ========== */
+    function handleCancel() {
+        if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+            window.location.href = '/dashboard/hr/employees';
+        }
+    }
+
+    /* ========== NOTIFICATION ========== */
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 90%;
+            word-wrap: break-word;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    /* ========== ONBOARDING FLOW FUNCTIONS ========== */
+    let currentEmployeeId = null;
+    let currentEmployeeName = null;
+    let documentsList = [];
+    let uploadedDocuments =[];
+
+    function startOnboarding() {
+        const successPopup = document.getElementById('successPopup');
+        currentEmployeeId = successPopup.getAttribute('data-employee-id');
+        currentEmployeeName = successPopup.getAttribute('data-employee-name');
+
+        document.getElementById('popupStep1').style.display = 'none';
+        document.getElementById('popupStep2').style.display = 'block';
+        document.getElementById('popupActionsStep1').style.display = 'none';
+        document.getElementById('popupActionsStep2').style.display = 'flex';
+
+        loadDocumentChecklist(currentEmployeeId);
+    }
+
+    function backToSuccess() {
+        document.getElementById('popupStep1').style.display = 'block';
+        document.getElementById('popupStep2').style.display = 'none';
+        document.getElementById('popupActionsStep1').style.display = 'flex';
+        document.getElementById('popupActionsStep2').style.display = 'none';
+    }
+
+    function skipOnboarding() {
+        immediateRedirect();
+    }
+
+    function completeOnboardingAndRedirect() {
+        const employeeId = document.getElementById('successPopup').getAttribute('data-employee-id');
+        window.location.href = `/dashboard/hr/onboarding/employee/${employeeId}`;
+    }
+
+    async function loadDocumentChecklist(employeeId) {
+        const checklistContainer = document.getElementById('documentChecklist');
+
+        try {
+            const initResponse = await fetch(`/onboarding/employee/${employeeId}/initialize-api`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (!initResponse.ok) {
+                throw new Error('Failed to initialize onboarding');
+            }
+
+            const response = await fetch(`/onboarding/employee/${employeeId}/documents-list`);
+
+            if (!response.ok) {
+                throw new Error('Failed to load documents');
+            }
+
+            const data = await response.json();
+            documentsList = data.documents ||[];
+
+            renderDocumentChecklist(documentsList, employeeId);
+            updateProgress();
+
+        } catch (error) {
+            console.error('Error loading checklist:', error);
+            checklistContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    <p style="margin-top: 0.5rem;">Failed to load document checklist</p>
+                    <button onclick="loadDocumentChecklist('${employeeId}')" class="btn-outline" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Retry
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    function renderDocumentChecklist(documents, employeeId) {
+        const container = document.getElementById('documentChecklist');
+
+        if (documents.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: var(--dark-text-secondary);">
+                    <i class="fas fa-check-circle fa-2x" style="color: var(--success);"></i>
+                    <p style="margin-top: 0.5rem;">No documents required</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+
+        documents.forEach((doc, index) => {
+            const isUploaded = doc.status === 'SUBMITTED' || doc.status === 'VERIFIED';
+            const isMandatory = doc.mandatory;
+
+            html += `
+                <div class="document-item" id="doc-${doc.id}" style="
+                    background: ${isUploaded ? 'rgba(16, 185, 129, 0.1)' : 'var(--dark-bg)'};
+                    border: 1px solid ${isUploaded ? 'rgba(16, 185, 129, 0.3)' : 'var(--dark-border)'};
+                    border-radius: 8px;
+                    padding: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    transition: all 0.3s ease;
+                ">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-shrink: 0;
+                        background: ${isUploaded ? 'var(--success)' : (isMandatory ? 'var(--danger)' : 'var(--warning)')};
+                        color: white;
+                        font-size: 1rem;
+                    ">
+                        ${isUploaded ? '<i class="fas fa-check"></i>' : (isMandatory ? '<i class="fas fa-exclamation"></i>' : '<i class="fas fa-minus"></i>')}
+                    </div>
+
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <span style="font-weight: 600; color: var(--dark-text); font-size: 0.95rem;">
+                                ${doc.documentName}
+                            </span>
+                            ${isMandatory ? '<span style="color: var(--danger); font-size: 0.8rem;">*</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">
+                            ${doc.description || 'No description available'}
+                        </div>
+                        <div style="font-size: 0.75rem; margin-top: 0.25rem;">
+                            ${isUploaded
+                                ? `<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Uploaded</span>`
+                                : `<span style="color: ${isMandatory ? 'var(--danger)' : 'var(--warning)'};">
+                                    <i class="fas fa-clock"></i> ${isMandatory ? 'Required - Pending' : 'Optional - Pending'}
+                                   </span>`
+                            }
+                        </div>
+                    </div>
+
+                    <div style="flex-shrink: 0;">
+                        ${isUploaded
+                            ? `<button class="btn-outline" onclick="viewDocument('${doc.id}')" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                <i class="fas fa-eye"></i> View
+                               </button>`
+                            : `<div class="upload-wrapper" style="position: relative;">
+                                <input type="file"
+                                       id="file-${doc.id}"
+                                       accept=".pdf,.jpg,.jpeg,.png"
+                                       style="display: none;"
+                                       onchange="uploadDocument('${doc.id}', '${doc.documentType}', '${employeeId}', this)">
+                                <button class="btn-primary" onclick="document.getElementById('file-${doc.id}').click()"
+                                        style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                               </div>`
+                        }
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+        document.getElementById('uploadProgress').style.display = 'block';
+    }
+
+    async function uploadDocument(documentId, documentType, employeeId, fileInput) {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const allowedTypes =['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            showNotification('Only PDF, JPG, JPEG, and PNG files are allowed', 'error');
+            fileInput.value = '';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('File size must be less than 5MB', 'error');
+            fileInput.value = '';
+            return;
+        }
+
+        const docElement = document.getElementById(`doc-${documentId}`);
+        const originalContent = docElement.innerHTML;
+        docElement.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; padding: 1rem; width: 100%;">
+                <i class="fas fa-spinner fa-spin" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                <span style="color: var(--dark-text-secondary);">Uploading...</span>
+            </div>
+        `;
+
+        try {
+            const formData = new FormData();
+            formData.append('documentFile', file);
+            formData.append('notes', 'Uploaded during initial onboarding');
+
+            const response = await fetch(`/onboarding/employee/${employeeId}/upload/${documentType}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Document uploaded successfully!', 'success');
+
+                const docIndex = documentsList.findIndex(d => d.id == documentId);
+                if (docIndex !== -1) {
+                    documentsList[docIndex].status = 'SUBMITTED';
+                    uploadedDocuments.push(documentId);
+                }
+
+                renderDocumentChecklist(documentsList, employeeId);
+                updateProgress();
+
+                if (result.document && result.document.id) {
+                    await autoVerifyDocument(result.document.id);
+                }
+
+            } else {
+                throw new Error(result.error || 'Upload failed');
+            }
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            showNotification('Failed to upload: ' + error.message, 'error');
+            docElement.innerHTML = originalContent;
+        }
+
+        fileInput.value = '';
+    }
+
+    async function autoVerifyDocument(documentId) {
+        try {
+            const response = await fetch(`/onboarding/verify/${documentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    verifiedBy: 'HR_SYSTEM',
+                    status: 'VERIFIED',
+                    remarks: 'Auto-verified during initial onboarding'
+                })
+            });
+
+            if (response.ok) {
+                console.log('Document auto-verified:', documentId);
+            }
+        } catch (error) {
+            console.error('Auto-verify error:', error);
+        }
+    }
+
+    function updateProgress() {
+        const total = documentsList.length;
+        const uploaded = documentsList.filter(d => d.status === 'SUBMITTED' || d.status === 'VERIFIED').length;
+        const percentage = total > 0 ? (uploaded / total) * 100 : 0;
+
+        document.getElementById('progressText').textContent = `${uploaded}/${total} Documents`;
+        document.getElementById('progressBar').style.width = `${percentage}%`;
+
+        const progressBar = document.getElementById('progressBar');
+        if (percentage === 100) {
+            progressBar.style.background = 'var(--success)';
+        } else if (percentage >= 50) {
+            progressBar.style.background = 'linear-gradient(90deg, var(--warning), var(--success))';
+        }
+    }
+
+    function viewDocument(documentId) {
+        window.open(`/onboarding/download/${documentId}`, '_blank');
+    }
+// Close success popup
+function closeSuccessPopup() {
+    const popup = document.getElementById('successPopup');
+    if (popup) {
+        popup.style.display = 'none';
+        popup.classList.remove('show');
+
+        // Remove from DOM after animation
+        setTimeout(() => {
+            popup.remove();
+        }, 300);
+    }
+
+    // Clean up URL parameters to prevent popup on refresh
+    if (window.history.replaceState) {
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+    }
+}
+
+// Close popup and reset form for adding another employee
+function closeSuccessPopupAndReset() {
+    closeSuccessPopup();
+
+    // Reset the form
+    const form = document.getElementById('employeeForm');
+    if (form) {
+        form.reset();
+
+        // Reset custom elements
+        resetFormElements();
+    }
+
+    // Generate new employee ID
+    generateEmployeeId();
+
+    // Reset to step 1
+    navigateToStep(1);
+
+    // Show notification
+    showNotification('Form reset. Ready to add another employee.', 'info');
+}
+
+// Reset form elements that aren't cleared by form.reset()
+function resetFormElements() {
+    // Reset avatar
+    const profileAvatar = document.getElementById('profileAvatar');
+    const removePhotoBtn = document.getElementById('removePhotoBtn');
+    if (profileAvatar) {
+        profileAvatar.innerHTML = '<span class="avatar-placeholder"><i class="fas fa-user"></i></span>';
+    }
+    if (removePhotoBtn) {
+        removePhotoBtn.style.display = 'none';
+    }
+
+    // Reset designation dropdown
+    const designationSelect = document.getElementById('designation');
+    if (designationSelect) {
+        designationSelect.innerHTML = '<option value="">Select Department First</option>';
+        designationSelect.disabled = true;
+    }
+
+    // Reset benefits
+    const benefitsContainer = document.getElementById('benefitsContainer');
+    if (benefitsContainer) {
+        benefitsContainer.innerHTML = `
+            <div class="text-center py-3">
+                <i class="fas fa-info-circle text-muted"></i>
+                <p class="text-muted mt-2">Select a department to view benefits</p>
+            </div>
+        `;
+    }
+
+    // Reset address sections
+    const sameAddressRadio = document.getElementById('sameAddress');
+    if (sameAddressRadio) {
+        sameAddressRadio.checked = true;
+    }
+    const residentialSection = document.getElementById('residentialAddressSection');
+    if (residentialSection) {
+        residentialSection.classList.remove('show');
+    }
+
+    // Clear validation errors
+    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    document.querySelectorAll('.error-message').forEach(el => el.remove());
+}
+
+// Close popup when clicking outside (on backdrop)
+document.addEventListener('DOMContentLoaded', function() {
+    const popup = document.getElementById('successPopup');
+    if (popup) {
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                closeSuccessPopup();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSuccessPopup();
+            }
+        });
+    }
+});
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        .is-invalid {
+            border-color: var(--danger) !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const isEditMode = [[${isEditMode != null ? isEditMode : false}]];
+    const employeeForm = document.getElementById('employeeForm');
+
+    if (isEditMode) {
+        // Change form action to update endpoint
+        employeeForm.action = '/dashboard/hr/update-employee';
+
+        // Change page title
+        document.querySelector('.page-title').textContent = 'Edit Employee';
+
+        // Change submit button text
+        document.getElementById('submitEmployeeBtn').innerHTML =
+            '<i class="fas fa-save"></i> Update Employee';
+    }
+});
+
+</script>
+
+</body>
+</html>

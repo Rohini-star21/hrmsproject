@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment Offer Letter - Mentis IT Solutions</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Global Black Scrollbar */
+        html { scrollbar-color: #1a1a1a #000000; scrollbar-width: thin; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #000000; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333333; }
+
+        :root {
+            --dark-bg: #0f172a; --dark-card: #1e293b; --dark-border: #334155;
+            --dark-text: #f8fafc; --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1; --primary-hover: #4f46e5;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #0ea5e9;
+            --sidebar-bg: #0f172a; --sidebar-hover: #1e293b;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* =========================================================
+           SIDEBAR STYLES
+           ========================================================= */
+        .sidebar { position: fixed; top: 0; left: 0; width: 280px; height: 100vh; background: var(--sidebar-bg); box-shadow: 2px 0 10px rgba(0,0,0,.2); transition: var(--transition); z-index: 1000; }
+        .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 1.5rem; border-bottom: 1px solid var(--dark-border); color: #fff; font-weight: 600; font-size: 1.25rem; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10; }
+        .brand-icon { width: 32px; height: 32px; background: #fff; color: var(--sidebar-bg); border-radius: 6px; display: grid; place-content: center; }
+
+        .sidebar-content { height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+        .sidebar-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .sidebar-content::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px);
+        }
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+        .nav-link:hover i, .nav-link.active i {
+            color: #fff;
+        }
+        .nav-badge {
+            margin-left: auto; background: var(--danger); color: white;
+            padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.65rem;
+            font-weight: 600; min-width: 20px; text-align: center;
+        }
+
+        .mobile-menu-toggle { display: none; background: none; border: none; color: var(--dark-text); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; position: fixed; top: 1rem; left: 1rem; z-index: 1001; }
+        .main-content { margin-left: 280px; min-height: 100vh; transition: var(--transition); }
+
+        /* === TOP HEADER STYLES === */
+        .top-header { display: flex; justify-content: space-between; align-items: center; background: var(--dark-card); border-bottom: 1px solid var(--dark-border); padding: .75rem 1.5rem; position: sticky; top: 0; z-index: 100; }
+        .search-box { position: relative; width: 300px; }
+        .search-box input { width: 100%; padding: .6rem .75rem .6rem 2.5rem; border-radius: 8px; border: 1px solid var(--dark-border); background: var(--dark-bg); color: var(--dark-text); font-size: .875rem; transition: var(--transition); }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,.1); outline: none; }
+        .search-box i { position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); color: var(--dark-text-secondary); }
+        .top-header-actions { display: flex; align-items: center; gap: 1rem; }
+        .icon-btn { width: 40px; height: 40px; border-radius: 8px; background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); position: relative; }
+        .icon-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
+        .notification-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .user-profile-menu { display: flex; align-items: center; gap: 1rem; }
+        .dropdown-menu { background: var(--dark-card); border: 1px solid var(--dark-border); }
+        .dropdown-item { color: var(--dark-text); }
+        .dropdown-item:hover { background: var(--sidebar-hover); }
+        .dropdown-item:active { background: var(--primary); }
+        .dropdown-item.text-danger:hover { background: var(--danger); color: white !important; }
+
+        /* =========================================================
+           OFFER LETTER SPECIFIC STYLES (Your Original CSS)
+           ========================================================= */
+        .content-area { padding: 2rem; }
+
+        .letter-container {
+            max-width: 816px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            color: #333; /* Forcing text inside letter to be dark */
+        }
+
+        .letter-header {
+            background: linear-gradient(135deg, #d946a6 0%, #4a2a7e 50%, #2a1a5e 100%);
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .letter-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            position: relative;
+        }
+        .letter-logo-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+        .letter-date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            z-index: 10;
+            position: relative;
+        }
+        .letter-content {
+            padding: 50px 60px 80px;
+            position: relative;
+        }
+        .letter-addresses {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 30px;
+        }
+        .letter-candidate-address {
+            text-align: right;
+            flex: 1;
+        }
+        .letter-candidate-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d946a6;
+            margin-bottom: 8px;
+        }
+        .letter-subtitle {
+            font-size: 32px;
+            font-weight: 700;
+            color: #8bc34a;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            line-height: 1.1;
+            text-align: center;
+        }
+        .letter-body {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .letter-greeting {
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .letter-paragraph {
+            margin-bottom: 20px;
+            text-align: left;
+            line-height: 1.9;
+        }
+        .letter-acceptance-section {
+            margin-top: 40px;
+        }
+        .letter-acceptance-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2a1a5e;
+        }
+        .letter-signature-section {
+            margin-top: 50px;
+        }
+        .letter-name {
+            font-weight: 700;
+            color: #d946a6;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        .letter-signature-image {
+            width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .letter-signature-line {
+            color: #999;
+            font-size: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            width: 240px;
+        }
+        .letter-footer {
+            height: 40px;
+            background: #2a1a5e;
+        }
+
+        /* Action Buttons outside letter */
+        .page-actions {
+            max-width: 816px;
+            margin: 0 auto 1.5rem auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .top-header { padding-left: 4.5rem; }
+            .content-area { padding: 1rem; }
+            .letter-content { padding: 30px 20px; }
+        }
+
+        @media print {
+            .sidebar, .top-header, .mobile-menu-toggle, .page-actions {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .content-area {
+                padding: 0 !important;
+            }
+            .letter-container {
+                box-shadow: none !important;
+                max-width: 100% !important;
+            }
+            body {
+                background: white !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- === SIDEBAR === -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon" id="sidebarBrandIcon">
+            <img id="sidebarLogo" src="https://via.placeholder.com/32x32/215c89/ffffff?text=MIS"
+                 style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover; display: none;">
+            <i id="sidebarIcon" class="fas fa-building" style="display: inline-block;"></i>
+        </div>
+        <span id="sidebarCompanyName">Menti's IT Solutions</span>
+    </div>
+
+    <div class="sidebar-content">
+        <nav class="mt-3">
+            <!-- Dashboard Section -->
+            <div class="nav-section">
+                <i class="fas fa-home"></i>
+                DASHBOARD
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Recruitment Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-tie"></i>
+                RECRUITMENT
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/job-form">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Job Postings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Applications</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/interview-schedule">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interview Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard/hr/offer-candidates">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Offer Letters</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Employee Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-users-cog"></i>
+                EMPLOYEES
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/add-employee">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/employees">
+                        <i class="fas fa-id-card"></i>
+                        <span>All Employees</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/onboarding">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Onboarding</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr" id="attendanceLeaveLink">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Attendance/Leave</span>
+                        <span class="nav-badge" id="leaveCountBadge" style="display: none; background: var(--danger);">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/performance">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Review</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Organization Structure -->
+            <div class="nav-section" th:if="${isSuperAdmin}">
+                <i class="fas fa-building"></i>
+                ORGANIZATION SETTINGS
+            </div>
+            <ul class="nav flex-column" th:if="${isSuperAdmin}">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/departments">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Departments & Designations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/locations">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/branches">
+                        <i class="fas fa-code-branch"></i>
+                        <span>Branches</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Company Settings -->
+            <div class="nav-section" th:if="${isSuperAdmin}">
+                <i class="fas fa-cog"></i>
+                COMPANY INFO
+            </div>
+            <ul class="nav flex-column" th:if="${isSuperAdmin}">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/company-profile">
+                        <i class="fas fa-building"></i>
+                        <span>Company Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/roles">
+                        <i class="fas fa-user-tag"></i>
+                        <span>Roles</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/categories">
+                        <i class="fas fa-tags"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Documentation -->
+            <div class="nav-section" th:if="${isSuperAdmin}">
+                <i class="fas fa-folder-open"></i>
+                DOCUMENTATION
+            </div>
+            <ul class="nav flex-column" th:if="${isSuperAdmin}">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/company-manual">
+                        <i class="fas fa-book"></i>
+                        <span>Company Manual</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/employee-manual">
+                        <i class="fas fa-users"></i>
+                        <span>Employee Manual</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/payslips">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Payslips</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<!-- === END SIDEBAR === -->
+
+<!-- Main Content -->
+<div class="main-content">
+    <header class="top-header">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search...">
+        </div>
+
+        <div class="top-header-actions">
+            <!-- Notification Icon -->
+            <div class="icon-btn" title="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+
+            <!-- User Profile Menu -->
+            <div class="user-profile-menu">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            style="background: var(--dark-bg); border-color: var(--dark-border); color: var(--dark-text);">
+                        <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">HR</div>
+                        <span>HR Manager</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="/candidate/auth/change-password">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/candidate/auth/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-area">
+
+        <!-- Action bar above the letter -->
+        <div class="page-actions">
+            <a href="/dashboard/hr/offer-candidates" style="color: var(--dark-text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-arrow-left"></i> Back to Offer Candidates
+            </a>
+            <button onclick="window.print()" class="btn-print">
+                <i class="fas fa-print"></i> Print / Save PDF
+            </button>
+        </div>
+
+        <!-- The Offer Letter -->
+        <div class="letter-container">
+
+            <div class="letter-header">
+                <div class="letter-logo">
+                    <div class="letter-logo-text">MENTIS IT</div>
+                </div>
+                <div class="letter-date" th:text="${today}">Date: November 24, 2025</div>
+            </div>
+
+            <div class="letter-content">
+                <div class="letter-addresses">
+                    <div class="letter-candidate-address">
+                        <div class="letter-candidate-name" th:text="${offer?.candidateName} ?: 'Candidate'">Candidate Name</div>
+                        <div style="margin-top: 8px; font-size: 14px; color: #666;"
+                             th:text="${offer?.candidateEmail} ?: 'candidate@example.com'">candidate@example.com</div>
+                    </div>
+                </div>
+
+                <div class="letter-subtitle">OFFER LETTER</div>
+
+                <div class="letter-body">
+                    <div class="letter-greeting">
+                        Dear <span th:text="${offer?.candidateName} ?: 'Candidate'">Candidate</span>,
+                    </div>
+
+                    <div class="letter-paragraph">
+                        We would like to offer you the position of
+                        <strong th:text="${offer?.designation} ?: 'Position'">Software Developer</strong>
+                        at our
+                        <strong th:text="${offer?.workLocation} ?: 'Office'">Hyderabad</strong>
+                        office. This is a
+                        <strong th:text="${offer?.employmentType} ?: 'Full-time'">full-time</strong>
+                        position reporting to
+                        <strong th:text="${offer?.reportingManager} ?: 'Manager'">Project Manager</strong>.
+                        Your employment will commence on
+                        <strong th:text="${offer?.joiningDate} ?: 'Date'">December 15, 2025</strong>.
+                    </div>
+
+                    <div class="letter-paragraph">
+                        Your starting annual gross salary will be
+                        <strong th:text="${offer?.currency} ?: 'USD'">₹</strong>
+                        <strong th:text="${offer?.annualSalary} ?: '0'">8,50,000</strong>
+                        per annum, payable in monthly installments.
+                    </div>
+
+                    <div class="letter-paragraph">
+                        <strong>Benefits & Perks:</strong><br>
+                        • Health insurance coverage<br>
+                        • Provident Fund (PF) and ESI<br>
+                        • 18 days paid annual leave<br>
+                        • Performance incentives<br>
+                        • Professional development<br>
+                        • Flexible work arrangements
+                    </div>
+
+                    <div class="letter-acceptance-section">
+                        <div class="letter-acceptance-title">ACCEPTANCE OF APPOINTMENT</div>
+                        <div class="letter-paragraph">
+                            I, <strong th:text="${offer?.candidateName} ?: 'Candidate'">Candidate Name</strong>,
+                            hereby accept the appointment with Mentis IT Solutions.
+                        </div>
+                    </div>
+
+                    <div class="letter-signature-section">
+                        <div class="letter-name">Srikanth</div>
+                        <div class="letter-position">Head of Human Resources</div>
+
+                        <div th:if="${showSignature}">
+                            <img th:src="${signature}" class="letter-signature-image" alt="HR Signature"/>
+                        </div>
+
+                        <div class="letter-signature-line">Authorized Signature</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="letter-footer"></div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mobile sidebar toggle script
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                const icon = mobileMenuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                const icon = mobileMenuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
+</script>
+</body>
+</html>

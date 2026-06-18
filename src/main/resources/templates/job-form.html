@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post New Job - HR Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Black Scrollbar */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* === SIDEBAR STYLES === */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; width: 280px; height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,.2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff;
+        }
+
+        .nav-badge {
+            margin-left: auto; background: var(--primary); color: white;
+            padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem;
+            font-weight: 600; min-width: 24px; text-align: center;
+        }
+
+        .sidebar-content {
+            height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px;
+        }
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05); border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none; background: none; border: none; color: var(--dark-text);
+            font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+            position: fixed; top: 1rem; left: 1rem; z-index: 1001;
+        }
+
+        .main-content { margin-left: 280px; min-height: 100vh; transition: var(--transition); }
+
+        .top-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--dark-card); border-bottom: 1px solid var(--dark-border);
+            padding: .75rem 1.5rem; position: sticky; top: 0; z-index: 100;
+        }
+
+        .search-box { position: relative; width: 300px; }
+        .search-box input {
+            width: 100%; padding: .6rem .75rem .6rem 2.5rem; border-radius: 8px;
+            border: 1px solid var(--dark-border); background: var(--dark-bg);
+            color: var(--dark-text); font-size: .875rem; transition: var(--transition);
+        }
+        .search-box input:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,.1); outline: none;
+        }
+        .search-box i {
+            position: absolute; left: .75rem; top: 50%; transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex; align-items: center; gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 8px; background: var(--dark-bg);
+            border: 1px solid var(--dark-border); color: var(--dark-text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: var(--transition); position: relative;
+        }
+        .icon-btn:hover {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .notification-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--danger);
+            color: #fff; border-radius: 50%; width: 18px; height: 18px;
+            font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-profile-menu { display: flex; align-items: center; gap: 1rem; }
+        .dropdown-item:hover { background: var(--sidebar-hover); }
+        .dropdown-item:active { background: var(--primary); }
+
+        /* ===== UPDATED HEADER STYLE ===== */
+        .attendance-header {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .attendance-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            font-weight: 500;
+            color: var(--dark-text) !important;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 4px;
+            padding: 0.375rem 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,.05);
+            color: var(--dark-text);
+            transform: translateY(-2px);
+        }
+
+        /* Page specific styles for job form */
+        .content-area { padding: 2rem; }
+        .job-form-container { max-width: 1200px; margin: 0 auto; }
+        .form-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .form-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--dark-border);
+            background: rgba(255,255,255,0.02);
+        }
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-body { padding: 2rem; }
+
+        /* ===== CORRECTED FORM SECTION STYLES ===== */
+        .form-section {
+            margin-bottom: 2rem;
+            background: rgba(255,255,255,0.02);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            border: 1px solid var(--dark-border);
+            border-left-width: 4px;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--dark-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ===== CORRECTED FORM GRID ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+        .required::after {
+            content: " *";
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        /* DROPDOWN STYLES */
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-wrapper::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            pointer-events: none;
+            font-size: 0.85rem;
+            z-index: 3;
+            transition: color 0.3s ease;
+        }
+
+        .select-wrapper:hover::after {
+            color: var(--primary);
+        }
+
+        /* Hide default dropdown arrow */
+        .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: none;
+            cursor: pointer;
+            padding-right: 2.5rem !important;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 100%;
+            height: 46px;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+            outline: none;
+        }
+
+        .form-select:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--dark-text-secondary);
+            border-color: var(--dark-border);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* Text inputs and textareas */
+        .form-control, .form-textarea {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-control:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+            outline: none;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .text-muted {
+            color: var(--dark-text-secondary);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--dark-border);
+            background: rgba(255,255,255,.02);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99,102,241,.3);
+        }
+
+        /* Validation Styles */
+        .is-invalid {
+            border-color: var(--danger) !important;
+            background: rgba(239, 68, 68, 0.05) !important;
+        }
+        .error-message {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            animation: fadeIn 0.3s ease;
+        }
+        .error-message i {
+            font-size: 0.75rem;
+        }
+        .success-message {
+            color: var(--success);
+            font-size: 0.8rem;
+            margin-top: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .alert-success {
+            background: rgba(16,185,129,.1);
+            border-color: rgba(16,185,129,.2);
+            color: var(--success);
+        }
+        .alert-success i {
+            color: var(--success);
+            font-size: 1.1rem;
+        }
+        .alert-danger {
+            background: rgba(239,68,68,.1);
+            border-color: rgba(239,68,68,.2);
+            color: var(--danger);
+        }
+        .alert-danger i {
+            color: var(--danger);
+            font-size: 1.1rem;
+        }
+.three-column-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .three-column-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+        /* ===== CORRECTED SALARY CONTAINER ===== */
+        .salary-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        /* Character Count */
+        .char-count {
+            position: absolute;
+            right: 0.75rem;
+            bottom: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--dark-text-secondary);
+            background: var(--dark-bg);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-toggle { display: flex; }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .salary-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .content-area { padding: 1rem; }
+            .attendance-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 0.5rem;
+            }
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .search-box { width: 100%; }
+            .form-section {
+                padding: 1rem;
+            }
+            .form-body {
+                padding: 1rem;
+            }
+            .form-header {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .salary-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar('job-postings')}"></div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <!-- === TOP HEADER === -->
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success" id="successAlert">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}">Job posted successfully!</span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" id="errorAlert">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}">Error posting job</span>
+        </div>
+
+        <!-- SHOW THIS IF THEY HAVE EDIT OR FULL ACCESS -->
+        <div th:if="${@permissionChecker.hasAccess(isSuperAdmin, 'recruitment', 'job_postings', 'edit')}" class="job-form-container">
+
+            <!-- UPDATED HEADER -->
+            <div class="attendance-header">
+                <h1>
+                    <i class="fas fa-briefcase" style="color: var(--primary);"></i>
+                    <span th:text="${job != null ? 'Edit Job' : 'Post New Job'}">Post Job</span>
+                </h1>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span th:text="${userName}">HR Manager</span>
+                    </div>
+                    <a href="/dashboard/hr" class="btn-outline">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Dashboard</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Job Form with Validation -->
+            <form method="POST" action="/dashboard/hr/post-job" id="jobForm" novalidate>
+                <input type="hidden" name="jobId" th:value="${job != null ? job.id : ''}">
+
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2 class="form-title">
+                            <i class="fas fa-briefcase"></i>
+                            Job Details
+                        </h2>
+                    </div>
+
+                    <div class="form-body">
+                        <!-- Job Details Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-info-circle"></i>
+                                Basic Information
+                            </h3>
+                            <div class="form-grid">
+                                <!-- Job Title - Full Width -->
+                                <div class="form-group full-width">
+                                    <label for="title" class="form-label required">Job Title</label>
+                                    <div style="position: relative;">
+                                        <input type="text" class="form-control" id="title" name="title"
+                                               placeholder="e.g., Senior Full Stack Developer"
+                                               th:value="${job != null ? job.title : ''}"
+                                               maxlength="100" required style="padding-right: 60px;">
+                                        <div class="char-count" id="titleCount">0/100</div>
+                                    </div>
+                                    <div class="error-message" id="titleError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Job title is required (max 100 characters)
+                                    </div>
+                                </div>
+
+                                <!-- Department Dropdown -->
+                                <div class="form-group">
+                                    <label for="department" class="form-label required">Department</label>
+                                    <div class="select-wrapper">
+                                        <select class="form-select" id="department" name="department" required>
+                                            <option value="">Select Department</option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" id="currentDepartmentVal" th:value="${job != null ? job.department : ''}">
+                                    <div class="error-message" id="departmentError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Please select a department
+                                    </div>
+                                </div>
+
+                                <!-- Designation Dropdown -->
+                                <div class="form-group">
+                                    <label for="designation" class="form-label required">Designation</label>
+                                    <div class="select-wrapper">
+                                        <select class="form-select" id="designation" name="designation" required disabled>
+                                            <option value="">Select Department First</option>
+                                        </select>
+                                    </div>
+                                    <div class="error-message" id="designationError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Please select a designation
+                                    </div>
+                                </div>
+
+                                <!-- Job Type Dropdown -->
+                                <div class="form-group">
+                                    <label for="jobType" class="form-label required">Job Type</label>
+                                    <div class="select-wrapper">
+                                        <select class="form-select" id="jobType" name="jobType" required>
+                                            <option value="">Select Job Type</option>
+                                            <option value="Full-time" th:selected="${job != null && job.jobType == 'Full-time'}">Full-time</option>
+                                            <option value="Part-time" th:selected="${job != null && job.jobType == 'Part-time'}">Part-time</option>
+                                            <option value="Contract" th:selected="${job != null && job.jobType == 'Contract'}">Contract</option>
+                                            <option value="Internship" th:selected="${job != null && job.jobType == 'Internship'}">Internship</option>
+                                            <option value="Remote" th:selected="${job != null && job.jobType == 'Remote'}">Remote</option>
+                                            <option value="Hybrid" th:selected="${job != null && job.jobType == 'Hybrid'}">Hybrid</option>
+                                        </select>
+                                    </div>
+                                    <div class="error-message" id="jobTypeError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Please select a job type
+                                    </div>
+                                </div>
+
+                                <!-- Location Dropdown -->
+                                <div class="form-group">
+                                    <label for="jobLocationId" class="form-label required">Location</label>
+                                    <div class="select-wrapper">
+                                        <select class="form-select" id="jobLocationId" name="jobLocationId" required>
+                                            <option value="">Select Location</option>
+                                            <option th:each="loc : ${locations}"
+                                                    th:value="${loc.id}"
+                                                    th:text="${loc.name + ' (' + (loc.city != null ? loc.city : '') + (loc.city != null && loc.country != null ? ', ' : '') + (loc.country != null ? loc.country : '') + ')'}"
+                                                    th:selected="${job != null and job.jobLocation != null and job.jobLocation.id == loc.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <small class="text-muted">Select office location</small>
+                                    <div class="error-message" id="locationError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Please select a location
+                                    </div>
+                                </div>
+
+                                <!-- Experience Level Dropdown -->
+                                <!-- Experience, Currency and Salary in one row -->
+                                <div class="form-group full-width">
+                                    <div class="three-column-row">
+                                        <!-- Experience Level -->
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label for="experienceLevel" class="form-label required">Experience Level</label>
+                                            <div class="select-wrapper">
+                                                <select class="form-select" id="experienceLevel" name="experienceLevel" required>
+                                                    <option value="">Select Experience</option>
+                                                    <option value="Entry Level" th:selected="${job != null && job.experienceLevel == 'Entry Level'}">Entry Level (0-2 years)</option>
+                                                    <option value="Mid Level" th:selected="${job != null && job.experienceLevel == 'Mid Level'}">Mid Level (3-5 years)</option>
+                                                    <option value="Senior Level" th:selected="${job != null && job.experienceLevel == 'Senior Level'}">Senior Level (6-9 years)</option>
+                                                    <option value="Lead" th:selected="${job != null && job.experienceLevel == 'Lead'}">Lead (10+ years)</option>
+                                                    <option value="Manager" th:selected="${job != null && job.experienceLevel == 'Manager'}">Manager</option>
+                                                </select>
+                                            </div>
+                                            <div class="error-message" id="experienceError" style="display: none;">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                                Please select experience level
+                                            </div>
+                                        </div>
+
+                                        <!-- Currency -->
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label for="currency" class="form-label required">Currency</label>
+                                            <div class="select-wrapper">
+                                                <select class="form-select" id="currency" name="currency" required>
+                                                    <option value="">Select</option>
+                                                    <option value="USD" th:selected="${job != null && job.currency == 'USD'}">USD ($)</option>
+                                                    <option value="EUR" th:selected="${job != null && job.currency == 'EUR'}">EUR (€)</option>
+                                                    <option value="GBP" th:selected="${job != null && job.currency == 'GBP'}">GBP (£)</option>
+                                                    <option value="INR" th:selected="${job != null && job.currency == 'INR'}">INR (₹)</option>
+                                                    <option value="AED" th:selected="${job != null && job.currency == 'AED'}">AED (د.إ)</option>
+                                                </select>
+                                            </div>
+                                            <div class="error-message" id="currencyError" style="display: none;">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                                Select currency
+                                            </div>
+                                        </div>
+
+                                        <!-- Salary Range -->
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label for="salaryRange" class="form-label required">Salary Range</label>
+                                            <input type="text" class="form-control" id="salaryRange" name="salaryRange"
+                                                   placeholder="e.g., 80,000 - 120,000"
+                                                   th:value="${job != null ? job.salaryRange : ''}"
+                                                   pattern="^[\d,\s]+-[\d,\s]+$" required>
+                                            <div class="error-message" id="salaryError" style="display: none;">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                                Enter valid salary range
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Job Description Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-align-left"></i>
+                                Job Description
+                            </h3>
+                            <div class="form-group">
+                                <label for="description" class="form-label required">Detailed Description</label>
+                                <div style="position: relative;">
+                                    <textarea class="form-textarea" id="description" name="description" rows="6"
+                                              placeholder="Describe the job role, responsibilities, and what makes this position unique..."
+                                              maxlength="2000" required
+                                              th:text="${job != null ? job.description : ''}" style="padding-bottom: 30px;"></textarea>
+                                    <div class="char-count" id="descCount">0/2000</div>
+                                </div>
+                                <div class="error-message" id="descriptionError" style="display: none;">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    Description is required (max 2000 characters)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Requirements Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-clipboard-list"></i>
+                                Requirements & Responsibilities
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="requirements" class="form-label required">Requirements</label>
+                                    <div style="position: relative;">
+                                        <textarea class="form-textarea" id="requirements" name="requirements" rows="4"
+                                                  placeholder="e.g., Bachelor's degree, 5+ years experience, Java, Spring Boot, React..."
+                                                  maxlength="1000" required
+                                                  th:text="${job != null ? job.requirements : ''}" style="padding-bottom: 30px;"></textarea>
+                                        <div class="char-count" id="reqCount">0/1000</div>
+                                    </div>
+                                    <small class="text-muted">Separate each requirement with a comma</small>
+                                    <div class="error-message" id="requirementsError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Requirements are required (max 1000 characters)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="responsibilities" class="form-label">Responsibilities</label>
+                                    <div style="position: relative;">
+                                        <textarea class="form-textarea" id="responsibilities" name="responsibilities" rows="4"
+                                                  placeholder="e.g., Develop and maintain web applications&#10;Collaborate with cross-functional teams&#10;Write clean, maintainable code..."
+                                                  maxlength="1500"
+                                                  th:text="${job != null and job.responsibilities != null ? #strings.join(job.responsibilities, '&#10;') : ''}" style="padding-bottom: 30px;"></textarea>
+                                        <div class="char-count" id="respCount">0/1500</div>
+                                    </div>
+                                    <small class="text-muted">Enter each responsibility on a new line</small>
+                                    <div class="error-message" id="responsibilitiesError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Max 1500 characters
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Application Details -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-paper-plane"></i>
+                                Application Details
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="applicationInstructions" class="form-label">Application Instructions</label>
+                                    <div style="position: relative;">
+                                        <textarea class="form-textarea" id="applicationInstructions" name="applicationInstructions" rows="3"
+                                                  placeholder="e.g., Submit your resume and portfolio link..."
+                                                  maxlength="500"
+                                                  th:text="${job != null ? job.applicationInstructions : ''}" style="padding-bottom: 30px;"></textarea>
+                                        <div class="char-count" id="instrCount">0/500</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="applicationDeadline" class="form-label">Application Deadline</label>
+                                    <input type="date" class="form-control" id="applicationDeadline" name="applicationDeadline"
+                                           th:value="${job != null ? job.applicationDeadline : ''}"
+                                           min="" style="color-scheme: dark; height: 46px;">
+                                    <div class="error-message" id="deadlineError" style="display: none;">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Deadline must be a future date
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden input for backward compatibility -->
+                    <input type="hidden" name="location" id="locationHidden" value="">
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="window.location.href='/dashboard/hr'">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span th:text="${job != null ? 'Update Job' : 'Post Job'}">Post Job</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- ACCESS DENIED FALLBACK -->
+        <div th:unless="${@permissionChecker.hasAccess(isSuperAdmin, 'recruitment', 'job_postings', 'edit')}" class="job-form-container text-center py-5">
+            <div style="background: var(--dark-card); border: 1px solid var(--dark-border); padding: 3rem; border-radius: 12px; margin-top: 2rem;">
+                <i class="fas fa-lock fa-3x mb-3" style="color: var(--danger);"></i>
+                <h3 style="color: var(--dark-text); font-weight: 600;">Access Denied</h3>
+                <p style="color: var(--dark-text-secondary); margin-bottom: 2rem;">You do not have permission to post or edit jobs. Please contact the Super Admin.</p>
+                <a href="/dashboard/hr" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Call the common scripts fragment -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ========== GLOBAL VARIABLES ==========
+    let departmentsData = [];
+
+    // ========== DOCUMENT READY - MAIN INITIALIZATION ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(' Page loaded - Initializing job form with validation...');
+
+        // Only initialize form if the form container exists
+        if (document.getElementById('jobForm')) {
+            initializeForm();
+            loadLocationsForDropdown();
+            loadDepartments();
+            setupDepartmentChangeHandler();
+            setupDesignationChangeHandler();
+            initializeDeadline();
+            setupCharacterCounters();
+            setupRealTimeValidation();
+            setMinDeadlineDate();
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    });
+
+    // ========== SET MIN DATE FOR DEADLINE ==========
+    function setMinDeadlineDate() {
+        const deadlineInput = document.getElementById('applicationDeadline');
+        if (deadlineInput) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            deadlineInput.min = `${yyyy}-${mm}-${dd}`;
+        }
+    }
+
+    // ========== CHARACTER COUNTERS ==========
+    function setupCharacterCounters() {
+        // Title counter
+        const titleInput = document.getElementById('title');
+        const titleCount = document.getElementById('titleCount');
+        if (titleInput && titleCount) {
+            titleInput.addEventListener('input', function() {
+                const count = this.value.length;
+                titleCount.textContent = `${count}/100`;
+                if (count > 95) titleCount.style.color = 'var(--danger)';
+                else if (count > 90) titleCount.style.color = 'var(--warning)';
+                else titleCount.style.color = 'var(--dark-text-secondary)';
+            });
+            titleInput.dispatchEvent(new Event('input'));
+        }
+
+        // Description counter
+        const descInput = document.getElementById('description');
+        const descCount = document.getElementById('descCount');
+        if (descInput && descCount) {
+            descInput.addEventListener('input', function() {
+                const count = this.value.length;
+                descCount.textContent = `${count}/2000`;
+                descCount.style.color = count > 1900 ? 'var(--danger)' : count > 1800 ? 'var(--warning)' : 'var(--dark-text-secondary)';
+            });
+            descInput.dispatchEvent(new Event('input'));
+        }
+
+        // Requirements counter
+        const reqInput = document.getElementById('requirements');
+        const reqCount = document.getElementById('reqCount');
+        if (reqInput && reqCount) {
+            reqInput.addEventListener('input', function() {
+                const count = this.value.length;
+                reqCount.textContent = `${count}/1000`;
+                reqCount.style.color = count > 950 ? 'var(--danger)' : count > 900 ? 'var(--warning)' : 'var(--dark-text-secondary)';
+            });
+            reqInput.dispatchEvent(new Event('input'));
+        }
+
+        // Responsibilities counter
+        const respInput = document.getElementById('responsibilities');
+        const respCount = document.getElementById('respCount');
+        if (respInput && respCount) {
+            respInput.addEventListener('input', function() {
+                const count = this.value.length;
+                respCount.textContent = `${count}/1500`;
+                respCount.style.color = count > 1400 ? 'var(--danger)' : count > 1300 ? 'var(--warning)' : 'var(--dark-text-secondary)';
+            });
+            respInput.dispatchEvent(new Event('input'));
+        }
+
+        // Instructions counter
+        const instrInput = document.getElementById('applicationInstructions');
+        const instrCount = document.getElementById('instrCount');
+        if (instrInput && instrCount) {
+            instrInput.addEventListener('input', function() {
+                const count = this.value.length;
+                instrCount.textContent = `${count}/500`;
+                instrCount.style.color = count > 450 ? 'var(--warning)' : 'var(--dark-text-secondary)';
+            });
+            instrInput.dispatchEvent(new Event('input'));
+        }
+    }
+
+    // ========== REAL-TIME VALIDATION ==========
+    function setupRealTimeValidation() {
+        document.getElementById('title').addEventListener('input', function() {
+            validateField('title', this.value.trim() !== '', 'titleError');
+        });
+
+        document.getElementById('department').addEventListener('change', function() {
+            validateField('department', this.value !== '', 'departmentError');
+        });
+
+        document.getElementById('designation').addEventListener('change', function() {
+            validateField('designation', this.value !== '', 'designationError');
+        });
+
+        document.getElementById('jobType').addEventListener('change', function() {
+            validateField('jobType', this.value !== '', 'jobTypeError');
+        });
+
+        document.getElementById('jobLocationId').addEventListener('change', function() {
+            validateField('jobLocationId', this.value !== '', 'locationError');
+        });
+
+        document.getElementById('experienceLevel').addEventListener('change', function() {
+            validateField('experienceLevel', this.value !== '', 'experienceError');
+        });
+
+        document.getElementById('currency').addEventListener('change', function() {
+            validateField('currency', this.value !== '', 'currencyError');
+        });
+
+        document.getElementById('salaryRange').addEventListener('input', function() {
+            const pattern = /^[\d,\s]+-[\d,\s]+$/;
+            const isValid = this.value.trim() !== '' && pattern.test(this.value);
+            validateField('salaryRange', isValid, 'salaryError');
+        });
+
+        document.getElementById('description').addEventListener('input', function() {
+            validateField('description', this.value.trim() !== '', 'descriptionError');
+        });
+
+        document.getElementById('requirements').addEventListener('input', function() {
+            validateField('requirements', this.value.trim() !== '', 'requirementsError');
+        });
+
+        document.getElementById('applicationDeadline').addEventListener('change', function() {
+            if (this.value) {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                validateField('applicationDeadline', selectedDate >= today, 'deadlineError');
+            } else {
+                document.getElementById('deadlineError').style.display = 'none';
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
+
+    function validateField(fieldId, isValid, errorId) {
+        const field = document.getElementById(fieldId);
+        const errorElement = document.getElementById(errorId);
+
+        if (!isValid) {
+            field.classList.add('is-invalid');
+            errorElement.style.display = 'flex';
+        } else {
+            field.classList.remove('is-invalid');
+            errorElement.style.display = 'none';
+        }
+        return isValid;
+    }
+
+    // ========== LOCATIONS DROPDOWN ==========
+    async function loadLocationsForDropdown() {
+        try {
+            const response = await fetch('/api/locations/list');
+            const data = await response.json();
+
+            if (data.success) {
+                const locationSelect = document.getElementById('jobLocationId');
+                if (locationSelect) {
+                    locationSelect.innerHTML = '<option value="">Select Location</option>';
+                    data.locations.forEach(loc => {
+                        const option = document.createElement('option');
+                        option.value = loc.id;
+                        option.textContent = loc.displayName;
+                        locationSelect.appendChild(option);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(' Error loading locations:', error);
+        }
+    }
+
+    // ========== DEPARTMENT & DESIGNATION FUNCTIONS ==========
+    async function loadDepartments() {
+        console.log(' Loading departments from API...');
+
+        try {
+            const response = await fetch('/api/departments/all');
+            const data = await response.json();
+
+            if (data.success && data.departments && data.departments.length > 0) {
+                departmentsData = data.departments;
+
+                const deptSelect = document.getElementById('department');
+                if (deptSelect) {
+                    const currentVal = document.getElementById('currentDepartmentVal').value;
+
+                    deptSelect.innerHTML = '<option value="">Select Department</option>';
+
+                    departmentsData.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.name;
+                        option.textContent = dept.name;
+                        option.dataset.id = dept.id;
+
+                        if (dept.name === currentVal) {
+                            option.selected = true;
+                        }
+
+                        deptSelect.appendChild(option);
+                    });
+
+                    if (currentVal) {
+                        deptSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+            } else {
+                useFallbackDepartments();
+            }
+        } catch (error) {
+            console.error(' API call failed:', error);
+            useFallbackDepartments();
+        }
+    }
+
+    function useFallbackDepartments() {
+        const fallbackDepts = [
+            { name: "Engineering", designations: [] },
+            { name: "Marketing", designations: [] },
+            { name: "Human Resources", designations: [] },
+            { name: "Sales", designations: [] },
+            { name: "Finance", designations: [] },
+            { name: "Operations", designations: [] }
+        ];
+
+        const deptSelect = document.getElementById('department');
+        if (deptSelect) {
+            deptSelect.innerHTML = '<option value="">Select Department</option>';
+            fallbackDepts.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.name;
+                option.textContent = dept.name;
+                deptSelect.appendChild(option);
+            });
+        }
+    }
+
+    function setupDepartmentChangeHandler() {
+        const deptSelect = document.getElementById('department');
+        if (!deptSelect) return;
+
+        deptSelect.addEventListener('change', function() {
+            const selectedDeptName = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+            const deptId = selectedOption ? selectedOption.dataset.id : null;
+
+            const designationSelect = document.getElementById('designation');
+
+            if (deptId) {
+                loadDesignationsForDepartment(deptId, selectedDeptName);
+            } else if (selectedDeptName) {
+                loadDesignationsForDepartment(null, selectedDeptName);
+            } else {
+                designationSelect.innerHTML = '<option value="">Select Department First</option>';
+                designationSelect.disabled = true;
+            }
+
+            validateField('department', this.value !== '', 'departmentError');
+        });
+    }
+
+    function setupDesignationChangeHandler() {
+        const designationSelect = document.getElementById('designation');
+        const titleInput = document.getElementById('title');
+
+        if (designationSelect && titleInput) {
+            designationSelect.addEventListener('change', function() {
+                if (this.value && !titleInput.value) {
+                    titleInput.value = this.value;
+                    titleInput.dispatchEvent(new Event('input'));
+                }
+                validateField('designation', this.value !== '', 'designationError');
+            });
+        }
+    }
+
+    async function loadDesignationsForDepartment(deptId, departmentName) {
+        const designationSelect = document.getElementById('designation');
+        if (!designationSelect) return;
+
+        designationSelect.innerHTML = '<option value="">Loading designations...</option>';
+        designationSelect.disabled = true;
+
+        if (deptId) {
+            try {
+                const response = await fetch(`/api/departments/${deptId}/designations`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.designations && data.designations.length > 0) {
+                        populateDesignationDropdown(data.designations, designationSelect);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error(' Error loading designations:', error);
+            }
+        }
+
+        const fallbackNames = getFallbackDesignations(departmentName);
+        if (fallbackNames.length > 0) {
+            const fallbackDesignations = fallbackNames.map(name => ({ name: name }));
+            populateDesignationDropdown(fallbackDesignations, designationSelect);
+        } else {
+            designationSelect.innerHTML = '<option value="">No designations available</option>';
+            designationSelect.disabled = true;
+        }
+    }
+
+    function populateDesignationDropdown(designations, designationSelect) {
+        designationSelect.innerHTML = '<option value="">Select Designation</option>';
+        designations.forEach(des => {
+            const option = document.createElement('option');
+            option.value = des.name;
+            option.textContent = des.name;
+            designationSelect.appendChild(option);
+        });
+        designationSelect.disabled = false;
+    }
+
+    function getFallbackDesignations(departmentName) {
+        const fallbackData = {
+            "Engineering": ["Software Engineer", "Senior Software Engineer", "Lead Engineer", "DevOps Engineer", "QA Engineer"],
+            "Marketing": ["Marketing Executive", "Digital Marketing Specialist", "SEO Specialist", "Content Writer", "Social Media Manager"],
+            "Human Resources": ["HR Executive", "HR Manager", "Recruitment Specialist", "Training Coordinator", "Payroll Specialist"],
+            "Sales": ["Sales Executive", "Sales Manager", "Account Executive", "Business Development Manager"],
+            "Finance": ["Accountant", "Finance Manager", "Financial Analyst", "Tax Specialist"],
+            "Operations": ["Operations Executive", "Operations Manager", "Project Coordinator", "Facility Manager"]
+        };
+        return fallbackData[departmentName] || [];
+    }
+
+    // ========== FORM FUNCTIONS ==========
+    function initializeForm() {
+        const jobForm = document.getElementById('jobForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        if (jobForm) {
+            jobForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (validateForm()) {
+                    prepareFormData();
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                    showNotification('Processing your request...', 'info');
+
+                    this.submit();
+                } else {
+                    const firstError = document.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus();
+                    }
+
+                    showNotification('Please fix all errors before submitting', 'error');
+                }
+            });
+        }
+    }
+
+    function validateForm() {
+        let isValid = true;
+
+        document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+        const title = document.getElementById('title');
+        if (!title.value.trim()) {
+            title.classList.add('is-invalid');
+            document.getElementById('titleError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const department = document.getElementById('department');
+        if (!department.value) {
+            department.classList.add('is-invalid');
+            document.getElementById('departmentError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const designation = document.getElementById('designation');
+        if (!designation.value) {
+            designation.classList.add('is-invalid');
+            document.getElementById('designationError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const jobType = document.getElementById('jobType');
+        if (!jobType.value) {
+            jobType.classList.add('is-invalid');
+            document.getElementById('jobTypeError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const location = document.getElementById('jobLocationId');
+        if (!location.value) {
+            location.classList.add('is-invalid');
+            document.getElementById('locationError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const experience = document.getElementById('experienceLevel');
+        if (!experience.value) {
+            experience.classList.add('is-invalid');
+            document.getElementById('experienceError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const currency = document.getElementById('currency');
+        if (!currency.value) {
+            currency.classList.add('is-invalid');
+            document.getElementById('currencyError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const salary = document.getElementById('salaryRange');
+        const salaryPattern = /^[\d,\s]+-[\d,\s]+$/;
+        if (!salary.value.trim() || !salaryPattern.test(salary.value)) {
+            salary.classList.add('is-invalid');
+            document.getElementById('salaryError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const description = document.getElementById('description');
+        if (!description.value.trim()) {
+            description.classList.add('is-invalid');
+            document.getElementById('descriptionError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const requirements = document.getElementById('requirements');
+        if (!requirements.value.trim()) {
+            requirements.classList.add('is-invalid');
+            document.getElementById('requirementsError').style.display = 'flex';
+            isValid = false;
+        }
+
+        const deadline = document.getElementById('applicationDeadline');
+        if (deadline.value) {
+            const selectedDate = new Date(deadline.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate < today) {
+                deadline.classList.add('is-invalid');
+                document.getElementById('deadlineError').style.display = 'flex';
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    }
+
+    function prepareFormData() {
+        const locationSelect = document.getElementById('jobLocationId');
+        const selectedLocationId = locationSelect.value;
+        if (selectedLocationId) {
+            const selectedOption = locationSelect.options[locationSelect.selectedIndex];
+            const locationInput = document.querySelector('input[name="location"]');
+            if (locationInput) locationInput.value = selectedOption.textContent;
+        }
+    }
+
+    function initializeDeadline() {
+        const deadlineInput = document.getElementById('applicationDeadline');
+        if (deadlineInput && !deadlineInput.value) {
+            const today = new Date();
+            const deadline = new Date(today);
+            deadline.setDate(today.getDate() + 30);
+
+            const yyyy = deadline.getFullYear();
+            const mm = String(deadline.getMonth() + 1).padStart(2, '0');
+            const dd = String(deadline.getDate()).padStart(2, '0');
+            deadlineInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+    }
+
+    // ========== NOTIFICATION FUNCTION ==========
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#f59e0b'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; margin-left: 10px; cursor: pointer;">×</button>
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => notification.remove(), 4000);
+    }
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>

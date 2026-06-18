@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS announcements (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    type ENUM('PERMANENT', 'TEMPORARY') NOT NULL,
+    category VARCHAR(100),
+    priority ENUM('LOW', 'NORMAL', 'HIGH', 'URGENT') NOT NULL DEFAULT 'NORMAL',
+    target_audience ENUM('ALL', 'HR_ONLY', 'EMPLOYEES_ONLY') NOT NULL DEFAULT 'ALL',
+    created_by VARCHAR(100),
+    created_by_name VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    is_pinned BOOLEAN NOT NULL DEFAULT FALSE
+);

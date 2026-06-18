@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAdmin | Access Control Center</title>
+    <!-- Fonts & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #09090b;
+            --bg-card: #18181b;
+            --bg-item: #27272a;
+            --accent: #8b5cf6; /* Violet-600 */
+            --accent-hover: #a78bfa;
+            --text-main: #fafafa;
+            --text-muted: #a1a1aa;
+            --border: #3f3f46;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow: hidden; /* Main window scroll disabled, containers scroll */
+        }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .app-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .role-list-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .role-list-item:hover { background: var(--bg-item); }
+        .role-list-item.active {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-nav {
+            height: 70px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: var(--bg-card);
+        }
+
+        /* --- PERMISSION MATRIX --- */
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .module-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .module-header {
+            padding: 1.25rem;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* The Grid Header */
+        .matrix-header {
+            display: grid;
+            grid-template-columns: 2fr 100px 100px 100px 100px 100px;
+            padding: 10px 20px;
+            background: var(--bg-item);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .matrix-row {
+            display: grid;
+            grid-template-columns: 2fr 100px 100px 100px 100px 100px;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .matrix-row:hover { background: rgba(255,255,255,0.02); }
+
+        /* Custom Checkbox / Toggle */
+        .perm-check {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid var(--border);
+            background: var(--bg-main);
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .perm-check:checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .perm-check:checked::after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 10px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .perm-check:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #555;
+        }
+
+        /* Floating Save Bar */
+        .floating-actions {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+        }
+
+        .floating-actions.visible { bottom: 30px; }
+
+        /* Inheritance Tooltip */
+        .inherited-badge {
+            font-size: 10px;
+            color: var(--warning);
+            margin-left: 8px;
+        }
+
+        .search-input {
+            background: var(--bg-item);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            width: 300px;
+        }
+
+        .badge-count {
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <!-- Role Selection Sidebar -->
+    <aside class="sidebar">
+        <div class="mb-4 d-flex align-items-center gap-2">
+            <div class="p-2 rounded bg-primary"><i class="fas fa-fingerprint text-white"></i></div>
+            <h5 class="mb-0 fw-bold">IAM Center</h5>
+        </div>
+
+        <div class="text-muted small fw-bold mb-3 uppercase">SYSTEM ROLES</div>
+        <div class="role-list-item active">
+            <span>Super Admin</span>
+            <i class="fas fa-shield-halved small"></i>
+        </div>
+        <div class="role-list-item">
+            <span>HR Manager</span>
+            <span class="badge-count">142</span>
+        </div>
+        <div class="role-list-item">
+            <span>Recruiter</span>
+            <span class="badge-count">88</span>
+        </div>
+        <div class="role-list-item">
+            <span>Interviewer</span>
+            <span class="badge-count">12</span>
+        </div>
+
+        <div class="mt-auto pt-4">
+            <button class="btn btn-outline-secondary w-100 mb-2">
+                <i class="fas fa-history me-2"></i>Audit Logs
+            </button>
+            <button class="btn btn-primary w-100">
+                <i class="fas fa-plus me-2"></i>Add Custom Role
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <header class="top-nav">
+            <div>
+                <h5 class="mb-0 fw-bold">Editing Role: <span class="text-primary">Recruiter</span></h5>
+                <span class="text-muted small">Updated 2 hours ago by System</span>
+            </div>
+            <div class="d-flex gap-3">
+                <input type="text" class="search-input" placeholder="Search permissions (e.g. 'delete' or 'salary')...">
+                <div class="p-2 border border-secondary rounded"><i class="fas fa-ellipsis-v"></i></div>
+            </div>
+        </header>
+
+        <div class="content-scroll">
+
+            <!-- MODULE: RECRUITMENT -->
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-briefcase text-primary fs-4"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Recruitment Management</h6>
+                            <p class="text-muted small mb-0">Manage job postings, candidates, and interview flows.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="small text-muted">Grant All:</span>
+                        <input type="checkbox" class="perm-check" onclick="toggleAllModule(this)">
+                    </div>
+                </div>
+
+                <div class="matrix-header">
+                    <span>Feature / Permission Name</span>
+                    <div class="text-center">View</div>
+                    <div class="text-center">Create</div>
+                    <div class="text-center">Edit</div>
+                    <div class="text-center">Delete</div>
+                    <div class="text-center">Export</div>
+                </div>
+
+                <!-- Job Posting Row -->
+                <div class="matrix-row">
+                    <div>
+                        <div class="fw-bold">Job Posting Creation</div>
+                        <div class="text-muted small">Access to job-form.html and Title Management</div>
+                    </div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" checked onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" checked onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" checked onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" onchange="markDirty()"></div>
+                </div>
+
+                <!-- Compensation Details Row -->
+                <div class="matrix-row">
+                    <div>
+                        <div class="fw-bold">Compensation Details</div>
+                        <div class="text-muted small">Salary ranges, Currencies, and Budgeting info</div>
+                        <span class="inherited-badge"><i class="fas fa-lock small me-1"></i>Inherited from HR Manager</span>
+                    </div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" checked disabled></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" disabled></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" disabled></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" disabled></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" disabled></div>
+                </div>
+
+                <!-- Resume Management Row -->
+                <div class="matrix-row">
+                    <div>
+                        <div class="fw-bold">Resume Management</div>
+                        <div class="text-muted small">PDF Preview, Image Viewer, and File Downloads</div>
+                    </div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" checked onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" onchange="markDirty()"></div>
+                    <div class="text-center"><input type="checkbox" class="perm-check" checked onchange="markDirty()"></div>
+                </div>
+            </div>
+
+            <!-- MODULE: ATTENDANCE -->
+            <div class="module-section">
+                <div class="module-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-user-clock text-success fs-4"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Attendance & Approvals</h6>
+                            <p class="text-muted small mb-0">Live status monitoring and leave request approvals.</p>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" onchange="markDirty()">
+                    </div>
+                </div>
+
+                <div class="matrix-row border-0 p-4 text-center text-muted">
+                    <i class="fas fa-info-circle me-2"></i> This module is currently restricted. Toggle module header to enable individual settings.
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- Floating Save Bar -->
+<div class="floating-actions" id="saveBar">
+    <div class="text-white small">
+        <i class="fas fa-circle-exclamation me-2"></i>
+        <strong>You have unsaved changes</strong>
+    </div>
+    <div class="vr bg-white opacity-20" style="height: 20px;"></div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-sm text-white border-0" onclick="location.reload()">Discard</button>
+        <button class="btn btn-sm btn-light fw-bold px-4" onclick="savePermissions()">Commit Changes</button>
+    </div>
+</div>
+
+<script>
+    // 1. Show Save Bar when any toggle changes
+    function markDirty() {
+        document.getElementById('saveBar').classList.add('visible');
+    }
+
+    // 2. Module Level Toggle All
+    function toggleAllModule(master) {
+        const section = master.closest('.module-section');
+        const checkboxes = section.querySelectorAll('.perm-check:not(:disabled)');
+        checkboxes.forEach(cb => {
+            cb.checked = master.checked;
+        });
+        markDirty();
+    }
+
+    // 3. Fake Real-time Save Logic
+    function savePermissions() {
+        const btn = event.target;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Changes Applied';
+            btn.classList.replace('btn-light', 'btn-success');
+
+            setTimeout(() => {
+                document.getElementById('saveBar').classList.remove('visible');
+                // Reset button state
+                btn.innerHTML = 'Commit Changes';
+                btn.classList.replace('btn-success', 'btn-light');
+                btn.disabled = false;
+            }, 1000);
+        }, 1500);
+    }
+
+    // 4. Highlight the selected role (Sidebar logic)
+    document.querySelectorAll('.role-list-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelector('.role-list-item.active').classList.remove('active');
+            this.classList.add('active');
+            // In real app: Trigger AJAX to load permissions for this role
+        });
+    });
+</script>
+
+</body>
+</html>

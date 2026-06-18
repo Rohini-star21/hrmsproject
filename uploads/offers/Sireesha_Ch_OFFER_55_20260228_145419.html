@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment Offer Letter - Mentis IT Solutions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 816px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #d946a6 0%, #4a2a7e 50%, #2a1a5e 100%);
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            position: relative;
+        }
+        .logo-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+        .date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            z-index: 10;
+            position: relative;
+        }
+        .content {
+            padding: 50px 60px 80px;
+            position: relative;
+        }
+        .addresses {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 30px;
+        }
+        .candidate-address {
+            text-align: right;
+            flex: 1;
+        }
+        .candidate-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d946a6;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 32px;
+            font-weight: 700;
+            color: #8bc34a;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            line-height: 1.1;
+            text-align: center;
+        }
+        .letter-body {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .greeting {
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        .paragraph {
+            margin-bottom: 20px;
+            text-align: left;
+            line-height: 1.9;
+        }
+        .signature-section {
+            margin-top: 50px;
+        }
+        .name {
+            font-weight: 700;
+            color: #d946a6;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        .signature-image {
+            width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .signature-line {
+            color: #999;
+            font-size: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            width: 240px;
+        }
+        .footer {
+            height: 40px;
+            background: #2a1a5e;
+        }
+    </style>
+</head>
+<body>
+<!-- SIMPLIFIED: Just use the offer object directly, cleaning happens in Java -->
+<div class="container">
+
+    <div class="header">
+        <div class="logo">
+            <div class="logo-text">MENTIS IT</div>
+        </div>
+        <div class="date">February 28, 2026</div>
+    </div>
+
+    <div class="content">
+        <div class="addresses">
+            <div class="candidate-address">
+                <!-- Use cleaned values directly from offer object -->
+                <div class="candidate-name">Sireesha Ch</div>
+                <div style="margin-top: 8px; font-size: 14px; color: #666;">sireesha@gmail.com</div>
+            </div>
+        </div>
+
+        <div class="subtitle">OFFER LETTER</div>
+
+        <div class="letter-body">
+            <div class="greeting">
+                Dear <span>Sireesha Ch</span>,
+            </div>
+
+            <div class="paragraph">
+                We would like to offer you the position of
+                <strong>Compensation Analyst</strong>
+                at our
+                <strong>Guntur</strong>
+                office. This is a
+                <strong>Part-time</strong>
+                position reporting to
+                <strong>Rohini</strong>.
+                Your employment will commence on
+                <strong>2026-03-09</strong>.
+            </div>
+
+            <div class="paragraph">
+                Your starting annual gross salary will be
+                <strong>INR</strong>
+                <strong>10000</strong>
+                per annum, payable in monthly installments.
+            </div>
+
+            <div class="paragraph">
+                <strong>Benefits & Perks:</strong><br>
+                • Health insurance coverage<br>
+                • Provident Fund (PF) and ESI<br>
+                • 18 days paid annual leave<br>
+                • Performance incentives<br>
+                • Professional development<br>
+                • Flexible work arrangements
+            </div>
+
+            <div class="acceptance-section">
+                <div class="acceptance-title">ACCEPTANCE OF APPOINTMENT</div>
+                <div class="paragraph">
+                    I, <strong>Sireesha Ch</strong>,
+                    hereby accept the appointment with Mentis IT Solutions.
+                </div>
+            </div>
+
+            <div class="signature-section">
+                <div class="name">Srikanth</div>
+                <div class="position">Head of Human Resources</div>
+
+                <div>
+                    <img src="file:///C:/hrms/uploads/signatures/signature-55.png" class="signature-image" alt="HR Signature"/>
+                </div>
+
+                <div class="signature-line">Authorized Signature</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</div>
+
+<!-- Settings Org Functionality -->
+<script>
+    // ========== SETTINGS ORG TOGGLE FUNCTION ==========
+    function toggleSettingsOrg() {
+        console.log('⚙️ Toggling Settings Org');
+        const submenu = document.getElementById('settingsOrgSubmenu');
+        const arrow = document.getElementById('settingsOrgArrow');
+
+        if (!submenu || !arrow) {
+            console.error('Settings Org elements not found');
+            return;
+        }
+
+        if (submenu.style.display === 'none' || submenu.style.display === '') {
+            submenu.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            submenu.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // ========== KEEP SUBMENU OPEN IF ON CHILD PAGE ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔧 Initializing Settings Org');
+
+        const currentPath = window.location.pathname;
+        const settingsLinks = document.querySelectorAll('#settingsOrgSubmenu .nav-link');
+        let shouldExpand = false;
+
+        settingsLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === currentPath) {
+                shouldExpand = true;
+                console.log('📍 Current page is in Settings Org:', href);
+            }
+        });
+
+        if (shouldExpand) {
+            const submenu = document.getElementById('settingsOrgSubmenu');
+            const arrow = document.getElementById('settingsOrgArrow');
+            if (submenu && arrow) {
+                submenu.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+    });
+</script>
+</body>
+
+
+</html>

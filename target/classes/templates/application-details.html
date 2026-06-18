@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Details - HR Recruitment Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏢</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Black Scrollbar - SINGLE SCROLLBAR FOR ENTIRE PAGE */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* === SIDEBAR STYLES - EXACT MATCH WITH DASHBOARD.HTML === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, .2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+      .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary); /* Makes the section icon blue */
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px); /* Adds the nice slide effect on hover */
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary); /* Makes the link icons blue */
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff; /* Turns icon white when hovered or active */
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge.success {
+            background: var(--success);
+        }
+
+        .nav-badge.warning {
+            background: var(--warning);
+        }
+
+        .sidebar-content {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* === TOP HEADER - EXACT MATCH WITH DASHBOARD.HTML === */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: .75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: .6rem .75rem .6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: .875rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-menu {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+        }
+
+        .dropdown-item {
+            color: var(--dark-text);
+        }
+
+        .dropdown-item:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .dropdown-item.text-danger {
+            color: #ef4444;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* === NOTIFICATION DROPDOWN - EXACT MATCH === */
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            margin-top: 8px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .empty-notifications {
+            padding: 24px;
+            text-align: center;
+            color: var(--dark-text-secondary);
+            font-size: 13px;
+        }
+
+        .notification-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--dark-border);
+            text-align: center;
+        }
+
+        /* === CONTENT AREA === */
+        .content-area {
+            padding: 1.5rem;
+        }
+
+        /* === PAGE HEADER === */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: .875rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary);
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: var(--dark-text-secondary);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: var(--dark-border);
+            color: var(--dark-text);
+            transform: translateY(-2px);
+        }
+
+        /* === APPLICANT DETAILS STYLES === */
+        .details-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .applicant-info,
+        .resume-viewer {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+            height: fit-content;
+        }
+
+        .resume-viewer {
+            min-height: 950px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: .5rem;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .candidate-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .candidate-main-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+
+
+        .candidate-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+            text-decoration: none;
+        }
+
+        .btn-icon-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+        }
+
+        .btn-icon-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, .4);
+            color: white;
+        }
+
+        .btn-icon-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-icon-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, .4);
+            color: white;
+        }
+
+        .btn-icon-success {
+            background: linear-gradient(135deg, var(--success) 0%, #0da371 100%);
+            color: white;
+        }
+
+        .btn-icon-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, .4);
+            color: white;
+        }
+
+        .application-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .applied-date {
+            color: var(--dark-text-secondary);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+.status-selected {
+    background: rgba(16, 185, 129, .2);
+    color: #10b981;
+}
+        .applied-date i {
+            color: var(--primary);
+        }
+
+        .status-badge {
+            padding: .5rem 1rem;
+            border-radius: 20px;
+            font-size: .875rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .status-applied {
+            background: rgba(148, 163, 184, .2);
+            color: #94a3b8;
+        }
+
+        .status-in-review {
+            background: rgba(14, 165, 233, .2);
+            color: #0ea5e9;
+        }
+
+        .status-interview {
+            background: rgba(245, 158, 11, .2);
+            color: #f59e0b;
+        }
+
+        .status-interviewed {
+            background: rgba(139, 92, 246, .2);
+            color: #8b5cf6;
+        }
+
+        .status-onhold {
+            background: rgba(139, 92, 246, .2);
+            color: #8b5cf6;
+        }
+
+        .status-hired {
+            background: rgba(16, 185, 129, .2);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, .2);
+            color: #ef4444;
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: .75rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: .55rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: .5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: .875rem;
+            color: var(--dark-text-secondary);
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .info-value {
+            font-size: .875rem;
+            color: var(--dark-text);
+            text-align: right;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .cover-letter {
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: .875rem;
+            line-height: 1.5;
+            color: var(--dark-text-secondary);
+        }
+
+        .resume-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--dark-border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .file-type-badge {
+            padding: .4rem .8rem;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: rgba(99, 102, 241, .2);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, .3);
+        }
+
+        .file-name {
+            font-size: .9rem;
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+
+        .resume-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .resume-preview-container {
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--dark-bg);
+            flex: 1;
+            min-height: 800px;
+        }
+
+        .resume-preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .preview-unavailable {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--dark-text-secondary);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .preview-unavailable i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: .5;
+        }
+
+        .no-resume-message {
+            color: var(--dark-text-secondary);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* === MODAL STYLES === */
+        .modal-content {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .form-select,
+        .form-control {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .form-select:focus,
+        .form-control:focus {
+            background: var(--dark-bg);
+            border-color: var(--primary);
+            color: var(--dark-text);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1200px) {
+            .details-container {
+                grid-template-columns: 1fr;
+            }
+
+            .resume-viewer {
+                min-height: 700px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .applicant-info,
+            .resume-viewer {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-area {
+                padding: 1rem;
+            }
+
+            .applicant-info,
+            .resume-viewer {
+                padding: 1rem;
+            }
+
+            .candidate-main-info {
+                flex-direction: column;
+            }
+
+            .candidate-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div th:replace="~{fragments/layout :: sidebar('job-postings')}"></div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <!-- === CONTENT AREA === -->
+    <div class="content-area">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Applicant Details</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard/hr">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/dashboard/hr/applications">Applications</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Applicant Details</li>
+                    </ol>
+                </nav>
+            </div>
+            <a th:href="@{/dashboard/hr/applications}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Back to Applications
+            </a>
+        </div>
+
+        <!-- Applicant Details Content -->
+        <div class="details-container">
+            <!-- Left Side: Applicant Information -->
+            <div class="applicant-info">
+
+                <div class="candidate-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div class="application-meta" style="margin: 0;">
+                        <div class="applied-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <strong>Applied:</strong>
+                            <span th:text="${formattedApplicationDate != null ? formattedApplicationDate : 'Date not available'}">Jan 15, 2023</span>
+                        </div>
+                    </div>
+                    <div class="candidate-actions">
+                        <button type="button" class="btn-icon btn-icon-warning" data-bs-toggle="modal" data-bs-target="#statusModal" title="Change Status">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <a th:href="@{/dashboard/hr/interview-schedule/{id}(id=${applicationId})}"
+                           class="btn-icon btn-icon-primary"
+                           title="Schedule Interview">
+                            <i class="fas fa-calendar-plus"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Contact Information -->
+                <div class="info-section">
+                    <h3><i class="fas fa-address-card"></i> Contact Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value" th:text="${email != null ? email : 'Not provided'}">email@example.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone:</span>
+                            <span class="info-value" th:text="${phone != null ? phone : 'Not provided'}">+1234567890</span>
+                        </div>
+                        <div class="info-item" th:if="${linkedinProfile != null and !#strings.isEmpty(linkedinProfile)}">
+                            <span class="info-label">LinkedIn:</span>
+                            <span class="info-value">
+                                    <a th:href="${linkedinProfile}" target="_blank" style="color: var(--primary);" th:text="${linkedinProfile}">LinkedIn Profile</a>
+                                </span>
+                        </div>
+                        <div class="info-item" th:unless="${linkedinProfile != null and !#strings.isEmpty(linkedinProfile)}">
+                            <span class="info-label">LinkedIn:</span>
+                            <span class="info-value">Not provided</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Information -->
+                <div class="info-section">
+                    <h3><i class="fas fa-briefcase"></i> Job Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Position:</span>
+                            <span class="info-value" th:text="${jobTitle != null ? jobTitle : 'Not specified'}">Job Title</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Department:</span>
+                            <span class="info-value" th:text="${jobDepartment != null ? jobDepartment : 'Not specified'}">Department</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Job Type:</span>
+                            <span class="info-value" th:text="${jobType != null ? jobType : 'Not specified'}">Job Type</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Location:</span>
+                            <span class="info-value" th:text="${jobLocation != null ? jobLocation : 'Not specified'}">Location</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application Details -->
+                <div class="info-section">
+                    <h3><i class="fas fa-info-circle"></i> Application Details</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Experience:</span>
+                            <span class="info-value" th:text="${experience != null ? experience : 'Not specified'}">Experience</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Applied Date:</span>
+                            <span class="info-value" th:text="${formattedApplicationDate != null ? formattedApplicationDate : 'Date not available'}">Application Date</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cover Letter -->
+                <div class="info-section" th:if="${coverLetter != null and !#strings.isEmpty(coverLetter)}">
+                    <h3><i class="fas fa-envelope-open-text"></i> Cover Letter</h3>
+                    <div class="cover-letter" th:text="${coverLetter}">Cover letter content...</div>
+                </div>
+                <div class="info-section" th:unless="${coverLetter != null and !#strings.isEmpty(coverLetter)}">
+                    <h3><i class="fas fa-envelope-open-text"></i> Cover Letter</h3>
+                    <div class="cover-letter" style="color: var(--dark-text-secondary); font-style: italic;">No cover letter provided</div>
+                </div>
+            </div>
+
+            <!-- Right Side: Resume Viewer -->
+            <div class="resume-viewer">
+                <div class="resume-header">
+                    <div class="file-info">
+                        <span th:if="${hasResume == true and resumeExists == true}" class="file-type-badge" th:text="${resumeFileType != null ? resumeFileType : 'FILE'}">PDF</span>
+                        <span th:if="${hasResume == true and resumeExists == true}" class="file-name" th:text="${resumeFileName != null ? resumeFileName : 'resume.pdf'}">resume.pdf</span>
+                        <span th:if="${hasResume == true and resumeExists == true}" class="text-muted" th:text="'(' + (${resumeFileSize != null ? resumeFileSize : '0 B'}) + ')'">(2.4 MB)</span>
+
+                        <div th:if="${hasResume == false}" class="no-resume-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>No resume uploaded</span>
+                        </div>
+                        <div th:if="${hasResume == true and resumeExists == false}" class="no-resume-message">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                            <span>Resume file not found</span>
+                        </div>
+                    </div>
+
+                    <div class="resume-actions" th:if="${hasResume == true and resumeExists == true}">
+                        <a th:href="@{/dashboard/hr/download-resume/{id}(id=${applicationId})}"
+                           class="btn-icon btn-icon-success"
+                           title="Download Resume"
+                           download>
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Resume Preview Container -->
+                <!-- Resume Preview Container -->
+                <div class="resume-preview-container" th:if="${hasResume == true and resumeExists == true}">
+                    <div th:switch="${resumeFileType}">
+                        <!-- PDF Preview -->
+                        <div th:case="'PDF'" style="height: 100%;">
+                            <iframe
+                                    th:src="@{/dashboard/hr/public/preview-resume/{id}(id=${applicationId})}"
+                                    style="width: 100%; height: 100vh; min-height: 800px; border: none;"
+                                    type="application/pdf">
+                            </iframe>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div th:case="'IMAGE'" style="height: 100%; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                            <img th:src="@{/dashboard/hr/preview-image/{id}(id=${applicationId})}"
+                                 th:alt="${resumeFileName != null ? resumeFileName : 'Resume Image'}"
+                                 style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px;"
+                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'preview-unavailable\'><i class=\'fas fa-image\'></i><h4>Image Preview Failed</h4><p>Could not load image</p></div>';">
+                        </div>
+
+                        <!-- Document Preview (Word, etc) -->
+                        <div th:case="'DOCUMENT'" class="preview-unavailable">
+                            <i class="fas fa-file-word" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i>
+                            <h4>Document Preview Not Available</h4>
+                            <p>Preview is not available for this file type.</p>
+                            <p class="small text-muted" th:text="${resumeFileName != null ? resumeFileName : ''}">filename.docx</p>
+                            <div class="mt-3">
+                                <a th:href="@{/dashboard/hr/download-resume/{id}(id=${applicationId})}" class="btn btn-primary">
+                                    <i class="fas fa-download me-2"></i>Download Document
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Other file types -->
+                        <div th:case="*" class="preview-unavailable">
+                            <i class="fas fa-file" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h4>Preview Not Available</h4>
+                            <p>This file type cannot be previewed.</p>
+                            <div class="mt-3">
+                                <a th:href="@{/dashboard/hr/download-resume/{id}(id=${applicationId})}" class="btn btn-primary">
+                                    <i class="fas fa-download me-2"></i>Download File
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Resume / File Not Found Message -->
+                <div class="preview-unavailable" th:if="${hasResume == false or resumeExists == false}">
+                    <i th:if="${hasResume == false}" class="fas fa-file-upload" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <i th:if="${hasResume == true and resumeExists == false}" class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: var(--warning);"></i>
+
+                    <h4 th:if="${hasResume == false}">No Resume Available</h4>
+                    <h4 th:if="${hasResume == true and resumeExists == false}">Resume File Not Found</h4>
+
+                    <p th:if="${hasResume == false}">The candidate has not uploaded a resume file.</p>
+                    <p th:if="${hasResume == true and resumeExists == false}">The resume file could not be found on the server.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Change Modal -->
+<!-- Status Change Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel">Change Application Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <form th:action="@{/dashboard/hr/update-status}" method="post" id="statusUpdateForm">
+                <div class="modal-body">
+                    <!-- Hidden field with fallback value -->
+                    <input type="hidden" name="applicationId"
+                           th:value="${applicationId != null ? applicationId : (application != null && application.id != null ? application.id : '')}"
+                           id="applicationIdField">
+
+                    <!-- Debug info (remove after testing) -->
+                    <div style="background: #1e293b; border: 1px solid #6366f1; padding: 8px; margin-bottom: 10px; border-radius: 4px; font-size: 12px;">
+                        <strong>Debug:</strong> AppID=<span th:text="${applicationId != null ? applicationId : (application != null && application.id != null ? application.id : 'NOT SET')}">?</span>
+                    </div>
+
+                    <!-- Current Status Display -->
+                    <div class="mb-3">
+                        <label class="form-label">Current Status</label>
+                        <div>
+               <span class="status-badge" id="currentStatusBadge"
+                     th:classappend="${application != null && application.status != null} ? (
+          ${application.status == 'Applied'} ? 'status-applied' :
+          (${application.status == 'In Review'} ? 'status-in-review' :
+          (${application.status == 'Interview'} ? 'status-interview' :
+          (${application.status == 'Interviewed'} ? 'status-interviewed' :
+          (${application.status == 'On Hold'} ? 'status-onhold' :
+          (${application.status == 'Selected'} ? 'status-selected' :
+          (${application.status == 'Hired'} ? 'status-hired' : 'status-rejected'))))))
+      ) : 'status-applied'"
+                     th:text="${application != null && application.status != null ? application.status : 'Applied'}">Applied</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newStatus" class="form-label">New Status <span class="text-danger">*</span></label>
+                        <select class="form-select" id="newStatus" name="newStatus" required>
+                            <option value="">-- Select Status --</option>
+                            <option value="Applied">Applied</option>
+                            <option value="In Review">In Review</option>
+                            <option value="Interview">Interview Scheduled</option>
+                            <option value="Interviewed">Interviewed</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Selected">Selected</option>
+                            <option value="Hired">Hired</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="statusNotes" class="form-label">Notes (Optional)</label>
+                        <textarea class="form-control" id="statusNotes" name="statusNotes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background: var(--dark-border); border: none; color: var(--dark-text);">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); border: none;">
+                        <i class="fas fa-save me-2"></i>Update Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast Notification -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+    <div id="statusSuccessToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" th:if="${showStatusUpdateSuccess}">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}">Status updated successfully!</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Call the common scripts fragment -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ========== SIDEBAR AND HEADER FUNCTIONALITY ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Applicant Details Page Loaded');
+
+        // Mobile sidebar toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Set active nav link based on current URL
+        setActiveNavLink();
+
+        // Initialize leave badge
+        initLeaveBadge();
+    });
+
+    // Set active navigation link
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && currentPath.includes(href)) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // ========== NOTIFICATION FUNCTIONS ==========
+    function toggleNotificationDropdown() {
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        if (dropdown) {
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    function markAllNotificationsRead() {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            badge.style.display = 'none';
+            badge.textContent = '0';
+        }
+
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        if (dropdown) {
+            dropdown.style.display = 'none';
+        }
+
+        alert('All notifications marked as read');
+    }
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        const trigger = document.querySelector('.notification-trigger');
+
+        if (dropdown && trigger && !trigger.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    // ========== LEAVE BADGE FUNCTIONS ==========
+    function initLeaveBadge() {
+        fetch('/api/leaves/pending')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.count > 0) {
+                    const badge = document.getElementById('leaveCountBadge');
+                    if (badge) {
+                        badge.textContent = data.count > 99 ? '99+' : data.count;
+                        badge.style.display = 'flex';
+                        badge.classList.remove('zero');
+                    }
+                } else {
+                    const badge = document.getElementById('leaveCountBadge');
+                    if (badge) {
+                        badge.style.display = 'none';
+                        badge.classList.add('zero');
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching leave count:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Status update functionality
+        const updateStatusBtn = document.getElementById('updateStatusBtn');
+
+        if (updateStatusBtn) {
+            updateStatusBtn.addEventListener('click', function() {
+                const applicationId = document.getElementById('applicationId').value;
+                const newStatus = document.getElementById('newStatus').value;
+                const statusNotes = document.getElementById('statusNotes').value;
+
+                if (!newStatus) {
+                    alert('Please select a status');
+                    return;
+                }
+
+                // Disable button to prevent double submission
+                updateStatusBtn.disabled = true;
+                updateStatusBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+
+                // Send AJAX request
+                fetch('/dashboard/hr/api/update-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        applicationId: applicationId,
+                        newStatus: newStatus,
+                        statusNotes: statusNotes
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('statusModal'));
+                        modal.hide();
+
+                        // Show success message
+                        showNotification('success', 'Status updated successfully to: ' + newStatus);
+
+                        // Update status badge in UI
+                        updateStatusBadge(newStatus);
+
+                        // Optionally refresh page after 1 second to reflect changes in tabs
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        alert('Error: ' + data.error);
+                        updateStatusBtn.disabled = false;
+                        updateStatusBtn.innerHTML = 'Update Status';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update status. Please try again.');
+                    updateStatusBtn.disabled = false;
+                    updateStatusBtn.innerHTML = 'Update Status';
+                });
+            });
+        }
+
+        // Function to update status badge in UI
+        function updateStatusBadge(newStatus) {
+            const statusBadge = document.querySelector('.status-badge');
+            if (statusBadge) {
+                // Remove all status classes
+                statusBadge.className = statusBadge.className.replace(/status-\w+/g, '');
+
+                // Add new status class
+                let statusClass = '';
+                switch(newStatus) {
+                    case 'Applied':
+                        statusClass = 'status-applied';
+                        break;
+                    case 'In Review':
+                        statusClass = 'status-in-review';
+                        break;
+                    case 'Interview':
+                        statusClass = 'status-interview';
+                        break;
+                    case 'Interviewed':
+                        statusClass = 'status-interviewed';
+                        break;
+                    case 'On Hold':
+                        statusClass = 'status-onhold';
+                        break;
+                    case 'Hired':
+                        statusClass = 'status-hired';
+                        break;
+                    case 'Rejected':
+                        statusClass = 'status-rejected';
+                        break;
+                    default:
+                        statusClass = 'status-applied';
+                }
+
+                statusBadge.classList.add('status-badge', statusClass);
+                statusBadge.textContent = newStatus;
+            }
+        }
+
+        // Function to show notification
+        function showNotification(type, message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '300px';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Reset modal when closed
+        const statusModal = document.getElementById('statusModal');
+        if (statusModal) {
+            statusModal.addEventListener('hidden.bs.modal', function () {
+                document.getElementById('newStatus').value = '';
+                document.getElementById('statusNotes').value = '';
+                const updateBtn = document.getElementById('updateStatusBtn');
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = 'Update Status';
+                }
+            });
+        }
+    });
+// Status change handling
+function handleStatusChange(status) {
+    const messageDiv = document.getElementById('statusMessage');
+    const messageText = document.getElementById('statusMessageText');
+
+    const messages = {
+        'Applied': 'Candidate will appear in the Applied tab',
+        'In Review': 'Candidate will appear in the In Review tab',
+        'Interview': 'Candidate will appear in the Interview tab. You can schedule an interview.',
+        'Interviewed': 'Candidate will appear in the Interviewed tab',
+        'On Hold': 'Candidate will be moved to On Hold',
+        'Selected': 'Candidate will appear in the Selected tab. You can now generate an offer letter!',
+        'Hired': 'Candidate will be marked as Hired and moved to Hired Candidates',
+        'Rejected': 'Candidate will be marked as Rejected'
+    };
+
+    if (messages[status]) {
+        messageText.textContent = messages[status];
+        messageDiv.classList.remove('d-none');
+
+        // Special styling for Selected status
+        if (status === 'Selected') {
+            messageDiv.className = 'alert alert-success';
+            messageDiv.style.cssText = 'background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;';
+        } else if (status === 'Rejected') {
+            messageDiv.className = 'alert alert-danger';
+            messageDiv.style.cssText = 'background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;';
+        } else {
+            messageDiv.className = 'alert alert-info';
+            messageDiv.style.cssText = 'background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); color: #0ea5e9;';
+        }
+    } else {
+        messageDiv.classList.add('d-none');
+    }
+}
+
+// Show success toast if status was updated
+document.addEventListener('DOMContentLoaded', function() {
+    const successToast = document.getElementById('statusSuccessToast');
+    if (successToast) {
+        const toast = new bootstrap.Toast(successToast);
+        toast.show();
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            toast.hide();
+        }, 3000);
+    }
+
+    // Pre-select current status in dropdown when modal opens
+    const statusModal = document.getElementById('statusModal');
+    if (statusModal) {
+        statusModal.addEventListener('show.bs.modal', function () {
+            const currentStatus = document.querySelector('.status-badge').textContent.trim();
+            const select = document.getElementById('newStatus');
+            if (select && currentStatus) {
+                select.value = currentStatus;
+            }
+        });
+    }
+});
+// Status change handling
+function handleStatusChange(status) {
+    const messageDiv = document.getElementById('statusMessage');
+    const messageText = document.getElementById('statusMessageText');
+
+    const messages = {
+        'Applied': 'Candidate will appear in the Applied tab',
+        'In Review': 'Candidate will appear in the In Review tab',
+        'Interview': 'Candidate will appear in the Interview tab. You can schedule an interview.',
+        'Interviewed': 'Candidate will appear in the Interviewed tab',
+        'On Hold': 'Candidate will be moved to On Hold',
+        'Selected': 'Candidate will appear in the Selected tab. You can now generate an offer letter!',
+        'Hired': 'Candidate will be marked as Hired and moved to Hired Candidates',
+        'Rejected': 'Candidate will be marked as Rejected'
+    };
+
+    if (messages[status]) {
+        messageText.textContent = messages[status];
+        messageDiv.classList.remove('d-none');
+
+        // Special styling for different statuses
+        if (status === 'Selected' || status === 'Hired') {
+            messageDiv.className = 'alert alert-success';
+            messageDiv.style.cssText = 'background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;';
+        } else if (status === 'Rejected') {
+            messageDiv.className = 'alert alert-danger';
+            messageDiv.style.cssText = 'background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;';
+        } else {
+            messageDiv.className = 'alert alert-info';
+            messageDiv.style.cssText = 'background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); color: #0ea5e9;';
+        }
+    } else {
+        messageDiv.classList.add('d-none');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Show success toast if status was updated
+    const successToast = document.getElementById('statusSuccessToast');
+    if (successToast) {
+        const toast = new bootstrap.Toast(successToast);
+        toast.show();
+        setTimeout(() => { toast.hide(); }, 3000);
+    }
+
+    // Pre-select current status in dropdown when modal opens
+    const statusModal = document.getElementById('statusModal');
+    if (statusModal) {
+        statusModal.addEventListener('show.bs.modal', function () {
+            const currentStatusBadge = document.getElementById('currentStatusBadge');
+            const select = document.getElementById('newStatus');
+
+            if (currentStatusBadge && select) {
+                const currentStatus = currentStatusBadge.textContent.trim();
+                console.log('Current status from badge:', currentStatus);
+
+                // Find and select the matching option
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === currentStatus) {
+                        select.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    // Validate form before submit
+    const form = document.getElementById('statusUpdateForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const appId = document.getElementById('applicationIdField').value;
+            const newStatus = document.getElementById('newStatus').value;
+
+            console.log('Form submit - Application ID:', appId, 'New Status:', newStatus);
+
+            if (!appId || appId === '') {
+                e.preventDefault();
+                alert('Error: Application ID is missing. Please refresh the page and try again.');
+                return false;
+            }
+
+            if (!newStatus) {
+                e.preventDefault();
+                alert('Please select a new status.');
+                return false;
+            }
+        });
+    }
+});
+
+    // ========== SEARCH FUNCTIONALITY ==========
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            console.log('Search:', term);
+            // Implement search functionality as needed
+        });
+    }
+
+    // Make functions globally available
+    window.toggleNotificationDropdown = toggleNotificationDropdown;
+    window.markAllNotificationsRead = markAllNotificationsRead;
+</script>
+</body>
+</html>

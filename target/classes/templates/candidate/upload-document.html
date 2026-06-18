@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Upload ' + ${documentName}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .upload-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--dark-card);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--dark-border);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        /* File name display - text only */
+        .file-info {
+            margin-top: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-info .file-name {
+            color: var(--dark-text);
+        }
+
+        .file-info .file-name.valid {
+            color: var(--success-color);
+        }
+
+        .file-info .file-name.invalid {
+            color: var(--error-color);
+        }
+
+        .file-info .file-size {
+            color: var(--dark-text-secondary);
+            font-size: 12px;
+        }
+
+        /* Simple alert messages */
+        .simple-message {
+            margin: 10px 0;
+            padding: 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .simple-message.success {
+            color: var(--success-color);
+        }
+
+        .simple-message.error {
+            color: var(--error-color);
+        }
+
+        .simple-message.info {
+            color: var(--primary);
+        }
+
+        /* Form styling */
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .form-control:focus {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: var(--primary);
+            color: var(--dark-text);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-text {
+            color: var(--dark-text-secondary);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--dark-border);
+            color: var(--dark-text-secondary);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--dark-border);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+    </style>
+</head>
+<body>
+<div class="upload-container">
+    <div class="text-center mb-4">
+        <i class="fas fa-file-upload fa-3x text-primary mb-3"></i>
+        <h2>Upload <span th:text="${documentName}"></span></h2>
+        <p class="text-muted" th:text="'For: ' + ${employee.firstName} + ' ' + ${employee.lastName}"></p>
+        <p class="text-muted" th:text="'Employee ID: ' + ${employee.employeeId}"></p>
+    </div>
+
+    <!-- Success Message - Simple text -->
+    <div th:if="${success}" class="simple-message success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
+    </div>
+
+    <!-- Error Message - Simple text -->
+    <div th:if="${error}" class="simple-message error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Upload Form -->
+    <form th:action="@{/candidate/onboarding/{empId}/upload/{docType}(empId=${employee.employeeId}, docType=${documentType})}"
+          method="post" enctype="multipart/form-data" id="uploadForm">
+        <div class="mb-4">
+            <label for="documentFile" class="form-label">Select File</label>
+            <input type="file" class="form-control" id="documentFile" name="documentFile" required
+                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+            <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>
+                Supported formats: PDF, DOC, DOCX, JPG, PNG (Max 5MB)
+            </div>
+
+            <!-- File info display - Simple text -->
+            <div id="fileInfo" class="file-info" style="display: none;">
+                <i class="fas fa-file" id="fileIcon"></i>
+                <span id="fileNameText" class="file-name"></span>
+                <span id="fileSizeText" class="file-size"></span>
+            </div>
+
+            <!-- File validation message - Simple text -->
+            <div id="validationMessage" class="simple-message" style="display: none;"></div>
+        </div>
+
+        <div class="mb-4">
+            <label for="notes" class="form-label">Notes (Optional)</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"
+                      placeholder="Any additional information..."></textarea>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a th:href="@{/candidate/dashboard/{empId}(empId=${employee.employeeId})}"
+               class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Back
+            </a>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                <i class="fas fa-upload me-2"></i> Upload
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('documentFile');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileNameText = document.getElementById('fileNameText');
+        const fileSizeText = document.getElementById('fileSizeText');
+        const fileIcon = document.getElementById('fileIcon');
+        const validationMessage = document.getElementById('validationMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('uploadForm');
+
+        // File validation
+        const validExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Show file info
+            fileInfo.style.display = 'flex';
+            validationMessage.style.display = 'flex';
+
+            // Get file extension
+            const fileName = file.name.toLowerCase();
+            const fileExt = fileName.substring(fileName.lastIndexOf('.'));
+
+            // Check file size
+            if (file.size > maxSize) {
+                showValidation('File size exceeds 5MB limit', 'error');
+                fileInfo.style.display = 'none';
+                fileNameText.className = 'file-name invalid';
+                fileIcon.className = 'fas fa-file text-danger';
+                return;
+            }
+
+            // Check file extension
+            const isValidExtension = validExtensions.includes(fileExt);
+
+            // Display file info
+            fileNameText.textContent = file.name;
+            fileNameText.className = isValidExtension ? 'file-name valid' : 'file-name invalid';
+            fileSizeText.textContent = formatFileSize(file.size);
+            fileIcon.className = isValidExtension ? 'fas fa-file text-success' : 'fas fa-file text-danger';
+
+            // Show validation message
+            if (isValidExtension) {
+                showValidation('File type is valid', 'success');
+            } else {
+                showValidation('Invalid file type. Please upload PDF, DOC, JPG or PNG files.', 'error');
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            const file = fileInput.files[0];
+            if (!file) {
+                e.preventDefault();
+                showValidation('Please select a file', 'error');
+                return;
+            }
+
+            // Check file size
+            if (file.size > maxSize) {
+                e.preventDefault();
+                showValidation('File size exceeds 5MB limit', 'error');
+                return;
+            }
+
+            // Check file extension
+            const fileName = file.name.toLowerCase();
+            const fileExt = fileName.substring(fileName.lastIndexOf('.'));
+            const isValidExtension = validExtensions.includes(fileExt);
+
+            if (!isValidExtension) {
+                e.preventDefault();
+                showValidation('Invalid file type. Please upload PDF, DOC, JPG or PNG files.', 'error');
+                return;
+            }
+
+            // Disable submit button during upload
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Uploading...';
+        });
+
+        // Show validation message
+        function showValidation(message, type) {
+            validationMessage.textContent = message;
+            validationMessage.className = `simple-message ${type}`;
+            validationMessage.style.display = 'flex';
+
+            // Change icon based on type
+            const icon = validationMessage.querySelector('i');
+            if (icon) {
+                icon.className = type === 'success' ? 'fas fa-check-circle' :
+                                type === 'error' ? 'fas fa-exclamation-circle' :
+                                'fas fa-info-circle';
+            } else {
+                const iconClass = type === 'success' ? 'fas fa-check-circle' :
+                                type === 'error' ? 'fas fa-exclamation-circle' :
+                                'fas fa-info-circle';
+                validationMessage.innerHTML = `<i class="${iconClass}"></i> ${message}`;
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return `(${bytes} bytes)`;
+            else if (bytes < 1048576) return `(${(bytes / 1024).toFixed(1)} KB)`;
+            else return `(${(bytes / 1048576).toFixed(1)} MB)`;
+        }
+    });
+</script>
+</body>
+</html>

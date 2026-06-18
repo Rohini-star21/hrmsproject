@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Job Details - ' + ${job.title}">Job Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #0f172a; color: #f8fafc; padding: 2rem; font-family: 'Inter', sans-serif; }
+        .details-card { background: #1e293b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; max-width: 900px; margin: 0 auto;}
+        .badge-status { background: #10b981; padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem;}
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; padding: 1.5rem; background: #0f172a; border-radius: 8px;}
+        .info-item label { color: #cbd5e1; font-weight: 600; display: block; margin-bottom: 0.3rem;}
+        .info-item span { color: #fff; font-size: 1rem; }
+        .actions { margin-top: 2rem; display: flex; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid #334155;}
+        .btn-custom { padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; font-weight: 500; transition: 0.3s;}
+        .btn-edit { background: #6366f1; color: white; border: none; }
+        .btn-edit:hover { background: #4f46e5; color: white; }
+        .btn-back { background: transparent; color: #cbd5e1; border: 1px solid #334155; }
+        .btn-back:hover { background: #334155; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="details-card">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 th:text="${job.title}" style="margin:0; color: #6366f1; font-weight: bold;">Job Title</h2>
+            <span class="badge-status" th:text="${job.active ? 'Active' : 'Closed'}">Status</span>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <label><i class="fas fa-building me-2"></i>Department:</label>
+                <span th:text="${job.department}"></span>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-clock me-2"></i>Job Type:</label>
+                <span th:text="${job.jobType}"></span>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-map-marker-alt me-2"></i>Location:</label>
+                <span th:text="${job.location}"></span>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-briefcase me-2"></i>Experience Level:</label>
+                <span th:text="${job.experienceLevel}"></span>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-money-bill-wave me-2"></i>Salary Range:</label>
+                <span th:text="${job.salaryRange}"></span>
+            </div>
+            <div class="info-item">
+                <label><i class="fas fa-calendar-alt me-2"></i>Posted Date:</label>
+                <span th:text="${job.formattedPostedDate}"></span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h4 style="color: #cbd5e1; border-bottom: 1px solid #334155; padding-bottom: 0.5rem;">Description</h4>
+            <p th:text="${job.description}" style="line-height: 1.7;"></p>
+        </div>
+
+        <div class="mt-4">
+            <h4 style="color: #cbd5e1; border-bottom: 1px solid #334155; padding-bottom: 0.5rem;">Requirements</h4>
+            <p th:text="${job.requirements}" style="line-height: 1.7;"></p>
+        </div>
+
+        <div class="actions">
+            <!-- Edit Button (Requires 'edit' access on 'job_postings') -->
+            <a th:if="${@permissionChecker.hasAccess(isSuperAdmin, 'recruitment', 'job_postings', 'edit')}"
+               th:href="@{/dashboard/hr/job-form(id=${job.id})}" class="btn-custom btn-edit">
+                <i class="fas fa-edit me-2"></i> Edit Job
+            </a>
+
+            <a th:href="@{/dashboard/hr}" class="btn-custom btn-back">
+                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Interview - HR Recruitment Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Black Scrollbar */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #000000; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333333; }
+
+        :root {
+            --dark-bg: #0f172a; --dark-card: #1e293b; --dark-border: #334155;
+            --dark-text: #f8fafc; --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1; --primary-hover: #4f46e5;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #0ea5e9;
+            --sidebar-bg: #0f172a; --sidebar-hover: #1e293b;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: var(--dark-text); font-size: 14px; line-height: 1.6; overflow-x: hidden; }
+
+        /* === SIDEBAR STYLES === */
+        .sidebar { position: fixed; top: 0; left: 0; width: 280px; height: 100vh; background: var(--sidebar-bg); box-shadow: 2px 0 10px rgba(0,0,0,.2); transition: var(--transition); z-index: 1000; }
+.sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary); /* Makes the section icon blue */
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px); /* Adds the nice slide effect on hover */
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary); /* Makes the link icons blue */
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff; /* Turns icon white when hovered or active */
+        }
+        .nav-badge { margin-left: auto; background: var(--primary); color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem; font-weight: 600; min-width: 24px; text-align: center; }
+        .sidebar-content { height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+        .sidebar-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .sidebar-content::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .mobile-menu-toggle { display: none; background: none; border: none; color: var(--dark-text); font-size: 1.5rem; cursor: pointer; padding: 0.5rem; position: fixed; top: 1rem; left: 1rem; z-index: 1001; }
+        .main-content { margin-left: 280px; min-height: 100vh; transition: var(--transition); }
+
+        /* === TOP HEADER STYLES === */
+        .top-header { display: flex; justify-content: space-between; align-items: center; background: var(--dark-card); border-bottom: 1px solid var(--dark-border); padding: .75rem 1.5rem; position: sticky; top: 0; z-index: 100; }
+
+        .search-box { position: relative; width: 300px; }
+        .search-box input {
+            width: 100%; padding: .6rem .75rem .6rem 2.5rem; border-radius: 8px;
+            border: 1px solid var(--dark-border); background: var(--dark-bg);
+            color: var(--dark-text); font-size: .875rem; transition: var(--transition);
+        }
+        .search-box input:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,.1); outline: none;
+        }
+        .search-box i {
+            position: absolute; left: .75rem; top: 50%; transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex; align-items: center; gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 8px; background: var(--dark-bg);
+            border: 1px solid var(--dark-border); color: var(--dark-text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: var(--transition); position: relative;
+        }
+        .icon-btn:hover {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--danger);
+            color: #fff; border-radius: 50%; width: 18px; height: 18px;
+            font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-profile-menu { display: flex; align-items: center; gap: 1rem; }
+        .dropdown-item:hover { background: var(--sidebar-hover); }
+        .dropdown-item:active { background: var(--primary); }
+
+        .page-title { font-size: 1.5rem; font-weight: 600; color: var(--dark-text); margin: 0; }
+        .breadcrumb { background: transparent; padding: 0; margin: 0; font-size: .875rem; }
+        .breadcrumb-item { color: var(--dark-text-secondary); }
+        .breadcrumb-item.active { color: var(--primary); }
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--dark-text-secondary); }
+        .back-button { background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text-secondary); padding: .5rem 1rem; border-radius: 6px; font-size: .875rem; transition: var(--transition); display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; }
+        .back-button:hover { background: rgba(255, 255, 255, .05); color: var(--dark-text); transform: translateX(-2px); }
+
+        .content-area { padding: 1.5rem; width: 100%; max-width: none; }
+        .applicant-card { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .applicant-header { display: flex; align-items: center; gap: 20px; margin-bottom: 1rem; }
+        .applicant-select {
+    flex: 1;
+    padding: 12px;
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    color: var(--dark-text);
+    border-radius: 8px;
+    font-size: 14px;
+    /* ADD THESE LINES */
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px;
+    padding-right: 2.5rem;
+}
+
+        .applicant-select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+
+        .selected-applicant-info { margin-top: 15px; padding: 15px; background: var(--dark-bg); border-radius: 8px; border-left: 4px solid var(--primary); display: none; }
+        .selected-applicant-info.show { display: block; }
+        .schedule-form { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 2.5rem; width: 100%; }
+        .section-title { font-size: 1.3rem; font-weight: 600; color: var(--primary); margin-bottom: 2rem; padding-bottom: .75rem; border-bottom: 2px solid var(--primary); display: flex; align-items: center; gap: .75rem; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .full-width { grid-column: 1 / -1; width: 100%; }
+        .form-group { margin-bottom: 1.5rem; position: relative; }
+        .form-label { font-weight: 600; color: var(--dark-text); margin-bottom: .5rem; display: block; font-size: .9rem; }
+        .required::after { content: " *"; color: var(--danger); }
+        .form-control, .form-select {
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    color: var(--dark-text);
+    border-radius: 8px;
+    padding: .75rem;
+    font-size: .9rem;
+    transition: var(--transition);
+    width: 100%;
+    appearance: none; /* Removes default browser arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Specific styling for Dropdowns to add the Chevron */
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center; /* Align middle right */
+    background-size: 12px;
+    padding-right: 2.5rem; /* Prevents text from overlapping icon */
+}
+        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, .1); outline: none; }
+
+        .interview-type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .type-option { background: var(--dark-bg); border: 2px solid var(--dark-border); border-radius: 8px; padding: 1.25rem 1rem; text-align: center; cursor: pointer; transition: var(--transition); position: relative; }
+        .type-option:hover { border-color: var(--primary); background: rgba(99, 102, 241, .05); }
+        .type-option.selected { border-color: var(--primary); background: rgba(99, 102, 241, .1); }
+        .type-option input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+        .type-icon { font-size: 1.75rem; color: var(--primary); margin-bottom: .75rem; }
+
+        .datetime-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        .time-input-wrapper { display: flex; gap: 0.5rem; align-items: center; }
+        .time-separator { font-weight: 600; color: var(--dark-text); font-size: 1.2rem; }
+        .duration-options { display: flex; gap: .75rem; flex-wrap: wrap; }
+        .duration-btn { background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text-secondary); padding: .6rem 1.25rem; border-radius: 6px; font-size: .875rem; cursor: pointer; transition: var(--transition); font-weight: 500; }
+        .duration-btn:hover, .duration-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        .interviewer-section { background: var(--dark-bg); border: 1px solid var(--dark-border); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; width: 100%; box-sizing: border-box; }
+        .interviewer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; width: 100%; }
+        .interviewer-count { font-size: 0.85rem; color: var(--dark-text-secondary); font-weight: 500; }
+        .interviewer-search-container { width: 100%; margin-bottom: 1rem; }
+        .interviewer-search-wrapper { position: relative; width: 100%; }
+        .interviewer-search-input { width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; background: var(--dark-bg); border: 1px solid var(--dark-border); border-radius: 8px; color: var(--dark-text); font-size: 0.95rem; transition: var(--transition); }
+        .interviewer-search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, .1); }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--dark-text-secondary); font-size: 1.1rem; pointer-events: none; }
+
+        .interviewer-pills-container { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; min-height: 60px; width: 100%; align-content: flex-start; }
+        .interviewer-pill { background: var(--primary); border: 2px solid var(--primary); border-radius: 25px; padding: 0.6rem 1.1rem; font-size: 0.875rem; color: white; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 0.6rem; font-weight: 500; }
+        .interviewer-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3); }
+        .interviewer-pill.selected { background: #dc3545; border-color: #dc3545; }
+
+        .selected-interviewers-display { background: var(--dark-bg); border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; margin-top: 1rem; display: none; width: 100%; box-sizing: border-box; }
+        .selected-interviewers-display.show { display: block; }
+        .selected-interviewers-title { font-size: 0.85rem; color: var(--dark-text-secondary); margin-bottom: 0.75rem; font-weight: 600; }
+        .selected-interviewers-list { display: flex; flex-wrap: wrap; gap: 0.5rem; width: 100%; }
+        .selected-interviewer-tag { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 20px; padding: 0.5rem 0.75rem; font-size: 0.85rem; color: var(--dark-text); display: flex; align-items: center; gap: 0.5rem; }
+        .remove-interviewer-btn { background: rgba(239, 68, 68, 0.2); border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--danger); font-size: 0.7rem; transition: var(--transition); padding: 0; }
+        .remove-interviewer-btn:hover { background: var(--danger); color: white; }
+
+        .conditional-field { display: none; animation: slideDown 0.3s ease-out; }
+        .conditional-field.show { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); border: none; padding: .85rem 2.5rem; border-radius: 8px; font-weight: 600; color: white; transition: var(--transition); display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; font-size: .95rem; cursor: pointer; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(99, 102, 241, .3); color: white; }
+        .btn-primary:disabled { background: #6b7280; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-outline { background: transparent; border: 1px solid var(--dark-border); color: var(--dark-text-secondary); padding: .85rem 2.5rem; border-radius: 8px; font-weight: 600; transition: var(--transition); display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; font-size: .95rem; cursor: pointer; }
+        .btn-outline:hover { background: rgba(255, 255, 255, .05); color: var(--dark-text); transform: translateY(-2px); }
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--dark-border); }
+
+        .process-steps { display: flex; justify-content: space-between; margin-bottom: 2rem; position: relative; }
+        .process-steps::before { content: ''; position: absolute; top: 20px; left: 0; right: 0; height: 2px; background: var(--dark-border); z-index: 1; }
+        .process-step { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; flex: 1; }
+        .step-number { width: 40px; height: 40px; border-radius: 50%; background: var(--dark-border); color: var(--dark-text-secondary); display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 0.5rem; transition: var(--transition); border: 2px solid var(--dark-border); }
+        .process-step.active .step-number { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.1); }
+        .process-step.completed .step-number { background: var(--success); color: white; border-color: var(--success); }
+        .step-label { font-size: 0.8rem; font-weight: 500; color: var(--dark-text-secondary); text-align: center; }
+        .process-step.active .step-label { color: var(--primary); }
+        .process-step.completed .step-label { color: var(--success); }
+
+        .interview-preview { background: var(--dark-card); border-radius: 12px; padding: 2rem; margin-top: 2rem; border: 1px solid var(--dark-border); display: none; }
+        .interview-preview.show { display: block; animation: slideDown 0.3s ease-out; }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--dark-border); }
+        .preview-title { font-size: 1.25rem; font-weight: 600; color: var(--dark-text); }
+        .preview-content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .preview-item { margin-bottom: 1rem; }
+        .preview-label { font-weight: 600; color: var(--dark-text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem; }
+        .preview-value { color: var(--dark-text); font-size: 0.95rem; }
+
+        .status-badge { padding: .35rem .75rem; border-radius: 20px; font-size: .7rem; font-weight: 600; color: #fff!important; display: inline-block; min-width: 80px; text-align: center; }
+        .status-applied { background: #9ca3af; }
+        .status-in-review { background: #0ea5e9; }
+        .status-interview { background: #f59e0b; }
+        .status-hired { background: #10b981; }
+        .status-offered { background: #8b5cf6; }
+        .status-rejected { background: #ef4444; }
+
+        .success-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .success-popup.show { opacity: 1; visibility: visible; }
+        .popup-content { background: var(--dark-card); border-radius: 12px; padding: 2.5rem; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transform: translateY(20px); transition: transform 0.3s ease; }
+        .success-popup.show .popup-content { transform: translateY(0); }
+        .popup-icon { font-size: 4rem; color: var(--success); margin-bottom: 1.5rem; }
+        .popup-title { font-size: 1.5rem; font-weight: 600; color: var(--dark-text); margin-bottom: 1rem; }
+        .popup-message { color: var(--dark-text-secondary); margin-bottom: 2rem; line-height: 1.6; }
+
+      /* Styles the calendar icon for Chrome/Edge/Safari */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Turns the black icon white */
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px;
+    transition: var(--transition);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+        @media (max-width: 1200px) { .form-grid { grid-template-columns: 1fr; } .preview-content { grid-template-columns: 1fr; } .datetime-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 992px) { .interview-type-grid { grid-template-columns: 1fr; } .datetime-grid { grid-template-columns: 1fr; } .applicant-header { flex-direction: column; } }
+       @media (max-width: 768px) {
+            .mobile-menu-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .content-area { padding: 1rem; }
+            .schedule-form { padding: 1.5rem; }
+            .form-actions { flex-direction: column; }
+
+            /* ADD THESE TWO LINES FOR MOBILE HEADER FIX */
+            .top-header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1rem; padding-left: 4.5rem; }
+            .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar('job-postings')}"></div>
+
+
+
+<!-- Main Content -->
+<div class="main-content">
+
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <div class="content-area">
+        <!-- Process Steps -->
+        <div class="process-steps">
+            <div class="process-step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-label">Interview Details</div>
+            </div>
+            <div class="process-step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-label">Review & Confirm</div>
+            </div>
+            <div class="process-step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-label">Send Invitations</div>
+            </div>
+        </div>
+
+        <div class="schedule-container">
+            <!-- MODE 1: With Pre-selected Applicant -->
+            <div class="applicant-card" th:if="${selectedApplication != null}">
+                <div class="applicant-header" style="align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                            <i class="fas fa-user-check" style="color: var(--success); font-size: 1.2rem;"></i>
+                            <label style="font-weight: 600; color: var(--dark-text); font-size: 1.1rem;">
+                                Applicant for Interview
+                            </label>
+                            <span class="status-badge"
+                                  th:classappend="'status-' + ${#strings.toLowerCase(selectedApplication.status)}"
+                                  th:text="${selectedApplication.status}"
+                                  style="margin-left: 10px;">Applied</span>
+                        </div>
+
+                        <!-- Pre-selected Applicant Info Card -->
+                        <div class="selected-applicant-info show" style="margin-top: 0; border-left-color: var(--success);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <span style="font-weight: 600; color: var(--success); font-size: 1.1rem;">
+                                        <i class="fas fa-check-circle" style="margin-right: 8px;"></i>Selected:
+                                    </span>
+                                    <span style="margin-left: 10px; font-weight: 600; font-size: 1.1rem;"
+                                          th:text="${selectedApplication.firstName + ' ' + selectedApplication.lastName}">John Doe</span>
+                                    <span style="margin-left: 15px; color: var(--dark-text-secondary);"
+                                          th:text="${selectedApplication.email}">john@example.com</span>
+                                    <span style="margin-left: 15px; color: var(--dark-text-secondary);"
+                                          th:text="${selectedApplication.phone}">123-456-7890</span>
+                                </div>
+                                <a th:href="@{/dashboard/hr/viewApplication/{id}(id=${selectedApplication.id})}"
+                                   class="btn-outline"
+                                   style="padding: 8px 16px; font-size: 0.875rem;">
+                                    <i class="fas fa-eye"></i> View Profile
+                                </a>
+                            </div>
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--dark-border);">
+                                <span style="color: var(--dark-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-briefcase" style="margin-right: 6px;"></i>
+                                    Position: <strong th:text="${selectedApplication.jobTitle != null ? selectedApplication.jobTitle : 'Not specified'}">Software Engineer</strong>
+                                </span>
+                                <span style="color: var(--dark-text-secondary); font-size: 0.9rem; margin-left: 20px;">
+                                    <i class="fas fa-calendar" style="margin-right: 6px;"></i>
+                                    Applied: <strong th:text="${selectedApplication.displayApplicationDate != null ? selectedApplication.displayApplicationDate : 'N/A'}">Jan 15, 2024</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="applicantSelect" th:value="${selectedApplication.id}">
+                <input type="hidden" name="applicationId" id="applicationIdHidden" th:value="${selectedApplication.id}">
+            </div>
+
+            <!-- MODE 2: Without Pre-selected Applicant -->
+            <div class="applicant-card" th:if="${selectedApplication == null}">
+                <div class="applicant-header">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark-text);">
+                            <i class="fas fa-user"></i> Select Applicant for Interview
+                        </label>
+                        <select id="applicantSelect" class="applicant-select" th:if="${applications != null and !applications.isEmpty()}">
+                            <option value="">-- Select an applicant --</option>
+                            <option th:each="app : ${applications}"
+                                    th:value="${app.id}"
+                                    th:text="${app.firstName + ' ' + app.lastName + ' - ' + (app.jobTitle != null ? app.jobTitle : (app.job != null ? app.job.title : 'Position')) + ' (' + app.status + ')'}">
+                                John Doe - Software Engineer (Applied)
+                            </option>
+                        </select>
+                        <div th:if="${applications == null or applications.isEmpty()}" style="color: var(--danger); padding: 12px; background: rgba(239,68,68,0.1); border-radius: 8px;">
+                            <i class="fas fa-exclamation-triangle"></i> No applications found. Please create an application first.
+                        </div>
+                    </div>
+                    <div style="padding-top: 24px;">
+                        <a href="/dashboard/hr/applications" class="btn-outline" style="padding: 12px 20px;">
+                            <i class="fas fa-list"></i> View All Applicants
+                        </a>
+                    </div>
+                </div>
+
+                <div id="selectedApplicantInfo" class="selected-applicant-info"></div>
+                <input type="hidden" name="applicationId" id="applicationIdHidden" value="">
+            </div>
+
+            <!-- Step 1: Interview Details Form -->
+            <div class="schedule-form" id="step1Form">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-plus"></i>
+                    Interview Details
+                </h2>
+
+                <form id="scheduleForm">
+                    <input type="hidden" name="applicationId" id="applicationIdHidden" th:value="${selectedApplication != null ? selectedApplication.id : ''}">
+                    <input type="hidden" name="interviewTime" id="interviewTimeHidden">
+                    <input type="hidden" id="interviewerEmails" name="interviewerEmails">
+
+                    <div class="form-grid">
+                        <!-- Interview Type -->
+                        <div class="form-group full-width">
+                            <label class="form-label required">Interview Type</label>
+                            <div class="interview-type-grid">
+                                <div class="type-option" data-type="phone">
+                                    <input type="radio" name="interviewType" value="phone" required>
+                                    <div class="type-icon"><i class="fas fa-phone"></i></div>
+                                    <div class="type-label">Phone Call</div>
+                                </div>
+                                <div class="type-option" data-type="video">
+                                    <input type="radio" name="interviewType" value="video" required>
+                                    <div class="type-icon"><i class="fas fa-video"></i></div>
+                                    <div class="type-label">Video Call</div>
+                                </div>
+                                <div class="type-option" data-type="in-person">
+                                    <input type="radio" name="interviewType" value="in-person" required>
+                                    <div class="type-icon"><i class="fas fa-users"></i></div>
+                                    <div class="type-label">In-Person</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date, Time and Timezone -->
+                        <div class="form-group full-width">
+                            <label class="form-label required">Date, Time & Timezone</label>
+                            <div class="datetime-grid">
+                                <div class="form-group">
+                                    <input type="date" class="form-control" name="interviewDate" id="interviewDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="time-input-wrapper">
+                                        <select class="form-select" id="timeHour" required>
+                                            <option value="">HH</option>
+                                            <option value="01">01</option><option value="02">02</option><option value="03">03</option>
+                                            <option value="04">04</option><option value="05">05</option><option value="06">06</option>
+                                            <option value="07">07</option><option value="08">08</option><option value="09">09</option>
+                                            <option value="10" selected>10</option><option value="11">11</option><option value="12">12</option>
+                                        </select>
+                                        <span class="time-separator">:</span>
+                                        <select class="form-select" id="timeMinute" required>
+                                            <option value="">MM</option>
+                                            <option value="00" selected>00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                        <select class="form-select" id="timePeriod" required>
+                                            <option value="">--</option>
+                                            <option value="AM">AM</option>
+                                            <option value="PM" selected>PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-select" id="timezone" name="timezone" required>
+                                        <option value="">Select timezone...</option>
+                                        <option value="Asia/Kolkata" selected>India (IST)</option>
+                                        <option value="America/New_York">Eastern Time (ET)</option>
+                                        <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                                        <option value="Europe/London">London (GMT/BST)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Duration -->
+                        <div class="form-group">
+                            <label class="form-label required">Duration</label>
+                            <div class="duration-options">
+                                <button type="button" class="duration-btn" data-duration="30">30 min</button>
+                                <button type="button" class="duration-btn active" data-duration="45">45 min</button>
+                                <button type="button" class="duration-btn" data-duration="60">1 hour</button>
+                                <button type="button" class="duration-btn" data-duration="90">1.5 hours</button>
+                            </div>
+                            <input type="hidden" name="duration" value="45" id="selectedDuration">
+                        </div>
+
+                        <!-- Interview Round -->
+                        <div class="form-group">
+                            <label for="interviewRound" class="form-label required">Interview Round</label>
+                            <select class="form-select" id="interviewRound" name="interviewRound" required>
+                                <option value="">Select round...</option>
+                                <option value="initial">Initial Screening</option>
+                                <option value="technical">Technical Interview</option>
+                                <option value="manager">Manager Interview</option>
+                                <option value="hr">HR Interview</option>
+                                <option value="final">Final Round</option>
+                            </select>
+                        </div>
+
+                        <!-- Priority Level -->
+                        <div class="form-group">
+                            <label for="priority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="low">Low Priority</option>
+                                <option value="medium" selected>Medium Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+
+                        <!-- Interviewer Selection -->
+                        <div class="form-group full-width">
+                            <div class="interviewer-section">
+                                <div class="interviewer-header">
+                                    <label class="form-label required">Select Interviewers</label>
+                                    <span class="interviewer-count" id="interviewerCount">0 selected</span>
+                                </div>
+
+                                <div class="interviewer-search-container">
+                                    <div class="interviewer-search-wrapper">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" class="interviewer-search-input" id="interviewerSearchInput"
+                                               placeholder="Search interviewers by name, role, or department..." autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="interviewer-pills-container" id="interviewerPillsContainer"></div>
+
+                                <div class="selected-interviewers-display" id="selectedInterviewersDisplay">
+                                    <div class="selected-interviewers-title">Selected Interviewers:</div>
+                                    <div class="selected-interviewers-list" id="selectedInterviewersList"></div>
+                                </div>
+
+                                <input type="hidden" name="selectedInterviewers" id="selectedInterviewersInput">
+                            </div>
+                        </div>
+
+                        <!-- Meeting Link/Location -->
+                        <div class="form-group conditional-field full-width" id="videoLinkField">
+                            <label for="meetingLink" class="form-label required">Meeting Link</label>
+                            <input type="url" class="form-control" id="meetingLink" name="meetingLink"
+                                   placeholder="https://meet.google.com/xxx-xxxx-xxx">
+                        </div>
+
+                        <div class="form-group conditional-field full-width" id="locationField">
+                            <label for="location" class="form-label required">Interview Location</label>
+                            <textarea class="form-control" id="location" name="location" rows="2"
+                                      placeholder="Conference Room A, 2nd Floor, Main Building"></textarea>
+                        </div>
+
+                        <!-- Interview Notes -->
+                        <div class="form-group full-width">
+                            <label for="notes" class="form-label">Interview Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="4"
+                                      placeholder="Add any special instructions, topics to cover, or notes for the interviewers..."></textarea>
+                            <div class="form-text">Characters remaining: <span id="notesCounter">500</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <a href="/dashboard/hr/applications" class="btn-outline">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                        <button type="button" class="btn-primary" id="nextButton" disabled>
+                            <i class="fas fa-arrow-right"></i>
+                            Next: Review & Confirm
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Review & Confirm -->
+            <div class="interview-preview" id="step2Form">
+                <div class="preview-header">
+                    <h3 class="preview-title">Review Interview Details</h3>
+                    <button type="button" class="btn-outline" id="backToFormButton">
+                        <i class="fas fa-edit"></i>
+                        Edit Details
+                    </button>
+                </div>
+
+                <div class="preview-content">
+                    <div class="preview-item">
+                        <div class="preview-label">Interview Type</div>
+                        <div class="preview-value" id="previewType"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Date & Time</div>
+                        <div class="preview-value" id="previewDateTime"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Timezone</div>
+                        <div class="preview-value" id="previewTimezone"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Duration</div>
+                        <div class="preview-value" id="previewDuration"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Interview Round</div>
+                        <div class="preview-value" id="previewRound"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Priority</div>
+                        <div class="preview-value" id="previewPriority"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Interviewers</div>
+                        <div class="preview-value" id="previewInterviewers"></div>
+                    </div>
+                    <div class="preview-item full-width" id="previewLocationContainer">
+                        <div class="preview-label" id="previewLocationLabel"></div>
+                        <div class="preview-value" id="previewLocation"></div>
+                    </div>
+                    <div class="preview-item full-width">
+                        <div class="preview-label">Notes</div>
+                        <div class="preview-value" id="previewNotes"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" id="backButton">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </button>
+                    <button type="button" class="btn-primary" id="confirmButton">
+                        <i class="fas fa-calendar-check"></i>
+                        Confirm & Schedule
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Popup -->
+<div class="success-popup" id="successPopup">
+    <div class="popup-content">
+        <div class="popup-icon"><i class="fas fa-check-circle"></i></div>
+        <h3 class="popup-title">Interview Scheduled Successfully</h3>
+        <p class="popup-message">
+            The interview has been scheduled successfully. All participants will receive calendar invitations shortly.
+        </p>
+        <a href="/dashboard/hr/applications" class="btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Applications
+        </a>
+    </div>
+</div>
+
+<!-- Call the common scripts fragment -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mock interviewer data
+        const interviewersData =[
+            { id: 1, name: "Vijay", role: "Operations Head", department: "Operations", email: "vijay.sekuru@thewmad.com" },
+            { id: 2, name: "Rohini", role: "Technical Recruiter", department: "Human Resources", email: "rohiniancha@gmail.com" },
+            { id: 3, name: "Sireesha", role: "Java Specialist", department: "Developer", email: "akkishiri717@gmail.com" }
+        ];
+
+        // State
+        let selectedInterviewers = [];
+        let allInterviewers =[...interviewersData];
+        let filteredInterviewers = [...interviewersData];
+
+        // DOM Elements
+        const form = document.getElementById('scheduleForm');
+        const typeOptions = document.querySelectorAll('.type-option');
+        const videoLinkField = document.getElementById('videoLinkField');
+        const locationField = document.getElementById('locationField');
+        const meetingLinkInput = document.getElementById('meetingLink');
+        const locationInput = document.getElementById('location');
+        const durationButtons = document.querySelectorAll('.duration-btn');
+        const selectedDurationInput = document.getElementById('selectedDuration');
+        const dateInput = document.getElementById('interviewDate');
+        const timeHourInput = document.getElementById('timeHour');
+        const timeMinuteInput = document.getElementById('timeMinute');
+        const timePeriodSelect = document.getElementById('timePeriod');
+        const timezoneSelect = document.getElementById('timezone');
+        const interviewTimeHidden = document.getElementById('interviewTimeHidden');
+        const notesTextarea = document.getElementById('notes');
+        const notesCounter = document.getElementById('notesCounter');
+        const interviewRound = document.getElementById('interviewRound');
+        const applicantSelect = document.getElementById('applicantSelect');
+        const applicationIdHidden = document.getElementById('applicationIdHidden');
+        const selectedApplicantInfo = document.getElementById('selectedApplicantInfo');
+
+        const searchInput = document.getElementById('interviewerSearchInput');
+        const pillsContainer = document.getElementById('interviewerPillsContainer');
+        const interviewerCountDisplay = document.getElementById('interviewerCount');
+        const selectedInterviewersInput = document.getElementById('selectedInterviewersInput');
+        const selectedInterviewersDisplay = document.getElementById('selectedInterviewersDisplay');
+        const selectedInterviewersList = document.getElementById('selectedInterviewersList');
+
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const step1Form = document.getElementById('step1Form');
+        const step2Form = document.getElementById('step2Form');
+        const nextButton = document.getElementById('nextButton');
+        const backButton = document.getElementById('backButton');
+        const backToFormButton = document.getElementById('backToFormButton');
+        const confirmButton = document.getElementById('confirmButton');
+
+        const successPopup = document.getElementById('successPopup');
+
+        // ========== APPLICANT SELECTION HANDLER ==========
+        if (applicantSelect) {
+            // Only add change listener if it's a real select element (not hidden input)
+            if (applicantSelect.tagName === 'SELECT') {
+                applicantSelect.addEventListener('change', function() {
+                    const applicationId = this.value;
+
+                    // Update hidden input
+                    if (applicationIdHidden) {
+                        applicationIdHidden.value = applicationId;
+                    }
+
+                    if (applicationId) {
+                        // Fetch applicant details via AJAX
+                        fetch(`/dashboard/hr/api/application/${applicationId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    updateSelectedApplicantInfo(data.application);
+                                    showToast('Applicant selected successfully', 'success');
+                                    updateFormProgress();
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching applicant:', error);
+                                showToast('Error loading applicant details', 'error');
+                            });
+                    } else {
+                        // Hide selected applicant info if no applicant selected
+                        const infoDiv = document.getElementById('selectedApplicantInfo');
+                        if (infoDiv) {
+                            infoDiv.classList.remove('show');
+                        }
+                        updateFormProgress();
+                    }
+                });
+            }
+        }
+
+        // Function to update selected applicant info
+        function updateSelectedApplicantInfo(applicant) {
+            let infoDiv = document.getElementById('selectedApplicantInfo');
+
+            if (!infoDiv) {
+                infoDiv = document.createElement('div');
+                infoDiv.id = 'selectedApplicantInfo';
+                infoDiv.className = 'selected-applicant-info';
+                document.querySelector('.applicant-card').appendChild(infoDiv);
+            }
+
+            infoDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-weight: 600; color: var(--primary);">Selected Applicant:</span>
+                        <span style="margin-left: 10px; font-weight: 600;">${applicant.firstName} ${applicant.lastName}</span>
+                        <span style="margin-left: 15px; color: var(--dark-text-secondary);">${applicant.email}</span>
+                        <span style="margin-left: 15px;">${applicant.phone || 'N/A'}</span>
+                    </div>
+                    <span class="status-badge status-${applicant.status.toLowerCase()}">${applicant.status}</span>
+                </div>
+            `;
+
+            infoDiv.classList.add('show');
+        }
+
+        function init() {
+            setDefaultDate();
+            setupEventListeners();
+            renderInterviewerPills(allInterviewers);
+
+            // Check if applicant is pre-selected (from application list/details page)
+            const preSelectedId = document.getElementById('applicationIdHidden')?.value;
+            if (preSelectedId && preSelectedId.trim() !== '') {
+                console.log('Pre-selected applicant detected:', preSelectedId);
+                // Pre-selected mode - no need to show dropdown, form is ready
+                updateFormProgress();
+            } else {
+                // Sidebar mode - need to select applicant
+                console.log('Sidebar mode - waiting for applicant selection');
+            }
+        }
+
+        function setDefaultDate() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+        }
+
+        function setupEventListeners() {
+            // Interview type selection
+            typeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    typeOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+
+                    const type = this.dataset.type;
+                    videoLinkField.classList.remove('show');
+                    locationField.classList.remove('show');
+                    meetingLinkInput.removeAttribute('required');
+                    locationInput.removeAttribute('required');
+
+                    if (type === 'video') {
+                        videoLinkField.classList.add('show');
+                        meetingLinkInput.setAttribute('required', 'required');
+                    } else if (type === 'in-person') {
+                        locationField.classList.add('show');
+                        locationInput.setAttribute('required', 'required');
+                    }
+
+                    updateFormProgress();
+                });
+            });
+
+            // Duration selection
+            durationButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    durationButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDurationInput.value = this.dataset.duration;
+                    updateFormProgress();
+                });
+            });
+
+            // Time fields
+            timeHourInput.addEventListener('change', updateTimeHidden);
+            timeMinuteInput.addEventListener('change', updateTimeHidden);
+            timePeriodSelect.addEventListener('change', updateTimeHidden);
+            timeHourInput.addEventListener('input', updateFormProgress);
+            timeMinuteInput.addEventListener('input', updateFormProgress);
+            timePeriodSelect.addEventListener('input', updateFormProgress);
+
+            // Date and timezone
+            dateInput.addEventListener('change', updateFormProgress);
+            timezoneSelect.addEventListener('change', updateFormProgress);
+
+            // Interview round
+            interviewRound.addEventListener('change', updateFormProgress);
+
+            // Interviewer search
+            searchInput.addEventListener('input', filterInterviewers);
+
+            // Form fields
+            meetingLinkInput.addEventListener('input', updateFormProgress);
+            locationInput.addEventListener('input', updateFormProgress);
+
+            // Notes counter
+            notesTextarea.addEventListener('input', function() {
+                const maxLength = 500;
+                const currentLength = this.value.length;
+
+                if (currentLength > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                    notesCounter.textContent = 0;
+                } else {
+                    notesCounter.textContent = maxLength - currentLength;
+                }
+                updateFormProgress();
+            });
+
+            // Navigation
+            nextButton.addEventListener('click', handleNextButton);
+            backButton.addEventListener('click', handleBackButton);
+            backToFormButton.addEventListener('click', handleBackToFormButton);
+            confirmButton.addEventListener('click', handleConfirmButton);
+
+            // Success popup
+            successPopup.addEventListener('click', function(e) {
+                if (e.target === successPopup) {
+                    successPopup.classList.remove('show');
+                }
+            });
+        }
+
+        function getApplicationId() {
+            // First check if we have a pre-selected application (hidden input with value)
+            const hiddenInput = document.getElementById('applicationIdHidden');
+            if (hiddenInput && hiddenInput.value && hiddenInput.value.trim() !== '') {
+                return hiddenInput.value.trim();
+            }
+
+            // Fallback to applicant select dropdown (for sidebar mode)
+            const applicantSelect = document.getElementById('applicantSelect');
+            if (applicantSelect && applicantSelect.value && applicantSelect.value.trim() !== '') {
+                return applicantSelect.value.trim();
+            }
+
+            return '';
+        }
+
+        function updateTimeHidden() {
+            const hour = timeHourInput.value;
+            const minute = timeMinuteInput.value;
+            const period = timePeriodSelect.value;
+
+            if (hour && minute && period) {
+                interviewTimeHidden.value = convertTo24Hour(hour, minute, period);
+            }
+        }
+
+        function convertTo24Hour(hour, minute, period) {
+            let hour24 = parseInt(hour);
+            if (period === 'PM' && hour24 !== 12) {
+                hour24 += 12;
+            } else if (period === 'AM' && hour24 === 12) {
+                hour24 = 0;
+            }
+            return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        }
+
+        function formatTime12Hour(hour, minute, period) {
+            return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${period}`;
+        }
+
+        function updateFormProgress() {
+            const hasValidTime = timeHourInput.value && timeMinuteInput.value && timePeriodSelect.value &&
+                                timeHourInput.value !== '' && timeMinuteInput.value !== '' && timePeriodSelect.value !== '';
+
+            const requiredFields =[
+                document.querySelector('input[name="interviewType"]:checked'),
+                dateInput.value,
+                hasValidTime,
+                timezoneSelect.value && timezoneSelect.value !== '',
+                interviewRound.value && interviewRound.value !== '',
+                selectedInterviewers.length > 0
+            ];
+
+            const selectedType = document.querySelector('input[name="interviewType"]:checked');
+            if (selectedType) {
+                if (selectedType.value === 'video') {
+                    requiredFields.push(meetingLinkInput.value && meetingLinkInput.value.trim() !== '');
+                } else if (selectedType.value === 'in-person') {
+                    requiredFields.push(locationInput.value && locationInput.value.trim() !== '');
+                }
+            }
+
+            const allFilled = requiredFields.every(field => field);
+            nextButton.disabled = !allFilled;
+
+            // Update interviewer emails
+            const interviewerEmails = selectedInterviewers.map(i => i.email).join(',');
+            document.getElementById('interviewerEmails').value = interviewerEmails;
+        }
+
+        function filterInterviewers() {
+            const searchQuery = searchInput.value.trim().toLowerCase();
+
+            filteredInterviewers = allInterviewers.filter(interviewer => {
+                return !searchQuery ||
+                    interviewer.name.toLowerCase().includes(searchQuery) ||
+                    interviewer.role.toLowerCase().includes(searchQuery) ||
+                    interviewer.department.toLowerCase().includes(searchQuery);
+            });
+
+            renderInterviewerPills(filteredInterviewers);
+        }
+
+        function renderInterviewerPills(interviewers) {
+            pillsContainer.innerHTML = '';
+
+            if (interviewers.length === 0) {
+                pillsContainer.innerHTML = '<div class="no-results-message">No interviewers found</div>';
+                return;
+            }
+
+            interviewers.forEach(interviewer => {
+                const isSelected = selectedInterviewers.some(sel => sel.id === interviewer.id);
+                const pill = document.createElement('div');
+                pill.className = `interviewer-pill ${isSelected ? 'selected' : ''}`;
+                pill.dataset.id = interviewer.id;
+
+                pill.innerHTML = isSelected ?
+                    `<span class="pill-name">${interviewer.name}</span><span class="pill-icon"><i class="fas fa-check"></i></span>` :
+                    `<span class="pill-name">${interviewer.name}</span><span class="pill-icon"><i class="fas fa-plus"></i></span>`;
+
+                pill.addEventListener('click', () => toggleInterviewer(interviewer));
+                pillsContainer.appendChild(pill);
+            });
+        }
+
+        function toggleInterviewer(interviewer) {
+            const index = selectedInterviewers.findIndex(sel => sel.id === interviewer.id);
+
+            if (index > -1) {
+                selectedInterviewers.splice(index, 1);
+            } else {
+                selectedInterviewers.push(interviewer);
+            }
+
+            updateInterviewerDisplay();
+            updateFormProgress();
+        }
+
+        function updateInterviewerDisplay() {
+            interviewerCountDisplay.textContent = `${selectedInterviewers.length} selected`;
+            selectedInterviewersInput.value = selectedInterviewers.map(i => i.id).join(',');
+            renderInterviewerPills(filteredInterviewers);
+
+            if (selectedInterviewers.length > 0) {
+                selectedInterviewersDisplay.classList.add('show');
+                selectedInterviewersList.innerHTML = '';
+
+                selectedInterviewers.forEach(interviewer => {
+                    const tag = document.createElement('div');
+                    tag.className = 'selected-interviewer-tag';
+                    tag.innerHTML = `
+                        <span class="selected-interviewer-name">${interviewer.name}</span>
+                        <span class="selected-interviewer-role">- ${interviewer.role}</span>
+                        <button type="button" class="remove-interviewer-btn" data-id="${interviewer.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+
+                    const removeBtn = tag.querySelector('.remove-interviewer-btn');
+                    removeBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const int = selectedInterviewers.find(i => i.id === parseInt(this.dataset.id));
+                        if (int) toggleInterviewer(int);
+                    });
+
+                    selectedInterviewersList.appendChild(tag);
+                });
+            } else {
+                selectedInterviewersDisplay.classList.remove('show');
+            }
+        }
+
+        function handleNextButton() {
+            // Validate applicant selection before proceeding
+            const applicationId = getApplicationId();
+            if (!applicationId || applicationId === '') {
+                showToast('Please select an applicant first', 'error');
+                // Scroll to applicant selection
+                document.querySelector('.applicant-card').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            updatePreview();
+            step1Form.style.display = 'none';
+            step2Form.classList.add('show');
+            step1.classList.remove('active');
+            step1.classList.add('completed');
+            step2.classList.add('active');
+            step2Form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleBackButton() {
+            step2Form.classList.remove('show');
+            step1Form.style.display = 'block';
+            step2.classList.remove('active');
+            step1.classList.add('active');
+            step1.classList.remove('completed');
+            step1Form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleBackToFormButton() {
+            handleBackButton();
+        }
+
+        function updatePreview() {
+            const interviewType = document.querySelector('input[name="interviewType"]:checked');
+            const interviewDate = dateInput.value;
+            const hour = timeHourInput.value;
+            const minute = timeMinuteInput.value;
+            const period = timePeriodSelect.value;
+            const timezone = timezoneSelect.options[timezoneSelect.selectedIndex].text;
+            const duration = selectedDurationInput.value;
+            const round = interviewRound.options[interviewRound.selectedIndex].text;
+            const priority = document.getElementById('priority').options[document.getElementById('priority').selectedIndex].text;
+            const notes = notesTextarea.value;
+
+            document.getElementById('previewType').textContent = interviewType ?
+                interviewType.value.charAt(0).toUpperCase() + interviewType.value.slice(1) : '';
+
+            if (interviewDate && hour && minute) {
+                const formattedDate = new Date(interviewDate).toLocaleDateString('en-US', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+                const formattedTime = formatTime12Hour(hour, minute, period);
+                document.getElementById('previewDateTime').textContent = `${formattedDate} at ${formattedTime}`;
+            }
+
+            document.getElementById('previewTimezone').textContent = timezone;
+            document.getElementById('previewDuration').textContent = duration + ' minutes';
+            document.getElementById('previewRound').textContent = round;
+            document.getElementById('previewPriority').textContent = priority;
+            document.getElementById('previewInterviewers').textContent =
+                selectedInterviewers.map(i => `${i.name} (${i.department})`).join(', ');
+            document.getElementById('previewNotes').textContent = notes || 'No notes provided';
+
+            if (interviewType && interviewType.value === 'video') {
+                document.getElementById('previewLocationLabel').textContent = 'Meeting Link';
+                document.getElementById('previewLocation').textContent = meetingLinkInput.value;
+                document.getElementById('previewLocationContainer').style.display = 'block';
+            } else if (interviewType && interviewType.value === 'in-person') {
+                document.getElementById('previewLocationLabel').textContent = 'Location';
+                document.getElementById('previewLocation').textContent = locationInput.value;
+                document.getElementById('previewLocationContainer').style.display = 'block';
+            } else {
+                document.getElementById('previewLocationContainer').style.display = 'none';
+            }
+        }
+
+        function handleConfirmButton() {
+            // Get the application ID from hidden input
+            const applicationId = getApplicationId();
+
+            // VALIDATION: Check if an applicant is selected
+            if (!applicationId || applicationId.trim() === '') {
+                showToast('Please select an applicant to schedule interview', 'error');
+                // Scroll to applicant selection
+                document.querySelector('.applicant-card').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            // Collect all form data
+            const formData = {
+                applicationId: applicationId,
+                interviewType: document.querySelector('input[name="interviewType"]:checked')?.value || '',
+                interviewDate: dateInput.value,
+                interviewTime: interviewTimeHidden.value,
+                duration: selectedDurationInput.value,
+                interviewRound: interviewRound.value,
+                priority: document.getElementById('priority').value,
+                meetingLink: meetingLinkInput.value || '',
+                location: locationInput.value || '',
+                notes: notesTextarea.value || '',
+                interviewerEmails: selectedInterviewers.map(i => i.email).join(','),
+                interviewerIds: selectedInterviewers.map(i => i.id).join(',')
+            };
+
+            console.log('Submitting interview schedule:', formData);
+
+            // Disable confirm button to prevent double submission
+            const confirmBtn = document.getElementById('confirmButton');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scheduling...';
+
+            // Send data to server
+            fetch('/dashboard/hr/save-interview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        try {
+                            // Try to parse as JSON
+                            const data = JSON.parse(text);
+                            throw new Error(data.error || `Server error: ${response.status}`);
+                        } catch (e) {
+                            // If not JSON, throw the text
+                            throw new Error(text || `Server error: ${response.status}`);
+                        }
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Show success popup
+                    successPopup.classList.add('show');
+                    step2.classList.remove('active');
+                    step2.classList.add('completed');
+                    step3.classList.add('active');
+
+                    showToast('Interview scheduled successfully!', 'success');
+
+                    // Redirect after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/dashboard/hr/applications';
+                    }, 3000);
+                } else {
+                    showToast('Failed to schedule interview: ' + (data.error || 'Unknown error'), 'error');
+                    // Re-enable button
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm & Schedule';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error scheduling interview: ' + error.message, 'error');
+                // Re-enable button
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm & Schedule';
+            });
+        }
+
+        function showToast(msg, type = 'success') {
+            const old = document.getElementById('toast');
+            if (old) old.remove();
+
+            const bg = type === 'success' ? '#10b981' : '#ef4444';
+            const toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.style.cssText = `
+                position:fixed; top:20px; right:20px; z-index:3000;
+                background:${bg}; color:#fff; padding:12px 18px;
+                border-radius:6px; font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,.3);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        init();
+    });
+
+   // Mobile sidebar toggle - IMPROVED
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+
+            // Toggle icon between bars and times (X)
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+                this.setAttribute('aria-expanded', 'true');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                this.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+
+                sidebar.classList.remove('active');
+                const icon = mobileMenuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                const icon = mobileMenuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+</script>
+</body>
+</html>

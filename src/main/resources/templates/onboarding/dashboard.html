@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Dashboard - HRMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Black Scrollbar */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+/* === SIDEBAR STYLES === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, .2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary); /* Makes the section icon blue */
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px); /* Adds the nice slide effect on hover */
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary); /* Makes the link icons blue */
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff; /* Turns icon white when hovered or active */
+        }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge.success {
+            background: var(--success);
+        }
+
+        .nav-badge.warning {
+            background: var(--warning);
+        }
+
+        .sidebar-content {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* === TOP HEADER === */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: .75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: .6rem .75rem .6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: .875rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* === PAGE SPECIFIC STYLES === */
+        .content-area {
+            padding: 1.5rem;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--dark-border);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-title p {
+            color: var(--dark-text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+       /* Statistics - Matching Applications Page Style */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card {
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .1);
+    border-color: var(--primary);
+}
+
+.stat-card.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+.stat-card-body {
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dark-text);
+}
+
+.stat-title {
+    font-size: 0.75rem;
+    color: var(--dark-text-secondary);
+    line-height: 1.2;
+    margin-top: 0.35rem;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    opacity: .7;
+    color: var(--primary);
+}
+
+/* Card bottom colors - matching applications page */
+.stat-card .card-footer-bar {
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.stat-card.pending .card-footer-bar { background: #818cf8; }
+.stat-card.in-progress .card-footer-bar { background: #0ea5e9; }
+.stat-card.submitted .card-footer-bar { background: #10b981; }
+.stat-card.completed .card-footer-bar { background: #8b5cf6; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+        /* Employees Section */
+        .employees-section {
+            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--dark-border);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--dark-text);
+        }
+
+        .section-title i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .count-badge {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Search and Filter */
+        .search-filter-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        #statusFilter {
+            width: 180px;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        #statusFilter:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        /* Table Styles */
+        .table {
+            background: transparent;
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .table th {
+            border-color: var(--dark-border);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 0.85rem 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+        }
+
+        .table td {
+            border-color: var(--dark-border);
+            padding: 0.85rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        /* Employee Info */
+        .employee-name-cell {
+            min-width: 200px;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.15rem;
+        }
+
+        .employee-id {
+            font-size: 0.8rem;
+            color: var(--dark-text-secondary);
+        }
+
+        /* Progress Wrapper */
+        .progress-wrapper {
+            min-width: 120px;
+        }
+
+        .progress {
+            background: var(--dark-border);
+            border-radius: 3px;
+            overflow: hidden;
+            height: 6px;
+        }
+
+        .progress-bar {
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 0.25rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Status Badges */
+        .badge-status {
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-status.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-status.submitted {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--info);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .badge-status.in-progress {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .badge-status.completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-status.not-started {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--dark-text-secondary);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        /* Button Styles */
+        .btn-sm {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            min-width: 32px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-outline-warning {
+            border-color: var(--warning);
+            color: var(--warning);
+            background: transparent;
+        }
+
+        .btn-outline-warning:hover {
+            background: var(--warning);
+            border-color: var(--warning);
+            color: white;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert i {
+            font-size: 1.1rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--dark-text-secondary);
+        }
+
+        .empty-state-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            font-size: 1.75rem;
+            color: white;
+        }
+
+        .empty-state h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* User Profile Menu */
+        .user-profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--sidebar-hover);
+        }
+
+        .dropdown-item:active {
+            background: var(--primary);
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            margin-top: 8px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .empty-notifications {
+            padding: 24px;
+            text-align: center;
+            color: var(--dark-text-secondary);
+            font-size: 13px;
+        }
+
+        .notification-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--dark-border);
+            text-align: center;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-filter-container {
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            #statusFilter {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar('job-postings')}"></div>
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <div class="dashboard-container">
+            <!-- Header Section -->
+            <div class="dashboard-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <h1><i class="fas fa-user-check me-2"></i>Onboarding Dashboard</h1>
+                        <p>Manage and track employee onboarding progress</p>
+                    </div>
+                    <a href="/dashboard/hr" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Main
+                    </a>
+                </div>
+
+                <!-- Statistics - Matching Applications Page Style -->
+                <div class="stats-grid">
+                    <!-- Pending Card -->
+                    <div class="stat-card pending" onclick="filterByStatus('DOCUMENTS_PENDING')" th:classappend="${selectedStatus == 'DOCUMENTS_PENDING'} ? 'active' : ''">
+                        <div class="stat-card-body">
+                            <div>
+                                <div class="stat-value" th:text="${totalPending != null ? totalPending : 0}">0</div>
+                                <div class="stat-title">Pending</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        </div>
+                        <div class="card-footer-bar"></div>
+                    </div>
+
+                    <!-- In Progress Card -->
+                    <div class="stat-card in-progress" onclick="filterByStatus('IN_PROGRESS')" th:classappend="${selectedStatus == 'IN_PROGRESS'} ? 'active' : ''">
+                        <div class="stat-card-body">
+                            <div>
+                                <div class="stat-value" th:text="${totalInProgress != null ? totalInProgress : 0}">0</div>
+                                <div class="stat-title">In Progress</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-sync-alt"></i></div>
+                        </div>
+                        <div class="card-footer-bar"></div>
+                    </div>
+
+                    <!-- Submitted Card -->
+                    <div class="stat-card submitted" onclick="filterByStatus('DOCUMENTS_SUBMITTED')" th:classappend="${selectedStatus == 'DOCUMENTS_SUBMITTED'} ? 'active' : ''">
+                        <div class="stat-card-body">
+                            <div>
+                                <div class="stat-value" th:text="${totalInProgress != null && totalPending != null ? totalInProgress - totalPending : 0}">0</div>
+                                <div class="stat-title">Submitted</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-file-upload"></i></div>
+                        </div>
+                        <div class="card-footer-bar"></div>
+                    </div>
+
+                    <!-- Completed Card -->
+                    <div class="stat-card completed" onclick="filterByStatus('COMPLETED')" th:classappend="${selectedStatus == 'COMPLETED'} ? 'active' : ''">
+                        <div class="stat-card-body">
+                            <div>
+                                <div class="stat-value" th:text="${employees != null ? #lists.size(employees.?[onboardingStatus == 'COMPLETED']) : 0}">0</div>
+                                <div class="stat-title">Completed</div>
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        </div>
+                        <div class="card-footer-bar"></div>
+                    </div>
+                </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle"></i>
+                <div th:text="${success}"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" style="background: none; border: none; color: inherit; font-size: 1.2rem; margin-left: auto;">&times;</button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle"></i>
+                <div th:text="${error}"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" style="background: none; border: none; color: inherit; font-size: 1.2rem; margin-left: auto;">&times;</button>
+            </div>
+
+            <!-- Employees Section -->
+            <div class="employees-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-users"></i>
+                        <h3>Onboarding Employees</h3>
+                        <div class="count-badge" th:text="${totalPending != null ? totalPending : 0}">0</div>
+                    </div>
+
+                    <!-- Search and Filter Controls -->
+                    <div class="search-filter-container">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="employeeSearch" placeholder="Search by name or ID...">
+                        </div>
+                        <select id="statusFilter" class="form-control">
+                            <option value="all">All Status</option>
+                            <option value="NOT_STARTED">Not Started</option>
+                            <option value="DOCUMENTS_PENDING">Pending</option>
+                            <option value="DOCUMENTS_SUBMITTED">Submitted</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="COMPLETED">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Employees Table -->
+                <div th:if="${employees != null and !employees.empty}">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover" id="employeesTable">
+                            <thead>
+                            <tr>
+                                <th style="width: 100px;">Employee ID</th>
+                                <th>Employee Name</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th style="width: 100px;">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="employee : ${employees}" class="employee-row"
+                                th:attr="data-status=${employee.onboardingStatus}"
+                                th:data-employee-id="${employee.employeeId}">
+                                <td class="fw-bold" th:text="${employee.employeeId}">N/A</td>
+                                <td class="employee-name-cell">
+                                    <div class="employee-name" th:text="${employee.firstName + ' ' + employee.lastName}">
+                                        John Doe
+                                    </div>
+                                    <div class="employee-id" th:text="${employee.employeeId}">
+                                        ID
+                                    </div>
+                                </td>
+                                <td th:text="${employee.department}">Department</td>
+                                <td th:text="${employee.designation}">Designation</td>
+                                <td>
+                                    <span th:switch="${employee.onboardingStatus}">
+                                        <span th:case="'DOCUMENTS_PENDING'" class="badge-status pending">Pending</span>
+                                        <span th:case="'DOCUMENTS_SUBMITTED'" class="badge-status submitted">Submitted</span>
+                                        <span th:case="'IN_PROGRESS'" class="badge-status in-progress">In Progress</span>
+                                        <span th:case="'COMPLETED'" class="badge-status completed">Completed</span>
+                                        <span th:case="'NOT_STARTED'" class="badge-status not-started">Not Started</span>
+                                        <span th:case="*" class="badge-status" th:text="${employee.onboardingStatus}">Status</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="progress-wrapper">
+                                        <div class="progress-label">
+                                            <span>Docs</span>
+                                            <span th:text="${employee.submittedDocuments != null ? employee.submittedDocuments : 0} + '/' + ${employee.totalDocuments != null ? employee.totalDocuments : 0}">
+                                                0/0
+                                            </span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-info"
+                                                 th:style="'width: ' + (${employee.totalDocuments != null and employee.totalDocuments > 0} ?
+                                                 ((${employee.submittedDocuments != null ? employee.submittedDocuments : 0} * 100) / ${employee.totalDocuments}) : 0) + '%;'"
+                                                 role="progressbar">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <!-- View Button -->
+                                        <a th:href="@{/onboarding/employee/{employeeId}(employeeId=${employee.employeeId})}"
+                                           class="btn btn-sm btn-outline-primary" title="View Dashboard">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <!-- Upload Button -->
+                                        <a th:href="@{/onboarding/employee/{employeeId}(employeeId=${employee.employeeId})}"
+                                           class="btn btn-sm btn-outline-warning" title="Manage Documents">
+                                            <i class="fas fa-upload"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${employees == null or employees.empty}" class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h4>No Employees Pending Onboarding</h4>
+                    <p>All new employees have completed their onboarding process.</p>
+                    <a th:href="@{/dashboard/hr/hired-candidates}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus me-2"></i> View Hired Candidates
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call the common scripts fragment -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile sidebar toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Header search functionality
+        const headerSearchInput = document.getElementById('searchInput');
+        if (headerSearchInput) {
+            headerSearchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                filterTable(term);
+            });
+        }
+
+        // Onboarding page specific search and filter
+        const employeeSearch = document.getElementById('employeeSearch');
+        const statusFilter = document.getElementById('statusFilter');
+
+        function filterEmployees() {
+            const searchTerm = employeeSearch ? employeeSearch.value.toLowerCase() : '';
+            const statusFilterValue = statusFilter ? statusFilter.value : 'all';
+
+            const rows = document.querySelectorAll('.employee-row');
+            rows.forEach(row => {
+                const employeeId = row.getAttribute('data-employee-id').toLowerCase();
+                const employeeName = row.querySelector('.employee-name').textContent.toLowerCase();
+                const department = row.children[2].textContent.toLowerCase();
+                const designation = row.children[3].textContent.toLowerCase();
+                const status = row.getAttribute('data-status');
+
+                const matchesSearch = employeeId.includes(searchTerm) ||
+                                    employeeName.includes(searchTerm) ||
+                                    department.includes(searchTerm) ||
+                                    designation.includes(searchTerm);
+
+                const matchesStatus = statusFilterValue === 'all' || status === statusFilterValue;
+
+                row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+            });
+        }
+
+        if (employeeSearch) {
+            employeeSearch.addEventListener('input', filterEmployees);
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', filterEmployees);
+        }
+
+        // Row click functionality (excluding action buttons)
+        const tableRows = document.querySelectorAll('.employee-row');
+        tableRows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                // Don't navigate if clicking on buttons
+                if (e.target.tagName === 'BUTTON' ||
+                    e.target.tagName === 'A' ||
+                    e.target.closest('button') ||
+                    e.target.closest('a')) {
+                    return;
+                }
+
+                const employeeId = this.getAttribute('data-employee-id');
+                if (employeeId && employeeId !== 'unknown') {
+                    window.location.href = `/onboarding/employee/${employeeId}`;
+                }
+            });
+        });
+
+        // Initialize dropdowns
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        const dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
+        });
+    });
+
+    function filterTable(searchTerm) {
+        const rows = document.querySelectorAll('.employee-row');
+        rows.forEach(row => {
+            const employeeId = row.getAttribute('data-employee-id').toLowerCase();
+            const employeeName = row.querySelector('.employee-name').textContent.toLowerCase();
+            const department = row.children[2].textContent.toLowerCase();
+            const designation = row.children[3].textContent.toLowerCase();
+
+            const matchesSearch = employeeId.includes(searchTerm) ||
+                                employeeName.includes(searchTerm) ||
+                                department.includes(searchTerm) ||
+                                designation.includes(searchTerm);
+
+            row.style.display = matchesSearch ? '' : 'none';
+        });
+    }
+
+   function filterByStatus(status) {
+    // Remove active class from all cards
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('active');
+    });
+
+    // Add active class to clicked card
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
+
+    // Update filter dropdown and trigger filter
+    if (statusFilter) {
+        statusFilter.value = status;
+        statusFilter.dispatchEvent(new Event('change'));
+    }
+}
+
+    function toggleNotificationDropdown() {
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    }
+
+    function markAllNotificationsRead() {
+        const badge = document.getElementById('notificationBadge');
+        badge.style.display = 'none';
+        badge.textContent = '0';
+
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        dropdown.style.display = 'none';
+
+        alert('All notifications marked as read');
+    }
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        const trigger = document.querySelector('.notification-trigger');
+
+        if (dropdown && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>

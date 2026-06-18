@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentis IT · Roles & Access Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --dark-bg: #0f172a; --dark-card: #1e293b; --dark-border: #334155;
+            --dark-text: #f8fafc; --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1; --primary-hover: #4f46e5;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #0ea5e9;
+            --transition: all .2s ease;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: var(--dark-text); font-size: 14px; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f1a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+        .main-content { min-height: 100vh; width: 100%; max-width: 1400px; margin: 0 auto; }
+        .content-area { padding: 1.5rem; }
+        .page-header { margin-bottom: 1.5rem; }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: var(--dark-text); display: flex; align-items: center; gap: 0.75rem; }
+        .page-title i { color: var(--primary); font-size: 1.8rem; }
+        .role-selector-bar { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+        .role-selector { display: flex; align-items: center; gap: 1rem; }
+        .role-selector label { color: var(--dark-text-secondary); }
+        .role-dropdown { position: relative; min-width: 260px; }
+        .role-dropdown select { width: 100%; padding: 0.6rem 2rem 0.6rem 1rem; background: var(--dark-bg); border: 1px solid var(--dark-border); border-radius: 8px; color: var(--dark-text); appearance: none; cursor: pointer; }
+        .role-dropdown i { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--primary); pointer-events: none; }
+        .access-tabs { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--dark-border); padding-bottom: 0.5rem; flex-wrap: wrap; }
+        .access-tab { padding: 0.6rem 1.2rem; background: transparent; border: none; border-radius: 30px; color: var(--dark-text-secondary); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: var(--transition); white-space: nowrap; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .access-tab i { font-size: 1rem; }
+        .access-tab:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .access-tab.active { background: var(--primary); color: white; }
+        .permissions-container { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; }
+        .module-group { border-bottom: 1px solid var(--dark-border); }
+        .module-header { background: rgba(0,0,0,.2); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .module-header:hover { background: rgba(99,102,241,.1); }
+        .module-title { display: flex; align-items: center; gap: 0.75rem; }
+        .module-title i { width: 32px; height: 32px; background: var(--dark-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        .module-title h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+        .module-title span { font-size: 0.75rem; color: var(--dark-text-secondary); margin-left: 0.3rem; }
+        .module-actions { display: flex; align-items: center; gap: 1.5rem; }
+        .expand-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--dark-text-secondary); }
+        .module-content { display: none; padding: 1rem 1.5rem; background: rgba(0,0,0,.1); }
+        .module-content.expanded { display: block; }
+        .feature-group { margin-bottom: 1.5rem; border-left: 3px solid var(--primary); padding-left: 1rem; background: rgba(0,0,0,0.2); border-radius: 0 8px 8px 0; padding-bottom: 1rem; }
+        .feature-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; margin-bottom: 0.5rem; border-bottom: 1px dashed var(--dark-border); }
+        .feature-title { font-weight: 700; color: var(--primary); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; }
+        .feature-title i { font-size: 1rem; color: var(--info); }
+        .functionalities-grid { display: flex; flex-direction: column; gap: 0.4rem; margin-left: 1.2rem; }
+        .functionality-row { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0.5rem; background: var(--dark-bg); border-radius: 6px; }
+        .functionality-info { display: flex; align-items: center; gap: 0.75rem; }
+        .functionality-info i { width: 20px; color: var(--dark-text-secondary); font-size: 0.8rem; }
+        .functionality-name { font-size: 0.85rem; color: var(--dark-text); }
+        .functionality-desc { font-size: 0.65rem; color: var(--dark-text-secondary); margin-left: 0.5rem; }
+        .access-select { background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 500; cursor: pointer; outline: none; transition: var(--transition); min-width: 130px; appearance: none; text-align: center; }
+        .access-select.val-full { border-color: var(--success); color: var(--success); background: rgba(16,185,129,0.05); }
+        .access-select.val-edit { border-color: var(--warning); color: var(--warning); background: rgba(245,158,11,0.05); }
+        .access-select.val-view { border-color: var(--info); color: var(--info); background: rgba(14,165,233,0.05); }
+        .access-select.val-disable { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.05); }
+        .save-bar { background: var(--dark-card); border: 2px solid var(--primary); border-radius: 60px; padding: 1rem 2rem; margin-top: 2.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: 0 10px 30px -5px rgba(99,102,241,0.3); width: 100%; }
+        .save-info { display: flex; align-items: center; gap: 0.75rem; color: var(--dark-text); font-weight: 500; }
+        .save-info i { color: var(--primary); font-size: 1.2rem; }
+        .save-actions { display: flex; gap: 1rem; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 0.6rem 1.8rem; border-radius: 40px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .btn-primary:hover { background: var(--primary-hover); transform: scale(1.02); box-shadow: 0 8px 20px rgba(99,102,241,0.4); }
+        .btn-outline-light { background: transparent; border: 1px solid var(--dark-border); color: var(--dark-text); padding: 0.6rem 1.8rem; border-radius: 40px; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+        .btn-outline-light:hover { border-color: var(--primary); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="main-content">
+    <div class="content-area">
+        <div class="page-header">
+            <div class="page-title"><i class="fas fa-user-shield"></i><span>Roles & Permissions Control</span></div>
+        </div>
+
+        <div class="role-selector-bar">
+            <div class="role-selector">
+                <label><i class="fas fa-users me-1"></i>Select Role to Configure:</label>
+                <div class="role-dropdown">
+                    <select id="roleSelect" onchange="changeRole(this.value)">
+                        <option value="super_admin" selected>Super Admin (Full Access)</option>
+                        <option value="hr">HR (Human Resources)</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="access-tabs" id="mainTabs">
+            <button class="access-tab active" data-tab="all"><i class="fas fa-list"></i> All Permissions</button>
+            <button class="access-tab" data-tab="recruitment"><i class="fas fa-user-tie"></i> Recruitment</button>
+        </div>
+
+        <div class="permissions-container" id="permissionsContainer">
+            <!-- 1. RECRUITMENT MODULE -->
+            <div class="module-group" data-module="recruitment">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <div class="module-title"><i class="fas fa-briefcase"></i><h3>Recruitment</h3><span>Job Posts & Applications</span></div>
+                    <div class="module-actions" onclick="event.stopPropagation()">
+                        <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                </div>
+                <div class="module-content expanded">
+                    <div class="feature-group">
+                        <div class="feature-header"><span class="feature-title"><i class="fas fa-pen-square"></i> Job Postings</span></div>
+                        <div class="functionalities-grid">
+
+                            <!-- Find the Recruitment Module section (~Line 100) and replace the selects with these: -->
+
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-pen-square"></i> Job Postings</span></div>
+                                <div class="functionalities-grid">
+
+                                    <div class="functionality-row">
+                                        <div class="functionality-info">
+                                            <i class="fas fa-list"></i>
+                                            <span class="functionality-name">Manage Job Postings</span>
+                                        </div>
+                                        <!-- ADDED data-feature HERE -->
+                                        <select class="access-select val-full" id="perm-job-postings" data-feature="job_postings" onchange="updateColor(this)">
+                                            <option value="disable">Disable</option>
+                                            <option value="view">View Only</option>
+                                            <option value="edit">View & Edit</option> <!-- THIS LINE CAUSES THE ISSUE -->
+                                            <option value="full" selected>Full Access</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-file-alt"></i> Application Management</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-eye"></i><span class="functionality-name">View Applicants</span></div>
+                                        <!-- ADDED data-feature HERE -->
+                                        <select class="access-select val-view" data-feature="view_applications" onchange="updateColor(this)">
+                                            <option value="disable">Disable</option>
+                                            <option value="view" selected>View Only</option>
+                                            <option value="edit">View & Edit</option>
+                                            <option value="full">Full Access</option>
+                                        </select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-search"></i><span class="functionality-name">Review Resumes</span></div>
+                                        <!-- ADDED data-feature HERE -->
+                                        <select class="access-select val-full" data-feature="review_resumes" onchange="updateColor(this)">
+                                            <option value="disable">Disable</option>
+                                            <option value="view">View Only</option>
+                                            <option value="edit">View & Edit</option>
+                                            <option value="full" selected>Full Access</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. INTERVIEWS MODULE -->
+                    <div class="module-group" data-module="interviews">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-comments"></i><h3>Interviews</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()">
+                                <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-calendar-alt"></i> Interview Operations</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-clock"></i><span class="functionality-name">Schedule Interviews</span><span class="functionality-desc">Arrange time/date for selected applicants</span></div>
+                                        <select class="access-select val-full" data-feature="schedule_interviews" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-check-double"></i><span class="functionality-name">Interview Status Update</span><span class="functionality-desc">Mark as Selected, Rejected, or Pending</span></div>
+                                        <select class="access-select val-full" data-feature="update_interview_status" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. OFFER LETTERS MODULE -->
+                    <div class="module-group" data-module="offers">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-file-contract"></i><h3>Offer Letters</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()"><div class="expand-icon"><i class="fas fa-chevron-down"></i></div></div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-envelope"></i> Offer Management</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-file-signature"></i><span class="functionality-name">Generate Offer Letters</span><span class="functionality-desc">Create formal offers for selected candidates</span></div>
+                                        <select class="access-select val-full" data-feature="generate_offers" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. ONBOARDING MODULE -->
+                    <div class="module-group" data-module="onboarding">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-clipboard-check"></i><h3>Onboarding</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()"><div class="expand-icon"><i class="fas fa-chevron-down"></i></div></div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-file-upload"></i> Document Handling</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-eye"></i><span class="functionality-name">View Employee Uploads</span><span class="functionality-desc">See documents uploaded by employees</span></div>
+                                        <select class="access-select val-full" data-feature="view_uploads" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-check-circle"></i><span class="functionality-name">Verify / Reject Documents</span><span class="functionality-desc">Approve valid docs or reject asking for re-upload</span></div>
+                                        <select class="access-select val-full" data-feature="verify_documents" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-upload"></i><span class="functionality-name">Upload Docs Directly</span><span class="functionality-desc">Upload on behalf of employee</span></div>
+                                        <select class="access-select val-full" data-feature="upload_documents" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. EMPLOYEES MODULE -->
+                    <div class="module-group" data-module="employees">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-users-cog"></i><h3>Employees</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()"><div class="expand-icon"><i class="fas fa-chevron-down"></i></div></div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-users"></i> Employee Database</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-list"></i><span class="functionality-name">View Employee List</span><span class="functionality-desc">Access the main employee directory</span></div>
+                                        <select class="access-select val-full" data-feature="view_employees" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-user-plus"></i><span class="functionality-name">Add New Employee</span><span class="functionality-desc">Add employees & generate credentials</span></div>
+                                        <select class="access-select val-full" data-feature="add_employee" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-user-edit"></i><span class="functionality-name">Edit/Update Employees</span><span class="functionality-desc">Modify existing employee details</span></div>
+                                        <select class="access-select val-full" data-feature="edit_employee" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. ATTENDANCE MODULE -->
+                    <div class="module-group" data-module="attendance">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-user-clock"></i><h3>Attendance</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()"><div class="expand-icon"><i class="fas fa-chevron-down"></i></div></div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-clock"></i> Time Tracking Control</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-desktop"></i><span class="functionality-name">View Live Attendance</span><span class="functionality-desc">See who logged in/out in real-time</span></div>
+                                        <select class="access-select val-full" data-feature="view_attendance" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-edit"></i><span class="functionality-name">Modify Attendance Records</span><span class="functionality-desc">Manually correct employee clock-ins</span></div>
+                                        <select class="access-select val-full" data-feature="edit_attendance" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. LEAVES MODULE -->
+                    <div class="module-group" data-module="leaves">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-calendar-minus"></i><h3>Leaves</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()"><div class="expand-icon"><i class="fas fa-chevron-down"></i></div></div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-envelope-open-text"></i> Leave Requests</span></div>
+                                <div class="functionalities-grid">
+
+                                    <!-- ONE FEATURE FOR LEAVES WITH 3 TIERS -->
+                                    <div class="functionality-row">
+                                        <div class="functionality-info">
+                                            <i class="fas fa-list-ul"></i>
+                                            <span class="functionality-name">Manage Leaves</span>
+                                            <span class="functionality-desc">View, approve, or reject employee leave requests</span>
+                                        </div>
+                                        <select class="access-select val-full" data-feature="manage_leaves" onchange="updateColor(this)">
+                                            <option value="disable">Disable</option>
+                                            <option value="view">View Only</option>
+                                            <option value="full" selected>Full Access</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 8. HOLIDAYS MODULE -->
+                    <div class="module-group" data-module="holidays">
+                        <div class="module-header" onclick="toggleModule(this)">
+                            <div class="module-title"><i class="fas fa-umbrella-beach"></i><h3>Holidays</h3></div>
+                            <div class="module-actions" onclick="event.stopPropagation()"><div class="expand-icon"><i class="fas fa-chevron-down"></i></div></div>
+                        </div>
+                        <div class="module-content expanded">
+                            <div class="feature-group">
+                                <div class="feature-header"><span class="feature-title"><i class="fas fa-calendar"></i> Holiday Setup</span></div>
+                                <div class="functionalities-grid">
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-calendar-alt"></i><span class="functionality-name">View Holiday Calendar</span><span class="functionality-desc">See existing company holidays</span></div>
+                                        <select class="access-select val-view" data-feature="view_holidays" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view" selected>View Only</option><option value="edit">View & Edit</option><option value="full">Full Access</option></select>
+                                    </div>
+                                    <div class="functionality-row">
+                                        <div class="functionality-info"><i class="fas fa-plus-circle"></i><span class="functionality-name">Create / Manage Holidays</span><span class="functionality-desc">Add new holidays that reflect on all dashboards</span></div>
+                                        <select class="access-select val-full" data-feature="manage_holidays" onchange="updateColor(this)"><option value="disable">Disable</option><option value="view">View Only</option><option value="edit">View & Edit</option><option value="full" selected>Full Access</option></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="save-bar">
+                    <div class="save-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Changes local to role: <strong id="currentRoleName">Super Admin</strong></span>
+                    </div>
+                    <div class="save-actions">
+                        <button class="btn-outline-light" onclick="resetChanges()"><i class="fas fa-undo-alt"></i> Reset</button>
+                        <button class="btn-primary" onclick="savePermissions()"><i class="fas fa-save"></i> Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function updateColor(selectElement) {
+                selectElement.classList.remove('val-disable', 'val-view', 'val-edit', 'val-full');
+                selectElement.classList.add('val-' + selectElement.value);
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll('.access-select').forEach(select => {
+                    updateColor(select);
+                });
+            });
+
+            function toggleModule(header) {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.expand-icon i');
+                content.classList.toggle('expanded');
+                icon.className = content.classList.contains('expanded') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+            }
+
+            function changeRole(val) {
+                let roleName = val.replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase());
+                document.getElementById('currentRoleName').innerText = roleName;
+            }
+
+            function resetChanges() { location.reload(); }
+
+         async function savePermissions() {
+                const role = document.getElementById('roleSelect').value;
+
+                if (role === 'super_admin') {
+                    alert('Super Admin permissions are hardcoded to Full Access and cannot be modified.');
+                    return;
+                }
+
+                // --- NEW DYNAMIC LOGIC ---
+                const permissionsData = [];
+
+                // This loop automatically finds EVERY dropdown on the page
+                document.querySelectorAll('.access-select').forEach(select => {
+                    // Find which module this dropdown belongs to (e.g., 'recruitment', 'leaves')
+                    const moduleGroup = select.closest('.module-group');
+                    const moduleName = moduleGroup ? moduleGroup.getAttribute('data-module') : 'general';
+
+                    // Get the feature name (e.g., 'manage_leaves', 'job_postings')
+                    const featureName = select.getAttribute('data-feature');
+
+                    // Get the selected value (disable, view, edit, full)
+                    const accessLevel = select.value;
+
+                    // Add it to our array to send to the database
+                    if (featureName) {
+                        permissionsData.push({
+                            roleName: role,
+                            moduleName: moduleName,
+                            featureName: featureName,
+                            accessLevel: accessLevel
+                        });
+                    }
+                });
+
+                try {
+                    const response = await fetch('/api/permissions/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(permissionsData)
+                    });
+
+                    if (response.ok) {
+                        alert('Permissions saved successfully for ' + role.toUpperCase() + '!');
+                    } else {
+                        alert('Failed to save permissions. Check backend.');
+                    }
+                } catch (error) {
+                    console.error('Error saving permissions:', error);
+                    alert('Error connecting to server.');
+                }
+            }
+        </script>
+</body>
+</html>

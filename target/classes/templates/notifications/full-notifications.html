@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Notifications - Menti's IT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg: #121826;
+            --dark-card: #1a2235;
+            --dark-border: #2a3655;
+            --dark-text: #e2e8f0;
+            --dark-text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
+        }
+
+        /* === SIDEBAR (Matches Candidate Dashboard) === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--dark-border);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid var(--dark-border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            padding: 0 16px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: var(--sidebar-hover);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .menu-item i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        /* === MAIN CONTENT (Centered) === */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--dark-card);
+            border-radius: 12px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            border-radius: 6px;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* === NOTIFICATION CARDS === */
+        .notifications-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .notification-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification-card.unread {
+            border-left: 4px solid var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .notification-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: var(--dark-text-secondary);
+            white-space: nowrap;
+        }
+
+        .notification-content {
+            color: var(--dark-text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 16px;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-right: 16px;
+        }
+
+        .icon-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .icon-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .icon-info { background: rgba(14, 165, 233, 0.1); color: var(--info); }
+        .icon-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--dark-text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: var(--dark-text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle" style="display: none;">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">
+            <i class="fas fa-bell"></i>
+            Menti's IT
+        </a>
+    </div>
+
+    <nav class="nav-menu">
+        <a th:href="@{/candidate/dashboard/{id}(id=${employee.employeeId})}" class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="menu-item active">
+            <i class="fas fa-bell"></i>
+            <span>All Notifications</span>
+            <span class="badge bg-primary ms-2" th:text="${unreadCount}">0</span>
+        </a>
+
+        <a th:href="@{/candidate/dashboard/{id}(id=${employee.employeeId}) + '?activeTab=profile&activeSubTab=documents'}" class="menu-item">
+            <i class="fas fa-file-alt"></i>
+            <span>My Documents</span>
+        </a>
+
+        <a th:href="@{/candidate/logout}" class="menu-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-bell"></i>
+            All Notifications
+        </h1>
+
+        <div class="header-actions">
+            <button class="btn-primary" onclick="markAllAsRead()">
+                <i class="fas fa-check-double"></i>
+                Mark All Read
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="notification-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="unread">Unread</button>
+        <button class="filter-btn" data-filter="documents">Documents</button>
+        <button class="filter-btn" data-filter="verifications">Verifications</button>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="notifications-container" id="notificationsList">
+        <div th:if="${notifications.empty}" class="empty-state">
+            <i class="fas fa-bell-slash"></i>
+            <h3>No notifications yet</h3>
+            <p>When you receive updates, they'll appear here</p>
+        </div>
+
+        <div th:each="notif : ${notifications}"
+             class="notification-card"
+             th:classappend="${notif.read} ? '' : 'unread'"
+             th:data-type="${notif.type}">
+            <div class="notification-header">
+                <div class="notification-title">
+                    <div th:class="'notification-icon ' + ${notif.type == 'DOCUMENT_VERIFIED'} ? 'icon-success' :
+                            (${notif.type == 'DOCUMENT_REJECTED'} ? 'icon-danger' : 'icon-info')">
+                        <i th:class="${notif.type == 'DOCUMENT_VERIFIED'} ? 'fas fa-check-circle' :
+                                (${notif.type == 'DOCUMENT_REJECTED'} ? 'fas fa-times-circle' : 'fas fa-file-upload')"></i>
+                    </div>
+                    <span th:text="${notif.title}"></span>
+                </div>
+                <div class="notification-time" th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}"></div>
+            </div>
+
+            <div class="notification-content" th:text="${notif.message}"></div>
+
+            <div class="notification-actions">
+                <button th:if="${!notif.read}"
+                        class="btn-primary"
+                        th:onclick="'markAsRead(' + ${notif.id} + ')'">
+                    <i class="fas fa-check"></i>
+                    Mark as Read
+                </button>
+
+                <button th:if="${notif.referenceType == 'DOCUMENT'}"
+                        class="btn-primary"
+                        th:onclick="'viewDocument(' + ${notif.referenceId} + ')'">
+                    <i class="fas fa-eye"></i>
+                    View Document
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Toggle mobile menu
+    document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+
+    // Filter notifications
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const filter = this.dataset.filter;
+            filterNotifications(filter);
+        });
+    });
+
+    function filterNotifications(filter) {
+        const cards = document.querySelectorAll('.notification-card');
+
+        cards.forEach(card => {
+            const type = card.dataset.type || '';
+            const isUnread = card.classList.contains('unread');
+
+            switch(filter) {
+                case 'all':
+                    card.style.display = 'block';
+                    break;
+                case 'unread':
+                    card.style.display = isUnread ? 'block' : 'none';
+                    break;
+                case 'documents':
+                    card.style.display = type.includes('DOCUMENT') ? 'block' : 'none';
+                    break;
+                case 'verifications':
+                    card.style.display = type.includes('VERIFIED') || type.includes('REJECTED') ? 'block' : 'none';
+                    break;
+            }
+        });
+    }
+
+    function markAsRead(notificationId) {
+        fetch(`/notifications/api/${notificationId}/mark-read`, {
+            method: 'POST'
+        }).then(() => {
+            location.reload();
+        });
+    }
+
+    function markAllAsRead() {
+        fetch('/notifications/api/mark-all-read', {
+            method: 'POST'
+        }).then(() => {
+            location.reload();
+        });
+    }
+
+    function viewDocument(documentId) {
+        window.open(`/candidate/download/${documentId}`, '_blank');
+    }
+
+    // Responsive behavior
+    window.addEventListener('resize', function() {
+        const toggleBtn = document.getElementById('mobileMenuToggle');
+        if (window.innerWidth <= 768) {
+            toggleBtn.style.display = 'block';
+        } else {
+            toggleBtn.style.display = 'none';
+            document.getElementById('sidebar').classList.remove('active');
+        }
+    });
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', function() {
+        window.dispatchEvent(new Event('resize'));
+    });
+</script>
+</body>
+</html>

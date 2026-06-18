@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notifications - Menti's IT Solutions</title>
+
+    <!-- ===== EXTERNAL LIBS ===== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg: #121826;
+            --dark-card: #1a2235;
+            --dark-border: #2a3655;
+            --dark-text: #e2e8f0;
+            --dark-text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --hover-bg: #4f46e5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
+        }
+
+        /* === LAYOUT STRUCTURE === */
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* === SIDEBAR === */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--dark-border);
+            padding: 20px 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid var(--dark-border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand i {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            padding: 0 16px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: var(--sidebar-hover);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .menu-item i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .notification-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* === MAIN CONTENT === */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 0;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* === NOTIFICATION CARDS === */
+        .notifications-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .notification-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            padding: 20px 50px 20px 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification-card.unread {
+            border-left: 4px solid var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 15px;
+        }
+
+        .notification-title-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: var(--dark-text-secondary);
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .notification-content {
+            color: var(--dark-text-secondary);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            padding-top: 12px;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .notification-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .icon-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .icon-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .icon-info {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--info);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-badge.info {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--info);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        /* === MARK AS READ BUTTON === */
+        .mark-read-btn-wrapper {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 2;
+        }
+
+        .btn-mark-read {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 4px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-mark-read:hover {
+            background: var(--hover-bg);
+            color: white;
+            border-color: var(--hover-bg);
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-mark-read i {
+            font-size: 12px;
+        }
+
+        .btn-mark-read:active {
+            background: var(--success);
+            border-color: var(--success);
+            transform: scale(0.95);
+        }
+
+        .notification-card.read .btn-mark-read {
+            border-color: var(--dark-text-secondary);
+            color: var(--dark-text-secondary);
+            opacity: 0.6;
+        }
+
+        .notification-card.read .btn-mark-read:hover {
+            background: var(--dark-text-secondary);
+            color: white;
+            opacity: 1;
+            border-color: var(--dark-text-secondary);
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--dark-text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: var(--dark-text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            color: var(--dark-text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* VERIFICATION MESSAGE STYLING */
+        .verification-message {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            border-left: 3px solid var(--info);
+        }
+
+        .verification-message.verified {
+            border-left-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .verification-message.rejected {
+            border-left-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .verification-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .verification-label i {
+            font-size: 12px;
+        }
+
+        .verification-label.verified i {
+            color: var(--success);
+        }
+
+        .verification-label.rejected i {
+            color: var(--danger);
+        }
+
+        .verification-text {
+            color: var(--dark-text-secondary);
+            font-size: 12px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .notification-card {
+                padding: 16px 45px 16px 16px;
+            }
+
+            .notification-title {
+                font-size: 13px;
+            }
+
+            .notification-time {
+                font-size: 10px;
+                margin-left: 8px;
+            }
+
+            .btn-mark-read {
+                width: 26px;
+                height: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a th:href="@{/candidate/dashboard/{id}(id=${employee.employeeId})}" class="sidebar-brand">
+                <i class="fas fa-bell"></i>
+                Menti's IT
+            </a>
+        </div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/candidate/dashboard/{id}(id=${employee.employeeId})}" class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a th:href="@{/notifications/employee}" class="menu-item active">
+                <i class="fas fa-bell"></i>
+                <span>All Notifications</span>
+                <span class="notification-badge" th:text="${unreadCount}">0</span>
+            </a>
+
+            <a th:href="@{/candidate/dashboard/{id}(id=${employee.employeeId}) + '?activeTab=profile&activeSubTab=documents'}" class="menu-item">
+                <i class="fas fa-file-alt"></i>
+                <span>My Documents</span>
+            </a>
+
+            <a th:href="@{/candidate/logout}" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-bell"></i>
+                My Notifications
+            </h1>
+
+            <div class="header-actions">
+                <span class="badge bg-primary" th:text="${unreadCount} + ' unread'"></span>
+                <button class="btn-primary" onclick="markAllAsRead()" title="Mark All Read">
+                    <i class="fas fa-check-double"></i>
+                </button>
+                <a th:href="@{/candidate/dashboard/{id}(id=${employee.employeeId})}" class="btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </a>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS LIST -->
+        <div class="notifications-container" id="notificationsList">
+            <div th:if="${notifications.empty}" class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h3>No notifications yet</h3>
+                <p>When you receive updates, they'll appear here</p>
+            </div>
+
+            <div th:each="notif : ${notifications}"
+                 th:class="'notification-card ' + (${notif.read} ? 'read' : 'unread')">
+
+                <!-- MARK AS READ BUTTON -->
+                <div class="mark-read-btn-wrapper">
+                    <button class="btn-mark-read"
+                            th:if="${!notif.read}"
+                            th:onclick="'markAsRead(' + ${notif.id} + ')'"
+                            th:title="'Mark as read: ' + ${notif.title}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn-mark-read"
+                            th:if="${notif.read}"
+                            style="border-color: #666; color: #666;"
+                            title="Already read">
+                        <i class="fas fa-check-double"></i>
+                    </button>
+                </div>
+
+                <div class="notification-header">
+                    <div class="notification-title-wrapper">
+                        <div th:class="'notification-icon ' +
+                            ${notif.type == 'DOCUMENT_VERIFIED'} ? 'icon-success' :
+                            (${notif.type == 'DOCUMENT_REJECTED'} ? 'icon-danger' : 'icon-info')">
+                            <i th:class="${notif.type == 'DOCUMENT_VERIFIED'} ? 'fas fa-check-circle' :
+                                    (${notif.type == 'DOCUMENT_REJECTED'} ? 'fas fa-times-circle' : 'fas fa-file-upload')"></i>
+                        </div>
+                        <div class="notification-title" th:text="${notif.title}" th:title="${notif.title}"></div>
+                    </div>
+                    <div class="notification-time" th:text="${#temporals.format(notif.createdAt, 'dd MMM yyyy HH:mm')}"></div>
+                </div>
+
+                <div class="notification-content" th:text="${notif.message}"></div>
+
+                <!-- VERIFICATION MESSAGE SECTION -->
+                <div th:if="${notif.type == 'DOCUMENT_VERIFIED' or notif.type == 'DOCUMENT_REJECTED'}"
+                     th:class="'verification-message ' + (${notif.type == 'DOCUMENT_VERIFIED'} ? 'verified' : 'rejected')">
+                    <div th:class="'verification-label ' + (${notif.type == 'DOCUMENT_VERIFIED'} ? 'verified' : 'rejected')">
+                        <i th:class="${notif.type == 'DOCUMENT_VERIFIED'} ? 'fas fa-user-check' : 'fas fa-user-times'"></i>
+                        <span th:text="${notif.type == 'DOCUMENT_VERIFIED'} ? 'HR Verification Complete' : 'HR Action Required'"></span>
+                    </div>
+                    <p class="verification-text" th:if="${notif.message != null}">
+                        <strong>HR Message:</strong>
+                        <span th:text="${#strings.replace(notif.message, 'candidate', 'employee')}"></span>
+                    </p>
+                    <p class="verification-text" th:if="${notif.sender != null}">
+                        <strong>By:</strong> <span th:text="${notif.sender}"></span>
+                    </p>
+                </div>
+
+                <div class="notification-actions">
+                    <span class="status-badge"
+                          th:classappend="${notif.type == 'DOCUMENT_VERIFIED'} ? 'success' :
+                                          (${notif.type == 'DOCUMENT_REJECTED'} ? 'danger' : 'info')"
+                          th:text="${notif.type}"></span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:inline="javascript">
+    // ✅ GLOBAL FUNCTIONS - CRITICAL FIX
+    const currentEmployeeId = '[[${employee.employeeId}]]';
+
+    function markAsRead(notificationId) {
+        console.log("📤 Marking notification as read:", notificationId);
+        fetch(`/notifications/api/${notificationId}/mark-read`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log("✅ Notification marked as read, reloading...");
+                location.reload();
+            } else {
+                console.error("❌ Failed to mark as read");
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error marking notification as read:', error);
+            alert('Failed to mark notification as read. Please try again.');
+        });
+    }
+
+    function markAllAsRead() {
+        console.log("📤 Marking all notifications as read");
+        fetch('/notifications/api/mark-all-read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log("✅ All notifications marked as read, reloading...");
+                location.reload();
+            } else {
+                console.error("❌ Failed to mark all as read");
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error marking all notifications as read:', error);
+            alert('Failed to mark all notifications as read. Please try again.');
+        });
+    }
+
+    // ✅ AUTO-REFRESH EVERY 30 SECONDS
+    setInterval(() => {
+        console.log("🔄 Auto-refreshing notifications...");
+        fetch('/notifications/api/recent?limit=10')
+            .then(response => response.json())
+            .then(notifications => {
+                console.log('✅ Notifications refreshed:', notifications.length);
+                if (notifications.length > document.querySelectorAll('.notification-card').length) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('❌ Auto-refresh error:', error));
+    }, 30000);
+
+    // ✅ WEBSOCKET CONNECTION
+    let stompClient = null;
+
+    function connectWebSocket() {
+        try {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = () => {};
+
+            stompClient.connect({}, function(frame) {
+                console.log('✅ WebSocket connected for employee notifications');
+                stompClient.subscribe(`/topic/employee/${currentEmployeeId}/notifications`, function(message) {
+                    const notification = JSON.parse(message.body);
+                    console.log('📨 Real-time notification received:', notification);
+                    if (notification.persistent) {
+                        location.reload();
+                    } else {
+                        showTemporaryToast(notification);
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('❌ WebSocket connection failed:', error);
+        }
+    }
+
+    function showTemporaryToast(notification) {
+        console.log("📢 Showing temporary toast:", notification);
+        const toast = document.createElement('div');
+        toast.className = 'notification-toast';
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+            max-width: 350px;
+        `;
+
+        const iconClass = getIconForType(notification.type);
+        const iconColor = getColorForType(notification.type);
+
+        toast.innerHTML = `
+            <div class="toast-header">
+                <strong style="color: ${iconColor};">
+                    <i class="fas ${iconClass}" style="margin-right: 8px;"></i>
+                    ${notification.title}
+                </strong>
+                <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--dark-text-secondary); font-size: 18px; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="toast-body">
+                ${notification.message}
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+    }
+
+    function getIconForType(type) {
+        if (type.includes('VERIFIED')) return 'fa-check-circle';
+        if (type.includes('REJECTED')) return 'fa-times-circle';
+        if (type.includes('WARNING')) return 'fa-exclamation-triangle';
+        if (type.includes('UPLOADED')) return 'fa-file-upload';
+        return 'fa-bell';
+    }
+
+    function getColorForType(type) {
+        if (type.includes('VERIFIED')) return 'var(--success)';
+        if (type.includes('REJECTED')) return 'var(--danger)';
+        if (type.includes('WARNING')) return 'var(--warning)';
+        return 'var(--info)';
+    }
+
+    // ✅ INITIALIZE ON PAGE LOAD
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("🚀 Initializing employee notifications page...");
+        connectWebSocket();
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+</body>
+</html>

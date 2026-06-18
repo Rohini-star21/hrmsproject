@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Offer Letter</title>
+    <style>
+        /* SIMPLIFIED CSS - NO COMPLEX MARGIN COLLAPSES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: white;
+            color: #333;
+            line-height: 1.5;
+            padding: 20px;
+        }
+        .letter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        .header {
+            background: linear-gradient(135deg, #d946a6, #2a1a5e);
+            color: white;
+            padding: 30px 40px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .candidate-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d946a6;
+        }
+        .offer-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #8bc34a;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .signature-img {
+            max-width: 200px;
+            max-height: 100px;
+            margin: 20px 0;
+        }
+        .footer {
+            height: 30px;
+            background: #2a1a5e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .label {
+            font-weight: bold;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+<div class="letter-container">
+    <div class="header">
+        <h2>MENTIS IT SOLUTIONS</h2>
+        <p th:text="${today}">Date</p>
+    </div>
+
+    <div class="content">
+        <div style="text-align: right; margin-bottom: 30px;">
+            <div class="candidate-name" th:text="${offer.candidateName}">Candidate Name</div>
+            <div th:text="${offer.candidateEmail}">Email</div>
+        </div>
+
+        <div class="offer-title">OFFER LETTER</div>
+
+        <div class="section">
+            <p>Dear <span th:text="${offer.candidateName}">Candidate</span>,</p>
+
+            <p>We are pleased to offer you the position of
+                <strong th:text="${offer.designation}">Position</strong>
+                at <strong th:text="${offer.workLocation}">Location</strong>.</p>
+        </div>
+
+        <div class="section">
+            <h3>Employment Details</h3>
+            <table>
+                <tr><td class="label">Employment Type</td><td th:text="${offer.employmentType}">Full-time</td></tr>
+                <tr><td class="label">Department</td><td th:text="${offer.department}">Department</td></tr>
+                <tr><td class="label">Joining Date</td><td th:text="${offer.joiningDate}">Date</td></tr>
+                <tr><td class="label">Reporting Manager</td><td th:text="${offer.reportingManager}">Manager</td></tr>
+                <tr><td class="label">Annual Salary</td><td th:text="${offer.currency} + ' ' + ${offer.annualSalary}">Salary</td></tr>
+                <tr><td class="label">Probation Period</td><td th:text="${offer.probationPeriod}">3 months</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <p><strong>Benefits:</strong> Health insurance, Provident Fund, Paid leave, Performance incentives, Professional development.</p>
+        </div>
+
+        <div th:if="${offer.additionalNotes}" class="section">
+            <p><strong>Additional Notes:</strong> <span th:text="${offer.additionalNotes}"></span></p>
+        </div>
+
+        <div class="section">
+            <h3>Acceptance</h3>
+            <p>I, <strong th:text="${offer.candidateName}">Candidate</strong>, accept the offer.</p>
+
+            <div style="margin-top: 40px;">
+                <div th:if="${showSignature}">
+                    <img th:src="${signature}" class="signature-img" alt="Signature"/>
+                </div>
+                <p><strong>HR Manager</strong><br>Mentis IT Solutions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</div>
+</body>
+</html>

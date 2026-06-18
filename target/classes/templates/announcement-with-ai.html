@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentis Assistant - Create Announcement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-modal {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 1150px;
+            height: auto;
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalSlideDown 0.3s ease-out;
+            overflow: visible;
+            margin: 0 auto;
+        }
+
+        @keyframes modalSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            flex-shrink: 0;
+            background: var(--dark-card);
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 8px;
+        }
+
+        .close-btn:hover { color: var(--danger); }
+
+        .popup-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            flex: 1;
+        }
+
+        .form-main {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 800px) {
+            .form-main { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: #fff;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea.form-control-custom {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--dark-border);
+            margin-top: 1rem;
+        }
+
+        .settings-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 0.75rem;
+        }
+
+        .checkbox-label input {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--primary);
+        }
+
+        .team-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: var(--dark-bg);
+            border-radius: 10px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .team-chip {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--dark-text);
+        }
+
+        .team-chip:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .team-chip.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .custom-dropdown {
+            width: 100%;
+        }
+
+        .custom-dropdown-select {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: #fff;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .team-submenu {
+            margin-top: 0.5rem;
+        }
+
+        /* Right Sidebar - Mentis Assistant (Hidden by default) */
+        .ai-sidebar {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            height: fit-content;
+            display: none; /* HIDDEN BY DEFAULT */
+        }
+
+        .ai-sidebar.visible {
+            display: block; /* SHOWN WHEN USER CLICKS ACTIVATE AI */
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .ai-header i { font-size: 1.2rem; color: var(--primary); }
+        .ai-header h4 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--dark-text); }
+        .ai-header span {
+            font-size: 0.65rem;
+            color: var(--primary);
+            margin-left: auto;
+            background: rgba(99, 102, 241, 0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        /* AI Activation Button */
+        .activate-ai-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0;
+        }
+
+        .activate-ai-btn i {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .activate-ai-btn h4 {
+            color: white;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .activate-ai-btn p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.7rem;
+            margin: 0;
+        }
+
+        .activate-ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .icon-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .ai-icon-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            padding: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 45px;
+            width: 45px;
+            height: 45px;
+        }
+
+        .ai-icon-btn i {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .ai-icon-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        /* Icon Colors */
+        .ai-icon-btn.icon-meeting i { color: #10b981; }
+        .ai-icon-btn.icon-maintenance i { color: #f59e0b; }
+        .ai-icon-btn.icon-event i { color: #8b5cf6; }
+        .ai-icon-btn.icon-celebration i { color: #ec4899; }
+        .ai-icon-btn.icon-holiday i { color: #0ea5e9; }
+        .ai-icon-btn.icon-hr-policy i { color: #6366f1; }
+        .ai-icon-btn.icon-employee-policy i { color: #14b8a6; }
+        .ai-icon-btn.icon-leave-policy i { color: #f97316; }
+        .ai-icon-btn.icon-accountants i { color: #a855f7; }
+        .ai-icon-btn.icon-achievements i { color: #fbbf24; }
+
+        .ai-quick-input { margin-bottom: 0; }
+        .ai-quick-input label {
+            font-size: 0.7rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .input-with-btn {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .input-with-btn input {
+            flex: 1;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            color: #fff;
+            font-size: 0.8rem;
+        }
+
+        .input-with-btn input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .ai-generate-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .ai-generate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark-card);
+            border-left: 4px solid var(--success);
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: var(--dark-text);
+            z-index: 10001;
+            animation: slideInRight 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        .generating-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .popup-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--dark-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+            background: var(--dark-card);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #fff;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-post {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.5rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .btn-post:hover { background: var(--primary-hover); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    </style>
+</head>
+<body>
+<div class="popup-modal">
+    <div class="popup-header">
+        <h3><i class="fas fa-bullhorn" style="color: var(--primary);"></i> Creating Announcements</h3>
+        <button class="close-btn" id="closeModalBtn">&times;</button>
+    </div>
+
+    <div class="popup-body">
+        <div class="form-main">
+            <!-- LEFT SIDE: Main Form -->
+            <div>
+                <div class="form-group">
+                    <label>Announcement Title</label>
+                    <input type="text" id="announcementTitle" class="form-control-custom" placeholder="Enter headline..." required>
+                </div>
+                <div class="form-group">
+                    <label>Message Content</label>
+                    <textarea id="announcementContent" class="form-control-custom" placeholder="Write your announcement message here..." required></textarea>
+                </div>
+
+                <div class="settings-panel">
+                    <div class="settings-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Duration Type</label>
+                            <select id="announcementType" class="form-control-custom" onchange="toggleAnnouncementExpiryField()">
+                                <option value="PERMANENT">Permanent</option>
+                                <option value="TEMPORARY">Temporary</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Priority Level</label>
+                            <select id="announcementPriority" class="form-control-custom">
+                                <option value="NORMAL">Normal</option>
+                                <option value="HIGH">High</option>
+                                <option value="URGENT">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="expiryContainer" style="display: none; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Expires At</label>
+                            <input type="datetime-local" id="announcementExpiresAt" class="form-control-custom">
+                        </div>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Category</label>
+                            <select id="announcementCategory" class="form-control-custom">
+                                <option value="Corporate">Corporate</option>
+                                <option value="HR">HR</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Event">Event</option>
+                                <option value="Policy">Policy</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Target Audience</label>
+                            <div class="custom-dropdown">
+                                <select id="announcementTargetAudience" class="custom-dropdown-select" onchange="handleAudienceChange()">
+                                    <option value="ALL">👥 All Employees</option>
+                                    <option value="HR_MANAGER">👔 HR Manager</option>
+                                    <option value="ACCOUNTANTS">💰 Accountants</option>
+                                    <option value="SPECIFIC_TEAM">🎯 Specific Team</option>
+                                </select>
+                            </div>
+                            <div id="teamSubmenu" class="team-submenu" style="display: none;">
+                                <div class="team-chips-container">
+                                    <div class="team-chip" data-team="Development Team">💻 Development</div>
+                                    <div class="team-chip" data-team="SEO Team">📈 SEO</div>
+                                    <div class="team-chip" data-team="Graphic Designing Team">🎨 Graphic Design</div>
+                                    <div class="team-chip" data-team="QA Team">🧪 QA</div>
+                                    <div class="team-chip" data-team="Sales Team">🤝 Sales</div>
+                                    <div class="team-chip" data-team="Marketing Team">📢 Marketing</div>
+                                    <div class="team-chip" data-team="Support Team">🛠️ Support</div>
+                                    <div class="team-chip" data-team="HR Team">👔 HR</div>
+                                    <div class="team-chip" data-team="Finance Team">💰 Finance</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedTeamValue" value="">
+                        </div>
+                    </div>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="announcementPinned">
+                        <i class="fas fa-thumbtack"></i> Pin this announcement to top
+                    </label>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: Mentis Assistant (Hidden by default - shows activation button first) -->
+            <div>
+                <!-- Activation Button (Visible when AI sidebar is hidden) -->
+                <div id="activateAiBtn" class="activate-ai-btn" onclick="activateAI()">
+                    <i class="fas fa-robot"></i>
+                    <h4>Mentis Assistant</h4>
+                    <p>Click to activate AI assistance</p>
+                </div>
+
+                <!-- AI Sidebar (Hidden by default) -->
+                <div id="aiSidebar" class="ai-sidebar">
+                    <div class="ai-header">
+                        <i class="fas fa-robot"></i>
+                        <h4>Mentis Assistant</h4>
+                        <span>AI</span>
+                    </div>
+
+                    <div class="icon-row">
+                        <div class="ai-icon-btn icon-meeting" data-prompt="Team meeting scheduled to discuss project updates" title="Meeting">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-maintenance" data-prompt="Urgent server maintenance, system downtime scheduled" title="Maintenance">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-event" data-prompt="Company event announcement, all employees invited" title="Event">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-celebration" data-prompt="Company celebration announcement, team party" title="Celebrations">
+                            <i class="fas fa-birthday-cake"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-holiday" data-prompt="Company holiday announcement, office closed" title="Holidays">
+                            <i class="fas fa-umbrella-beach"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-hr-policy" data-prompt="New HR policy update effective from next month" title="HR Policy">
+                            <i class="fas fa-address-card"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-employee-policy" data-prompt="Employee policy update regarding work rules" title="Employee Policy">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-leave-policy" data-prompt="Leave policy update, new leave rules announced" title="Leave Policy">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-accountants" data-prompt="Accountants team meeting and policy update" title="Accountants">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="ai-icon-btn icon-achievements" data-prompt="Company achievements announcement" title="Achievements">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                    </div>
+
+                    <div class="ai-quick-input">
+                        <label>📝 Describe your announcement</label>
+                        <div class="input-with-btn">
+                            <input type="text" id="aiPromptInput" placeholder="e.g., New Year holiday on Jan 1st..." autocomplete="off">
+                            <button class="ai-generate-btn" id="aiGenerateBtn">
+                                <i class="fas fa-sparkles"></i> Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-footer">
+        <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        <button class="btn-post" id="postBtn">Post Announcement</button>
+    </div>
+</div>
+
+<script>
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const postBtn = document.getElementById('postBtn');
+    const aiGenerateBtn = document.getElementById('aiGenerateBtn');
+    const aiPromptInput = document.getElementById('aiPromptInput');
+    const activateAiBtn = document.getElementById('activateAiBtn');
+    const aiSidebar = document.getElementById('aiSidebar');
+    const announcementTitle = document.getElementById('announcementTitle');
+    const announcementContent = document.getElementById('announcementContent');
+    const announcementPriority = document.getElementById('announcementPriority');
+    const announcementType = document.getElementById('announcementType');
+    const announcementTargetAudience = document.getElementById('announcementTargetAudience');
+    const announcementCategory = document.getElementById('announcementCategory');
+    const announcementPinned = document.getElementById('announcementPinned');
+    const teamSubmenu = document.getElementById('teamSubmenu');
+    const selectedTeamValue = document.getElementById('selectedTeamValue');
+
+    // Activate AI function - shows AI sidebar and hides activation button
+    function activateAI() {
+        activateAiBtn.style.display = 'none';
+        aiSidebar.classList.add('visible');
+        aiSidebar.style.display = 'block';
+        // Focus on the input
+        setTimeout(() => {
+            if (aiPromptInput) aiPromptInput.focus();
+        }, 100);
+        showToast('AI Assistant activated! Describe your announcement below.', 'success');
+    }
+
+    function handleAudienceChange() {
+        const value = announcementTargetAudience.value;
+        if (value === 'SPECIFIC_TEAM') {
+            teamSubmenu.style.display = 'block';
+        } else {
+            teamSubmenu.style.display = 'none';
+            selectedTeamValue.value = '';
+            announcementTargetAudience.options[announcementTargetAudience.selectedIndex].text =
+                value === 'ALL' ? '👥 All Employees' :
+                value === 'HR_MANAGER' ? '👔 HR Manager' :
+                value === 'ACCOUNTANTS' ? '💰 Accountants' : '🎯 Specific Team';
+        }
+    }
+
+    document.querySelectorAll('.team-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const teamName = this.getAttribute('data-team');
+            selectedTeamValue.value = teamName;
+
+            document.querySelectorAll('.team-chip').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+
+            announcementTargetAudience.options[announcementTargetAudience.selectedIndex].text = `🎯 ${teamName}`;
+            teamSubmenu.style.display = 'none';
+
+            showToast(`Target audience set to: ${teamName}`, 'success');
+        });
+    });
+
+    function getFinalAudience() {
+        const selected = announcementTargetAudience.value;
+        if (selected === 'SPECIFIC_TEAM' && selectedTeamValue.value) return selectedTeamValue.value;
+        if (selected === 'ALL') return 'ALL';
+        if (selected === 'HR_MANAGER') return 'HR_MANAGER';
+        if (selected === 'ACCOUNTANTS') return 'ACCOUNTANTS';
+        return selected;
+    }
+
+    function closeMainModal() {
+        const overlay = window.parent?.document.getElementById('aiModalOverlay');
+        if (overlay) overlay.remove();
+        else window.close();
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeMainModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeMainModal);
+
+    window.toggleAnnouncementExpiryField = function() {
+        const expiryContainer = document.getElementById('expiryContainer');
+        if (expiryContainer) {
+            expiryContainer.style.display = announcementType.value === 'TEMPORARY' ? 'block' : 'none';
+            if (announcementType.value !== 'TEMPORARY') {
+                const expiresAt = document.getElementById('announcementExpiresAt');
+                if (expiresAt) expiresAt.value = '';
+            }
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const existing = document.querySelector('.toast-notification');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.style.borderLeftColor = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : '#f59e0b');
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    }
+
+    async function generateWithAI(prompt) {
+        if (!prompt.trim()) {
+            showToast('Please describe your announcement', 'warning');
+            return false;
+        }
+
+        const originalHtml = aiGenerateBtn.innerHTML;
+        aiGenerateBtn.innerHTML = '<span class="generating-spinner"></span> Gen';
+        aiGenerateBtn.disabled = true;
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 600));
+            const promptLower = prompt.toLowerCase();
+
+            let generatedTitle = '', generatedMessage = '';
+            let suggestedPriority = 'NORMAL', suggestedType = 'TEMPORARY', suggestedCategory = 'Corporate';
+
+            if (promptLower.includes('holiday') || promptLower.includes('off') || promptLower.includes('closed')) {
+                generatedTitle = prompt.charAt(0).toUpperCase() + prompt.slice(1);
+                generatedMessage = `Dear Team,\n\nWe are pleased to inform you that the office will remain closed on ${prompt}.\n\nWishing you all a wonderful celebration!\n\nBest regards,\nHR Department`;
+                suggestedPriority = 'NORMAL';
+                suggestedType = 'TEMPORARY';
+                suggestedCategory = 'HR';
+            }
+            else if (promptLower.includes('urgent') || promptLower.includes('maintenance') || promptLower.includes('emergency')) {
+                generatedTitle = `⚠️ URGENT: ${prompt}`;
+                generatedMessage = `⚠️ IMPORTANT NOTICE ⚠️\n\n${prompt}\n\nWe appreciate your cooperation.\n\nRegards,\nIT Department`;
+                suggestedPriority = 'URGENT';
+                suggestedType = 'TEMPORARY';
+                suggestedCategory = 'Maintenance';
+            }
+            else if (promptLower.includes('policy') || promptLower.includes('update')) {
+                generatedTitle = `Policy Update: ${prompt}`;
+                generatedMessage = `Dear Team,\n\nWe are announcing an important policy update: ${prompt}.\n\nPlease contact HR for any questions.\n\nBest regards,\nHR Department`;
+                suggestedPriority = 'HIGH';
+                suggestedType = 'PERMANENT';
+                suggestedCategory = 'Policy';
+            }
+            else if (promptLower.includes('meeting') || promptLower.includes('call')) {
+                generatedTitle = `Meeting: ${prompt}`;
+                generatedMessage = `Hello Team,\n\nReminder for: ${prompt}\n\n📍 Virtual - Google Meet\n\nPlease join on time.\n\nBest regards,\nOrganizer`;
+                suggestedPriority = 'NORMAL';
+                suggestedType = 'TEMPORARY';
+                suggestedCategory = 'Corporate';
+            }
+            else if (promptLower.includes('achievement') || promptLower.includes('milestone') || promptLower.includes('award')) {
+                generatedTitle = `🏆 Achievement: ${prompt}`;
+                generatedMessage = `Dear Team,\n\nWe are proud to announce: ${prompt}.\n\nThis milestone reflects our collective dedication and hard work.\n\nCongratulations to everyone involved!\n\nBest regards,\nManagement Team`;
+                suggestedPriority = 'HIGH';
+                suggestedType = 'PERMANENT';
+                suggestedCategory = 'Corporate';
+            }
+            else {
+                generatedTitle = prompt.charAt(0).toUpperCase() + prompt.slice(1);
+                generatedMessage = `Dear Team,\n\n📢 ${prompt}\n\nFor questions, please reach out.\n\nBest regards,\nHR Department`;
+            }
+
+            announcementTitle.value = generatedTitle;
+            announcementContent.value = generatedMessage;
+            announcementPriority.value = suggestedPriority;
+            announcementType.value = suggestedType;
+            announcementCategory.value = suggestedCategory;
+            announcementPinned.checked = suggestedPriority === 'URGENT';
+            toggleAnnouncementExpiryField();
+
+            showToast('AI generated announcement!', 'success');
+            return true;
+        } catch (error) {
+            showToast('Generation failed', 'error');
+            return false;
+        } finally {
+            aiGenerateBtn.innerHTML = originalHtml;
+            aiGenerateBtn.disabled = false;
+        }
+    }
+
+    if (aiGenerateBtn) {
+        aiGenerateBtn.addEventListener('click', () => generateWithAI(aiPromptInput.value));
+    }
+    if (aiPromptInput) {
+        aiPromptInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateWithAI(aiPromptInput.value);
+        });
+    }
+
+    document.querySelectorAll('.ai-icon-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const prompt = btn.getAttribute('data-prompt');
+            if (prompt) {
+                aiPromptInput.value = prompt;
+                generateWithAI(prompt);
+            }
+        });
+    });
+
+    async function submitAnnouncement() {
+        const payload = {
+            title: announcementTitle.value.trim(),
+            description: announcementContent.value.trim(),
+            type: announcementType.value,
+            category: announcementCategory.value,
+            priority: announcementPriority.value,
+            targetAudience: getFinalAudience(),
+            isPinned: announcementPinned.checked,
+            isActive: true,
+            expiresAt: document.getElementById('announcementExpiresAt').value || null
+        };
+
+        if (!payload.title || !payload.description) {
+            showToast('Title and description are required', 'error');
+            return;
+        }
+        if (payload.type === 'TEMPORARY' && !payload.expiresAt) {
+            showToast('Expiry date is required for temporary announcements', 'error');
+            return;
+        }
+
+        const originalText = postBtn.innerHTML;
+        postBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+        postBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/announcements/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error || 'Failed');
+            showToast('Announcement posted successfully!', 'success');
+            if (window.parent && window.parent.loadAdminAnnouncements) {
+                window.parent.loadAdminAnnouncements();
+            }
+            setTimeout(() => closeMainModal(), 1500);
+        } catch (error) {
+            showToast(error.message || 'Failed to post announcement', 'error');
+            postBtn.innerHTML = originalText;
+            postBtn.disabled = false;
+        }
+    }
+
+    if (postBtn) postBtn.addEventListener('click', submitAnnouncement);
+    toggleAnnouncementExpiryField();
+    handleAudienceChange();
+</script>
+</body>
+</html>

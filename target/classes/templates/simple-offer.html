@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Offer Letter</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .content { line-height: 1.6; }
+        .section { margin-bottom: 20px; }
+        .signature { margin-top: 50px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Offer Letter</h1>
+</div>
+<div class="content">
+    <div class="section">
+        <p th:text="'Date: ' + ${#temporals.format(now, 'MMMM dd, yyyy')}"></p>
+    </div>
+    <div class="section">
+        <p>To: <span th:text="${offer.candidateName}"></span><br>
+            <span th:text="${offer.candidateEmail}"></span></p>
+    </div>
+    <div class="section">
+        <p>Dear <span th:text="${offer.candidateName}"></span>,</p>
+        <p>We are pleased to offer you the position of
+            <strong th:text="${offer.designation}"></strong> at our company.</p>
+    </div>
+    <div class="section">
+        <p>Your employment will commence on
+            <strong th:text="${offer.joiningDate}"></strong>.</p>
+    </div>
+    <div class="section">
+        <p>Your annual compensation will be
+            <strong th:text="${offer.currency}"></strong>
+            <strong th:text="${offer.annualSalary}"></strong>.</p>
+    </div>
+    <div class="section signature">
+        <p>Sincerely,<br>HR Department</p>
+    </div>
+</div>
+</body>
+</html>

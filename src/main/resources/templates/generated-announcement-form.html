@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Generated Announcement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(8px);
+            color: var(--dark-text);
+            font-size: 13px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+      .form-popup {
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 1100px;
+    max-height: 92vh;
+    overflow-y: auto;
+    animation: modalSlideDown 0.3s ease-out;
+}
+
+        @keyframes modalSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--dark-border);
+            background: var(--dark-card);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0 6px;
+        }
+
+        .close-btn:hover { color: var(--danger); }
+
+        .popup-body {
+            padding: 1.25rem;
+        }
+
+        /* TWO COLUMN LAYOUT */
+        .two-column-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    padding: 0.25rem;
+}
+
+
+        /* LEFT COLUMN - AI Controls - COMPACT */
+        .ai-controls-column {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            padding: 0.85rem;
+            border: 1px solid var(--dark-border);
+            position: sticky;
+            top: 0;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 16px;
+            font-size: 0.65rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ai-controls-column h4 {
+            font-size: 0.6rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* COMPACT TYPE BUTTONS - 2 column grid with smaller buttons */
+        .type-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.4rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .type-change-btn {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 6px;
+            padding: 0.35rem 0.35rem;
+            color: var(--dark-text-secondary);
+            font-size: 0.65rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .type-change-btn i {
+            font-size: 0.65rem;
+        }
+
+        .type-change-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .type-change-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Icon colors */
+        .type-change-btn.type-meeting i { color: #10b981; }
+        .type-change-btn.type-maintenance i { color: #f59e0b; }
+        .type-change-btn.type-event i { color: #8b5cf6; }
+        .type-change-btn.type-celebration i { color: #ec4899; }
+        .type-change-btn.type-holiday i { color: #0ea5e9; }
+        .type-change-btn.type-hr-policy i { color: #6366f1; }
+        .type-change-btn.type-employee-policy i { color: #14b8a6; }
+        .type-change-btn.type-leave-policy i { color: #f97316; }
+        .type-change-btn.type-accountants i { color: #a855f7; }
+        .type-change-btn.type-achievements i { color: #fbbf24; }
+        .type-change-btn.active i { color: white !important; }
+
+        /* CUSTOM PROMPT AREA - VISIBLE WITHOUT SCROLLING */
+        .custom-prompt-area {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .custom-prompt-area label {
+            font-size: 0.6rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .custom-prompt-input-group {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .custom-prompt-input-group input {
+            flex: 1;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 6px;
+            padding: 0.5rem 0.65rem;
+            color: #fff;
+            font-size: 0.75rem;
+        }
+
+        .custom-prompt-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .custom-prompt-input-group input::placeholder {
+            font-size: 0.7rem;
+        }
+
+        .regenerate-custom-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 0.9rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .regenerate-custom-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .regenerate-status {
+            font-size: 0.55rem;
+            color: var(--primary);
+            margin-top: 0.4rem;
+            display: none;
+        }
+
+        .regenerate-status.show {
+            display: block;
+        }
+
+        /* RIGHT COLUMN - Form Fields */
+        .form-column {
+            min-width: 0;
+        }
+
+        .form-group {
+            margin-bottom: 0.85rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #94a3b8;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: #fff;
+            border-radius: 7px;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+       textarea.form-control-custom {
+    resize: vertical;
+    min-height: 200px;
+    line-height: 1.6;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Improved form field spacing */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group textarea {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.form-group textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.7rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            margin-top: 0.5rem;
+        }
+
+        .settings-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.7rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.7rem;
+            margin-top: 0.4rem;
+        }
+
+        .checkbox-label input {
+            width: 13px;
+            height: 13px;
+            accent-color: var(--primary);
+        }
+
+        .team-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.4rem;
+            padding: 0.5rem;
+            background: var(--dark-bg);
+            border-radius: 6px;
+            border: 1px solid var(--dark-border);
+        }
+
+        .team-chip {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 0.25rem 0.65rem;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            color: var(--dark-text);
+        }
+
+        .team-chip:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .team-chip.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .custom-dropdown-select {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: #fff;
+            border-radius: 7px;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .team-submenu {
+            margin-top: 0.4rem;
+        }
+
+        .popup-footer {
+            padding: 0.85rem 1.25rem;
+            border-top: 1px solid var(--dark-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: var(--dark-card);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #fff;
+            padding: 0.45rem 1.25rem;
+            border-radius: 7px;
+            border: 1px solid var(--dark-border);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+        }
+
+        .btn-post {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.45rem 1.75rem;
+            border-radius: 7px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .btn-post:hover { background: var(--primary-hover); }
+
+        .btn-back-ai {
+            background: transparent;
+            color: var(--primary);
+            padding: 0.45rem 1.25rem;
+            border-radius: 7px;
+            border: 1px solid var(--primary);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-back-ai:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark-card);
+            border-left: 3px solid var(--success);
+            padding: 8px 14px;
+            border-radius: 6px;
+            color: var(--dark-text);
+            z-index: 10001;
+            animation: slideInRight 0.3s ease;
+            font-size: 0.75rem;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--dark-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        @media (max-width: 768px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .ai-controls-column {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="form-popup">
+    <div class="popup-header">
+        <h3>
+            <i class="fas fa-magic"></i>
+            AI Generated Announcement
+        </h3>
+        <button class="close-btn" id="closeModalBtn">&times;</button>
+    </div>
+
+    <div class="popup-body">
+        <!-- TWO COLUMN LAYOUT -->
+        <div class="two-column-layout">
+
+            <!-- LEFT COLUMN - AI Controls - COMPACT -->
+            <div class="ai-controls-column">
+                <div class="ai-badge">
+                    <i class="fas fa-robot"></i> Mentis AI
+                </div>
+
+                <h4><i class="fas fa-bolt"></i> Templates</h4>
+                <div class="type-buttons-grid">
+                    <button class="type-change-btn type-meeting" data-prompt="Team meeting scheduled to discuss project updates">
+                        <i class="fas fa-users"></i> Meeting
+                    </button>
+                    <button class="type-change-btn type-maintenance" data-prompt="Urgent server maintenance, system downtime scheduled">
+                        <i class="fas fa-tools"></i> Maint
+                    </button>
+                    <button class="type-change-btn type-event" data-prompt="Company event announcement, all employees invited">
+                        <i class="fas fa-calendar-check"></i> Event
+                    </button>
+                    <button class="type-change-btn type-celebration" data-prompt="Company celebration announcement, team party">
+                        <i class="fas fa-birthday-cake"></i> Celebrate
+                    </button>
+                    <button class="type-change-btn type-holiday" data-prompt="Company holiday announcement, office closed">
+                        <i class="fas fa-umbrella-beach"></i> Holiday
+                    </button>
+                    <button class="type-change-btn type-hr-policy" data-prompt="New HR policy update effective from next month">
+                        <i class="fas fa-address-card"></i> HR Policy
+                    </button>
+                    <button class="type-change-btn type-employee-policy" data-prompt="Employee policy update regarding work rules">
+                        <i class="fas fa-user-tie"></i> Emp Policy
+                    </button>
+                    <button class="type-change-btn type-leave-policy" data-prompt="Leave policy update, new leave rules announced">
+                        <i class="fas fa-calendar-week"></i> Leave
+                    </button>
+                    <button class="type-change-btn type-accountants" data-prompt="Accountants team meeting and policy update">
+                        <i class="fas fa-calculator"></i> Accounts
+                    </button>
+                    <button class="type-change-btn type-achievements" data-prompt="Company achievements announcement, celebrating milestones">
+                        <i class="fas fa-trophy"></i> Achieve
+                    </button>
+                </div>
+
+                <!-- CUSTOM PROMPT - VISIBLE WITHOUT SCROLLING -->
+                <div class="custom-prompt-area">
+                    <label><i class="fas fa-edit"></i> 📝 Describe Your Announcement</label>
+                    <div class="custom-prompt-input-group">
+                        <input type="text" id="customPromptInput" placeholder="e.g., New Year party on Dec 31st" autocomplete="off">
+                        <button class="regenerate-custom-btn" id="regenerateCustomBtn">
+                            <i class="fas fa-sync-alt"></i> Gen
+                        </button>
+                    </div>
+                    <div id="regenerateStatus" class="regenerate-status">
+                        <i class="fas fa-spinner fa-spin"></i> Generating...
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN - Form Fields -->
+            <div class="form-column">
+                <div class="form-group">
+                    <label>Announcement Title</label>
+                    <input type="text" id="announcementTitle" class="form-control-custom" placeholder="Enter headline..." required>
+                </div>
+
+                <!-- MESSAGE CONTENT - INCREASED HEIGHT -->
+                <div class="form-group">
+                    <label>Message Content</label>
+                    <textarea id="announcementContent" class="form-control-custom"
+                              placeholder="Write your announcement message here..."
+                              required style="min-height: 200px; resize: vertical;"></textarea>
+                </div>
+
+                <div class="settings-panel">
+                    <div class="settings-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Duration Type</label>
+                            <select id="announcementType" class="form-control-custom" onchange="toggleAnnouncementExpiryField()">
+                                <option value="PERMANENT">Permanent</option>
+                                <option value="TEMPORARY">Temporary</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Priority Level</label>
+                            <select id="announcementPriority" class="form-control-custom">
+                                <option value="NORMAL">Normal</option>
+                                <option value="HIGH">High</option>
+                                <option value="URGENT">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="expiryContainer" style="display: none; margin-bottom: 0.7rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Expires At</label>
+                            <input type="datetime-local" id="announcementExpiresAt" class="form-control-custom">
+                        </div>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Category</label>
+                            <select id="announcementCategory" class="form-control-custom">
+                                <option value="Corporate">Corporate</option>
+                                <option value="HR">HR</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Event">Event</option>
+                                <option value="Policy">Policy</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Target Audience</label>
+                            <div class="custom-dropdown">
+                                <select id="announcementTargetAudience" class="custom-dropdown-select" onchange="handleAudienceChange()">
+                                    <option value="ALL">👥 All Employees</option>
+                                    <option value="HR_MANAGER">👔 HR Manager</option>
+                                    <option value="ACCOUNTANTS">💰 Accountants</option>
+                                    <option value="SPECIFIC_TEAM">🎯 Specific Team</option>
+                                </select>
+                            </div>
+                            <div id="teamSubmenu" class="team-submenu" style="display: none;">
+                                <div class="team-chips-container">
+                                    <div class="team-chip" data-team="Development Team">💻 Dev</div>
+                                    <div class="team-chip" data-team="SEO Team">📈 SEO</div>
+                                    <div class="team-chip" data-team="Graphic Designing Team">🎨 Design</div>
+                                    <div class="team-chip" data-team="QA Team">🧪 QA</div>
+                                    <div class="team-chip" data-team="Sales Team">🤝 Sales</div>
+                                    <div class="team-chip" data-team="Marketing Team">📢 Marketing</div>
+                                    <div class="team-chip" data-team="Support Team">🛠️ Support</div>
+                                    <div class="team-chip" data-team="HR Team">👔 HR</div>
+                                    <div class="team-chip" data-team="Finance Team">💰 Finance</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedTeamValue" value="">
+                        </div>
+                    </div>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="announcementPinned">
+                        <i class="fas fa-thumbtack"></i> Pin this announcement
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-footer">
+
+        <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        <button class="btn-post" id="postBtn">Post</button>
+    </div>
+</div>
+
+<script>
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const postBtn = document.getElementById('postBtn');
+    const backToAiBtn = document.getElementById('backToAiBtn');
+    const announcementTitle = document.getElementById('announcementTitle');
+    const announcementContent = document.getElementById('announcementContent');
+    const announcementPriority = document.getElementById('announcementPriority');
+    const announcementType = document.getElementById('announcementType');
+    const announcementTargetAudience = document.getElementById('announcementTargetAudience');
+    const announcementCategory = document.getElementById('announcementCategory');
+    const announcementPinned = document.getElementById('announcementPinned');
+    const teamSubmenu = document.getElementById('teamSubmenu');
+    const selectedTeamValue = document.getElementById('selectedTeamValue');
+    const customPromptInput = document.getElementById('customPromptInput');
+    const regenerateCustomBtn = document.getElementById('regenerateCustomBtn');
+    const regenerateStatus = document.getElementById('regenerateStatus');
+
+    let currentGeneratedData = null;
+    let currentActiveButton = null;
+
+    window.toggleAnnouncementExpiryField = function() {
+        const expiryContainer = document.getElementById('expiryContainer');
+        if (expiryContainer) {
+            expiryContainer.style.display = announcementType.value === 'TEMPORARY' ? 'block' : 'none';
+            if (announcementType.value !== 'TEMPORARY') {
+                const expiresAt = document.getElementById('announcementExpiresAt');
+                if (expiresAt) expiresAt.value = '';
+            }
+        }
+    }
+
+    let generatedData = null;
+
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'AI_GENERATED_DATA') {
+            generatedData = event.data.data;
+            currentGeneratedData = generatedData;
+            populateFormWithData(generatedData);
+        }
+    });
+
+    const stored = localStorage.getItem('ai_generated_announcement');
+    if (stored && !generatedData) {
+        generatedData = JSON.parse(stored);
+        currentGeneratedData = generatedData;
+        localStorage.removeItem('ai_generated_announcement');
+        populateFormWithData(generatedData);
+    }
+
+    function populateFormWithData(data) {
+        if (!data) return;
+        if (announcementTitle) announcementTitle.value = data.title || '';
+        if (announcementContent) announcementContent.value = data.content || '';
+        if (announcementPriority) announcementPriority.value = data.priority || 'NORMAL';
+        if (announcementType) announcementType.value = data.type || 'TEMPORARY';
+        if (announcementCategory) announcementCategory.value = data.category || 'Corporate';
+        if (announcementPinned) announcementPinned.checked = data.pinned || false;
+        toggleAnnouncementExpiryField();
+    }
+// REPLACE THE ENTIRE generateAnnouncementContent function with this:
+
+async function generateAnnouncementContent(promptText) {
+    if (!promptText || !promptText.trim()) {
+        showToast('Please provide announcement details', 'warning');
+        return false;
+    }
+
+    if (regenerateStatus) regenerateStatus.classList.add('show');
+
+    try {
+        const response = await fetch('/api/ai/generate-announcement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: promptText })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || `Server error: ${response.status}`);
+        }
+
+        const generatedData = await response.json();
+
+        const newGeneratedData = {
+            title: generatedData.title || promptText.charAt(0).toUpperCase() + promptText.slice(1),
+            content: generatedData.content || `Dear Team,\n\n📢 ${promptText}\n\nBest regards,\nHR Department`,
+            priority: generatedData.priority || 'NORMAL',
+            type: generatedData.type || 'TEMPORARY',
+            category: generatedData.category || 'Corporate',
+            pinned: generatedData.pinned || false
+        };
+
+        populateFormWithData(newGeneratedData);
+        currentGeneratedData = newGeneratedData;
+
+        showToast('Announcement generated by AI!', 'success');
+        return true;
+
+    } catch (error) {
+        console.error('Generation Error:', error);
+        showToast('AI generation failed: ' + error.message, 'error');
+        return false;
+    } finally {
+        if (regenerateStatus) regenerateStatus.classList.remove('show');
+    }
+}
+
+    function setupTypeChangeButtons() {
+        const buttons = document.querySelectorAll('.type-change-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const promptText = this.getAttribute('data-prompt');
+                buttons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentActiveButton = this;
+                if (customPromptInput) customPromptInput.value = promptText;
+                await generateAnnouncementContent(promptText);
+            });
+        });
+    }
+
+    if (regenerateCustomBtn) {
+        regenerateCustomBtn.addEventListener('click', async function() {
+            const customPrompt = customPromptInput ? customPromptInput.value.trim() : '';
+            if (!customPrompt) {
+                showToast('Please enter your announcement details', 'warning');
+                return;
+            }
+            const buttons = document.querySelectorAll('.type-change-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            currentActiveButton = null;
+            await generateAnnouncementContent(customPrompt);
+        });
+    }
+
+    if (customPromptInput) {
+        customPromptInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && regenerateCustomBtn) {
+                regenerateCustomBtn.click();
+            }
+        });
+    }
+
+    function handleAudienceChange() {
+        const value = announcementTargetAudience.value;
+        if (value === 'SPECIFIC_TEAM') {
+            teamSubmenu.style.display = 'block';
+        } else {
+            teamSubmenu.style.display = 'none';
+            selectedTeamValue.value = '';
+            announcementTargetAudience.options[announcementTargetAudience.selectedIndex].text =
+                value === 'ALL' ? '👥 All Employees' :
+                value === 'HR_MANAGER' ? '👔 HR Manager' :
+                value === 'ACCOUNTANTS' ? '💰 Accountants' : '🎯 Specific Team';
+        }
+    }
+
+    document.querySelectorAll('.team-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const teamName = this.getAttribute('data-team');
+            selectedTeamValue.value = teamName;
+            document.querySelectorAll('.team-chip').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            announcementTargetAudience.options[announcementTargetAudience.selectedIndex].text = `🎯 ${teamName}`;
+            teamSubmenu.style.display = 'none';
+            showToast(`Target: ${teamName}`, 'success');
+        });
+    });
+
+    function getFinalAudience() {
+        const selected = announcementTargetAudience.value;
+        if (selected === 'SPECIFIC_TEAM' && selectedTeamValue.value) return selectedTeamValue.value;
+        if (selected === 'ALL') return 'ALL';
+        if (selected === 'HR_MANAGER') return 'HR_MANAGER';
+        if (selected === 'ACCOUNTANTS') return 'ACCOUNTANTS';
+        return selected;
+    }
+
+    function closeThisModal() {
+        let overlay = document.getElementById('generatedFormOverlay');
+        if (!overlay) {
+            const modalContainer = document.querySelector('.form-popup');
+            if (modalContainer && modalContainer.parentElement) {
+                overlay = modalContainer.parentElement;
+            }
+        }
+        if (overlay && overlay.style.position === 'fixed') {
+            overlay.remove();
+        } else {
+            const iframe = window.frameElement;
+            if (iframe && iframe.parentElement) {
+                const parentOverlay = iframe.closest('#generatedFormOverlay');
+                if (parentOverlay) parentOverlay.remove();
+            }
+        }
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeThisModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeThisModal);
+
+   // if (backToAiBtn) {
+     //   backToAiBtn.addEventListener('click', function() {
+       //     closeThisModal();
+         //   if (window.parent && window.parent.reopenAIPopup) {
+           //     setTimeout(() => window.parent.reopenAIPopup(), 100);
+            //} else if (window.parent && window.parent.openAIPopup) {
+            //    setTimeout(() => window.parent.openAIPopup(), 100);
+           // } else {
+             //   window.open('/announcement/ai-popup', '_blank', 'width=550,height=600');
+           // }
+        // });
+   // }
+
+    function showToast(message, type = 'success') {
+        const existing = document.querySelector('.toast-notification');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.style.borderLeftColor = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : '#f59e0b');
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    }
+
+    async function submitAnnouncement() {
+        const payload = {
+            title: announcementTitle.value.trim(),
+            description: announcementContent.value.trim(),
+            type: announcementType.value,
+            category: announcementCategory.value,
+            priority: announcementPriority.value,
+            targetAudience: getFinalAudience(),
+            isPinned: announcementPinned.checked,
+            isActive: true,
+            expiresAt: document.getElementById('announcementExpiresAt').value || null
+        };
+
+        if (!payload.title || !payload.description) {
+            showToast('Title and description are required', 'error');
+            return;
+        }
+        if (payload.type === 'TEMPORARY' && !payload.expiresAt) {
+            showToast('Expiry date is required', 'error');
+            return;
+        }
+
+        const originalText = postBtn.innerHTML;
+        postBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        postBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/announcements/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (!result.success) throw new Error(result.error || 'Failed');
+
+            showToast('Posted successfully!', 'success');
+
+            if (window.parent && window.parent.loadAdminAnnouncements) {
+                window.parent.loadAdminAnnouncements();
+            }
+
+            setTimeout(() => closeThisModal(), 1000);
+
+        } catch (error) {
+            showToast(error.message || 'Failed to post', 'error');
+            postBtn.innerHTML = originalText;
+            postBtn.disabled = false;
+        }
+    }
+
+    if (postBtn) postBtn.addEventListener('click', submitAnnouncement);
+    toggleAnnouncementExpiryField();
+    handleAudienceChange();
+    setupTypeChangeButtons();
+</script>
+</body>
+</html>

@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - HR Recruitment Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Black Scrollbar */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* === SIDEBAR STYLES === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, .2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+
+
+
+       .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary); /* Makes the section icon blue */
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px); /* Adds the nice slide effect on hover */
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary); /* Makes the link icons blue */
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff; /* Turns icon white when hovered or active */
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge.success {
+            background: var(--success);
+        }
+
+        .nav-badge.warning {
+            background: var(--warning);
+        }
+
+        .sidebar-content {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* === TOP HEADER === */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: .75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        /* Enhanced hover effects for table rows */
+.table-dark tbody tr {
+    transition: var(--transition);
+}
+
+.table-dark tbody tr:hover {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+    transform: translateX(4px);
+}
+
+/* Style for active stat cards */
+.stat-card.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+/* Email styling in dark theme */
+.table-dark td .small {
+    color: var(--dark-text) !important;
+    opacity: 0.9;
+}
+/* Add these new status classes */
+.status-selected {
+    background: rgba(16, 185, 129, .2);
+    color: #10b981;
+}
+
+.status-rejected {
+    background: rgba(239, 68, 68, .2);
+    color: #ef4444;
+}
+        .search-box input {
+            width: 100%;
+            padding: .6rem .75rem .6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: .875rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* === PAGE SPECIFIC STYLES === */
+        .content-area {
+            padding: 1.5rem;
+        }
+
+       .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Forces 4 cards in one row */
+            gap: 1rem; /* Slightly reduced gap to save space */
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .1);
+            border-color: var(--primary);
+        }
+
+        .stat-card-body {
+            padding: 1.25rem; /* Reduced padding */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem; /* Reduced font size */
+            font-weight: 700;
+            line-height: 1;
+            color: var(--dark-text);
+        }
+
+        .stat-title {
+            font-size: .75rem; /* Reduced text size */
+            color: var(--dark-text-secondary);
+            line-height: 1.2;
+            margin-top: 0.35rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem; /* Reduced icon size */
+            opacity: .7;
+            color: var(--primary);
+        }
+
+        /* Safely wrap to 2 columns on smaller laptops/tablets */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .status-filter {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .status-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: .875rem;
+            font-weight: 500;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-card);
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .status-btn:hover {
+            background: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .status-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .table-container {
+            background: var(--dark-card);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--dark-border);
+        }
+
+        /* Dark Table Styling */
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+            --bs-table-striped-color: var(--dark-text);
+            --bs-table-active-bg: rgba(255, 255, 255, 0.1);
+            --bs-table-active-color: var(--dark-text);
+            --bs-table-hover-bg: rgba(255, 255, 255, 0.075);
+            --bs-table-hover-color: var(--dark-text);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+            margin-bottom: 0;
+        }
+
+        .table-dark th {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            font-weight: 600;
+            padding: 1rem .75rem;
+            font-size: .75rem;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .table-dark td {
+            border-top: 1px solid var(--dark-border);
+            padding: 1rem .75rem;
+            vertical-align: middle;
+            background-color: transparent;
+            color: var(--dark-text);
+        }
+
+        .table-dark.table-striped>tbody>tr:nth-of-type(odd)>* {
+            --bs-table-accent-bg: rgba(255, 255, 255, 0.03);
+            color: var(--dark-text);
+        }
+
+        .table-dark tbody tr:hover {
+            background-color: var(--bs-table-hover-bg) !important;
+            color: var(--bs-table-hover-color) !important;
+        }
+
+        .status-badge {
+            padding: .25rem .75rem;
+            border-radius: 12px;
+            font-size: .75rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .status-applied {
+            background: rgba(148, 163, 184, .2);
+            color: #94a3b8;
+        }
+
+        .status-in-review {
+            background: rgba(14, 165, 233, .2);
+            color: #0ea5e9;
+        }
+
+        .status-interview {
+            background: rgba(245, 158, 11, .2);
+            color: #f59e0b;
+        }
+
+        .status-interviewed {
+            background: rgba(139, 92, 246, .2);
+            color: #8b5cf6;
+        }
+
+        .status-onhold {
+            background: rgba(139, 92, 246, .2);
+            color: #8b5cf6;
+        }
+
+        .status-hired {
+            background: rgba(16, 185, 129, .2);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, .2);
+            color: #ef4444;
+        }
+
+        .btn-action {
+            padding: .375rem .75rem;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+            text-decoration: none;
+        }
+
+        .btn-view {
+            background: rgba(14, 165, 233, .2);
+            color: #0ea5e9;
+            border: 1px solid rgba(14, 165, 233, .3);
+        }
+
+        .btn-view:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .btn-schedule {
+            background: rgba(16, 185, 129, .2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, .3);
+        }
+
+        .btn-schedule:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        /* User Profile Dropdown */
+        .user-profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--sidebar-hover);
+        }
+
+        .dropdown-item:active {
+            background: var(--primary);
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            margin-top: 8px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .empty-notifications {
+            padding: 24px;
+            text-align: center;
+            color: var(--dark-text-secondary);
+            font-size: 13px;
+        }
+
+        .notification-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--dark-border);
+            text-align: center;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .status-filter {
+                flex-direction: column;
+            }
+
+            .status-btn {
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-area {
+                padding: 1rem;
+            }
+
+            .stat-card-body {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-icon {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar('applications')}"></div>
+
+
+
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Page Title and Breadcrumb -->
+        <!-- Page Title and Breadcrumb -->
+        <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h1 style="font-size: 1.5rem; font-weight: 600; color: var(--dark-text); margin: 0;">
+                    Applications
+                </h1>
+                <div style="display: flex; gap: 10px;">
+                    <!-- Dashboard Button -->
+                    <a href="/dashboard/hr"
+                       class="btn-action"
+                       style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <!-- Go Back Button -->
+                    <button onclick="history.back()"
+                            class="btn-action"
+                            style="background: var(--dark-border); color: var(--dark-text); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Go Back</span>
+                    </button>
+                </div>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background: transparent; padding: 0; margin: 0; font-size: .875rem;">
+                    <li class="breadcrumb-item" style="color: var(--dark-text-secondary);">
+                        <a href="/dashboard/hr" style="color: var(--dark-text-secondary); text-decoration: none;">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active" style="color: var(--primary);">Applications</li>
+
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card" onclick="filterByStatus('all')" th:classappend="${selectedStatus == 'all'} ? 'active' : ''">
+                <div class="stat-card-body">
+                    <div>
+                        <div class="stat-value" th:text="${totalApplications}">0</div>
+                        <div class="stat-title">Total Applications</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div style="background: #818cf8; padding:.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between; color:#fff; font-weight:500; font-size:.875rem;">
+
+                </div>
+            </div>
+            <div class="stat-card" onclick="filterByStatus('Applied')" th:classappend="${selectedStatus == 'Applied'} ? 'active' : ''">
+                <div class="stat-card-body">
+                    <div>
+                        <div class="stat-value" th:text="${newApplications}">0</div>
+                        <div class="stat-title">New Applications</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                </div>
+                <div style="background: #0ea5e9; padding:.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between; color:#fff; font-weight:500; font-size:.875rem;">
+
+                </div>
+            </div>
+            <div class="stat-card" onclick="filterByStatus('In Review')" th:classappend="${selectedStatus == 'In Review'} ? 'active' : ''">
+                <div class="stat-card-body">
+                    <div>
+                        <div class="stat-value" th:text="${inReviewCount}">0</div>
+                        <div class="stat-title">In Review</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-search"></i></div>
+                </div>
+                <div style="background: #10b981; padding:.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between; color:#fff; font-weight:500; font-size:.875rem;">
+
+                </div>
+            </div>
+            <div class="stat-card" onclick="filterByStatus('Selected')" th:classappend="${selectedStatus == 'Selected'} ? 'active' : ''">
+                <div class="stat-card-body">
+                    <div>
+                        <div class="stat-value" th:text="${selectedCount != null ? selectedCount : 0}">0</div>
+                        <div class="stat-title">Selected Candidates</div>
+                    </div>
+                    <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                </div>
+                <div style="background: #8b5cf6; padding:.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between; color:#fff; font-weight:500; font-size:.875rem;">
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Status Filter Buttons -->
+        <!-- Status Filter Buttons -->
+        <!-- Status Filter Buttons -->
+        <div class="status-filter">
+            <a th:href="@{/dashboard/hr/applications}" class="status-btn" th:classappend="${selectedStatus == 'all'} ? 'active' : ''">All Applications</a>
+            <a th:href="@{/dashboard/hr/applications(status='Applied')}" class="status-btn" th:classappend="${selectedStatus == 'Applied'} ? 'active' : ''">Applied</a>
+            <a th:href="@{/dashboard/hr/applications(status='In Review')}" class="status-btn" th:classappend="${selectedStatus == 'In Review'} ? 'active' : ''">In Review</a>
+            <a th:href="@{/dashboard/hr/applications(status='Interview')}" class="status-btn" th:classappend="${selectedStatus == 'Interview'} ? 'active' : ''">Interview</a>
+            <a th:href="@{/dashboard/hr/applications(status='Interviewed')}" class="status-btn" th:classappend="${selectedStatus == 'Interviewed'} ? 'active' : ''">Interviewed</a>
+            <a th:href="@{/dashboard/hr/applications(status='On Hold')}" class="status-btn" th:classappend="${selectedStatus == 'On Hold'} ? 'active' : ''">On Hold</a>
+            <a th:href="@{/dashboard/hr/applications(status='Selected')}" class="status-btn" th:classappend="${selectedStatus == 'Selected'} ? 'active' : ''">Selected</a>
+            <a th:href="@{/dashboard/hr/applications(status='Hired')}" class="status-btn" th:classappend="${selectedStatus == 'Hired'} ? 'active' : ''">Hired</a>
+            <a th:href="@{/dashboard/hr/applications(status='Rejected')}" class="status-btn" th:classappend="${selectedStatus == 'Rejected'} ? 'active' : ''">Rejected</a>
+        </div>
+
+        <!-- Applications Table -->
+        <!-- Applications Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th style="width: 60px;">S.No</th>
+                        <th>Candidate</th>
+                        <th>Position</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="app, iterStat : ${applications}" th:if="${applications != null and !applications.empty}">
+                        <td style="color: var(--dark-text); font-weight: 500;" th:text="${iterStat.index + 1}">1</td>
+                        <td>
+                            <div>
+                                <div th:text="${app.firstName + ' ' + app.lastName}" class="fw-semibold" style="color: var(--dark-text);">John Doe</div>
+                                <div th:text="${app.email}" class="small" style="color: var(--dark-text);">email@example.com</div>
+                            </div>
+                        </td>
+                        <td style="color: var(--dark-text);" th:text="${app.jobTitle}">Senior Developer</td>
+                        <td style="color: var(--dark-text);" th:text="${app.displayApplicationDate}">Nov 15, 2023</td>
+                        <td>
+                    <span class="status-badge"
+                          th:classappend="${app.status == 'Applied'} ? 'status-applied' :
+                            (${app.status == 'In Review'} ? 'status-in-review' :
+                            (${app.status == 'Interview'} ? 'status-interview' :
+                            (${app.status == 'Interviewed'} ? 'status-interviewed' :
+                            (${app.status == 'On Hold'} ? 'status-onhold' :
+                            (${app.status == 'Selected'} ? 'status-selected' :
+                            (${app.status == 'Hired'} ? 'status-hired' : 'status-rejected'))))))"
+                          th:text="${app.status}">Applied</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/dashboard/hr/viewApplication/{id}(id=${app.id})}"
+                                   class="btn-action btn-view"
+                                   title="View Application">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{/dashboard/hr/interview-schedule/{id}(id=${app.id})}"
+                                   class="btn-action btn-schedule"
+                                   title="Schedule Interview"
+                                   th:if="${app.status != 'Hired' and app.status != 'Rejected' and app.status != 'Selected'}">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </a>
+                                <!-- Offer Letter button for Selected candidates -->
+                                <a th:href="@{/dashboard/hr/generate-offer/{id}(id=${app.id})}"
+                                   class="btn-action"
+                                   style="background: rgba(16, 185, 129, .2); color: #10b981; border: 1px solid rgba(16, 185, 129, .3);"
+                                   title="Generate Offer Letter"
+                                   th:if="${app.status == 'Selected'}">
+                                    <i class="fas fa-file-contract"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${applications == null or applications.empty}">
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2" style="color: var(--dark-text-secondary);"></i><br>
+                            <span style="color: var(--dark-text-secondary);" th:if="${selectedStatus == 'all'}">No applications found</span>
+                            <span style="color: var(--dark-text-secondary);" th:if="${selectedStatus != 'all'}">No <span th:text="${selectedStatus}"></span> applications found</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Call the common scripts fragment -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile sidebar toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                filterTable(term);
+            });
+        }
+
+        // Initialize dropdowns
+        const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        const dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
+        });
+    });
+
+    function filterByStatus(status) {
+        if (status === 'all') {
+            window.location.href = '/dashboard/hr/applications';
+        } else {
+            window.location.href = '/dashboard/hr/applications?status=' + status;
+        }
+    }
+
+    function filterTable(searchTerm) {
+        const rows = document.querySelectorAll('.table tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+
+
+
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        const trigger = document.querySelector('.notification-trigger');
+
+        if (dropdown && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    // Function to update stats cards counts
+function updateStatsCounts() {
+    // You can fetch these counts from your backend or calculate from table
+    const totalRows = document.querySelectorAll('.table tbody tr:not([style*="display: none"])').length;
+    const appliedRows = document.querySelectorAll('.table tbody tr td .status-applied').length;
+    const inReviewRows = document.querySelectorAll('.table tbody tr td .status-in-review').length;
+    const hiredRows = document.querySelectorAll('.table tbody tr td .status-hired').length;
+
+    // Update the stat values if they exist in the DOM
+    const totalAppsElement = document.querySelector('[th\\:text="${totalApplications}"]');
+    const newAppsElement = document.querySelector('[th\\:text="${newApplications}"]');
+    const inReviewElement = document.querySelector('[th\\:text="${inReviewCount}"]');
+    const hiredElement = document.querySelector('[th\\:text="${hiredCount}"]');
+
+    // Note: These values should ideally come from your backend
+    // This is just for frontend display during filtering
+}
+
+// Call this after table updates
+function refreshTableDisplay() {
+    filterTable(document.getElementById('searchInput').value.toLowerCase());
+    updateStatsCounts();
+}
+</script>
+</body>
+</html>

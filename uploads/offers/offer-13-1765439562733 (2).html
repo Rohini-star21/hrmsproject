@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment Offer Letter - Mentis IT Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 816px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #d946a6 0%, #4a2a7e 50%, #2a1a5e 100%);
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -50px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 20, 147, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: transparent;
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+
+        .date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .content {
+            padding: 50px 60px 80px;
+            position: relative;
+        }
+
+        .addresses {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 30px;
+        }
+
+        .company-address {
+            border-left: 4px solid #d946a6;
+            padding-left: 15px;
+            flex: 1;
+        }
+
+        .candidate-address {
+            text-align: right;
+            flex: 1;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d946a6;
+            margin-bottom: 8px;
+        }
+
+        .candidate-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d946a6;
+            margin-bottom: 8px;
+        }
+
+        .address-line {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #8bc34a;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            font-weight: 700;
+            color: #8bc34a;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .letter-body {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .greeting {
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .paragraph {
+            margin-bottom: 20px;
+            text-align: left;
+            line-height: 1.9;
+        }
+
+        .signature-section {
+            margin-top: 50px;
+        }
+
+        .regards {
+            margin-bottom: 5px;
+        }
+
+        .name {
+            font-weight: 700;
+            color: #d946a6;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .position {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .signature-image {
+            width: 150px;
+            height: 70px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .signature-line {
+            color: #999;
+            font-size: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            width: 240px;
+        }
+
+        .molecule-bg {
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+            opacity: 0.08;
+            width: 250px;
+            height: 250px;
+        }
+
+        .footer {
+            height: 40px;
+            background: #2a1a5e;
+        }
+
+        .acceptance-section {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #ddd;
+        }
+
+        .acceptance-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .signature-fields {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .signature-field {
+            flex: 1;
+        }
+
+        .signature-field-line {
+            border-bottom: 1px solid #333;
+            width: 100%;
+            margin-bottom: 5px;
+            height: 30px;
+        }
+
+        .signature-field-label {
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <!-- Logo will be added dynamically -->
+            </div>
+            <div class="logo-text">MENTIS IT</div>
+        </div>
+        <div class="date">Date: December 11, 2025</div>
+    </div>
+
+    <div class="content">
+        <div class="addresses">
+            <div class="company-address">
+                <div class="company-name">Mentis IT Solutions</div>
+                <div class="address-line">Gopal Nagar, HPHB Colony</div>
+                <div class="address-line">Hyderabad, Telangana 500085</div>
+                <div class="address-line">India</div>
+            </div>
+            <div class="candidate-address">
+                <div class="candidate-name">Deepthi D</div>
+                <div class="address-line">deepthi@gmail.com</div>
+            </div>
+        </div>
+
+        <div class="subtitle">OFFER LETTER</div>
+
+        <div class="letter-body">
+            <div class="greeting">Dear <span>Deepthi D</span>,</div>
+
+            <!-- In the body of the letter -->
+            <div class="paragraph">
+                We would like to offer you the position of <strong>teacher</strong> at our <strong>Hyderabad Office</strong> office. This is a <strong>Full-time</strong> position reporting to <strong>Vijay</strong>. Your employment will commence on <strong>2026-01-02</strong>.
+            </div>
+
+            <div class="paragraph">
+                Your starting annual gross salary will be <strong>INR</strong> <strong>5,00,000</strong> per annum...
+            </div>
+
+            <div class="paragraph" style="padding-left: 20px;">
+                • Health insurance coverage for you and your dependents<br>
+                • Provident Fund (PF) and Employee State Insurance (ESI) as per statutory requirements<br>
+                • 18 days of paid annual leave per year<br>
+                • Performance-based incentives and annual bonus<br>
+                • Professional development and training opportunities<br>
+                • Flexible work arrangements
+            </div>
+
+            <div class="paragraph">
+                <strong>Your key responsibilities will include:</strong> Developing and maintaining software applications, collaborating with cross-functional teams to define and design new features, writing clean and efficient code, troubleshooting and debugging applications, and participating in code reviews.
+            </div>
+
+            <div class="paragraph">
+                As a condition of employment, you will be required to sign our standard employment agreement and Non-Disclosure Agreement (NDA) to protect our confidential information and intellectual property.
+            </div>
+
+            <div class="paragraph">
+                Your probation period will be <strong>3 months</strong> from the date of joining. Upon satisfactory completion of the probation period, your appointment will be confirmed in writing.
+            </div>
+
+            <div class="paragraph">
+                <strong>Additional Terms:</strong> <span></span>
+            </div>
+
+            <div class="paragraph">
+                Please confirm your acceptance of this offer by signing and returning this letter. Our HR Manager will contact you to discuss the next steps, complete necessary documentation, and address any questions you may have.
+            </div>
+
+            <div class="paragraph">
+                We are excited about the prospect of you joining Mentis IT Solutions and contributing to our continued growth and success. We look forward to welcoming you to our team!
+            </div>
+
+            <!-- In the signature section of offer-letter-template.html -->
+            <div class="signature-section">
+                <div class="regards">Best Regards,</div>
+                <div class="name">Srikanth</div>
+                <div class="position">Head of Human Resources</div>
+                <div class="position">Mentis IT Solutions</div>
+
+                <!-- Signature Image -->
+                <div class="signature-image">
+                    <img src="file:///C:/hrms/uploads/signatures/signature-13.png" alt="HR Signature" style="max-width: 200px; height: auto; margin: 10px 0;">
+                </div>
+
+                <div class="signature-line">Authorized Signature</div>
+            </div>
+            <div class="acceptance-section">
+                <div class="acceptance-title">ACCEPTANCE OF APPOINTMENT</div>
+                <div class="letter-body">
+                    I, <strong>Deepthi D</strong>, hereby accept the appointment with Mentis IT Solutions as outlined in this letter. I understand and agree to the terms and conditions stated above.
+                </div>
+                <div class="signature-fields">
+                    <div class="signature-field">
+                        <div class="signature-field-line"></div>
+                        <div class="signature-field-label">Candidate Signature</div>
+                    </div>
+                    <div class="signature-field" style="max-width: 200px;">
+                        <div class="signature-field-line"></div>
+                        <div class="signature-field-label">Date</div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+    <div class="footer"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles - Menti's IT Solutions</title>
+
+    <!-- CSS/JS libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Global Black Scrollbar */
+        html {
+            scrollbar-color: #1a1a1a #000000;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* === SIDEBAR STYLES (FOR FRAGMENTS) === */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,.2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 8px;
+            display: grid;
+            place-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge.success { background: var(--success); }
+        .nav-badge.warning { background: var(--warning); }
+
+        .sidebar-content {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+         /* === TOP HEADER STYLES (FOR FRAGMENTS) === */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Groupings for left (search) and right (icons/profile) */
+        .header-left, .header-right, .top-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Search Box in Header */
+        .header-search, .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .header-search input, .search-box input {
+            width: 100%;
+            padding: 0.6rem 0.75rem 0.6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 0.875rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .header-search input:focus, .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .header-search i, .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Icon Buttons (Notifications, Announcements) */
+        .header-notification, .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            text-decoration: none;
+        }
+
+        .header-notification:hover, .icon-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: #fff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid var(--dark-card);
+        }
+
+        /* User Profile Button */
+        .header-profile, .user-profile-menu button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            height: 40px;
+            padding: 0 1rem 0 0.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .header-profile:hover, .user-profile-menu button:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .profile-name {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .profile-role {
+            display: none; /* Hide role to keep header clean like previous page */
+        }
+
+        /* === CONTENT AREA (Roles Page) === */
+        .content-area {
+            padding: 1.5rem;
+        }
+
+        .roles-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Matched to Department Page Header */
+        .page-header {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-title i {
+            color: var(--primary);
+        }
+
+        .stats-badge {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: flex-end; /* Aligns search bar to the right */
+        }
+
+        /* Styled exactly like the header search */
+        .search-box-roles {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .search-box-roles input {
+            width: 100%;
+            padding: 0.65rem 0.75rem 0.65rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-card);
+            color: var(--dark-text);
+            font-size: 0.875rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .search-box-roles input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .search-box-roles i {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .table-container:hover {
+            border-color: var(--primary);
+        }
+
+        .table {
+            margin: 0;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+
+           .table {
+            --bs-table-bg: transparent; /* Overrides Bootstrap's default white table background */
+            margin: 0;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead th {
+            background: rgba(0, 0, 0, 0.4) !important; /* Forces the black/dark background */
+            border-bottom: 1px solid var(--dark-border) !important;
+            color: var(--dark-text-secondary) !important;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            text-align: left;
+        }
+
+        .table thead th i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid var(--dark-border);
+            transition: var(--transition);
+        }
+
+        .table tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.05) !important;
+            transform: translateX(2px);
+        }
+
+        .table tbody td {
+            padding: 1rem 1.5rem;
+            color: var(--dark-text) !important;
+            vertical-align: middle;
+            background: var(--dark-card) !important;
+            border: none;
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .role-id {
+            color: var(--dark-text-secondary) !important;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .role-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--dark-text) !important;
+            font-size: 0.9rem;
+        }
+
+        .role-name i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .role-dept {
+            display: inline-flex;
+            background: rgba(99, 102, 241, 0.1) !important;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #a5b4fc !important;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .pagination-info {
+            color: var(--dark-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .pagination {
+            margin: 0;
+            gap: 0.25rem;
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .page-link {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            display: block;
+            text-decoration: none;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .page-link:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-item.active .page-link {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .header-search, .search-box-roles {
+                width: 100%;
+                max-width: none;
+            }
+            .header-right, .top-header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .content-area {
+                padding: 1rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .table thead th, .table tbody td {
+                padding: 1rem;
+            }
+            .pagination-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .header-search {
+                width: 100%;
+            }
+            .content-area {
+                padding: 1rem;
+            }
+            .table thead th,
+            .table tbody td {
+                padding: 1rem;
+            }
+            .pagination-container {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar Fragment (preserved) -->
+<div th:replace="~{fragments/layout :: sidebar('offer-candidates')}"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Top Header Fragment (preserved) -->
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+    <!-- Content Area (Roles Page) -->
+    <div class="content-area">
+        <div class="roles-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-user-tag"></i>
+                    Roles (Designations)
+                    <span class="stats-badge" id="totalCount">12 total</span>
+                </h1>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-box-roles">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search roles..." onkeyup="filterTable()">
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <table class="table" id="rolesTable">
+                    <thead>
+                    <tr>
+                        <th style="width: 15%;"><i class="fas fa-hashtag"></i> ROLE ID</th>
+                        <th style="width: 45%;"><i class="fas fa-tag"></i> ROLE NAME</th>
+                        <th style="width: 40%;"><i class="fas fa-building"></i> DEPARTMENT</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    <!-- Dynamic rows from database -->
+                    <tr th:each="desig : ${designations}" class="data-row">
+                        <td class="role-id" th:text="'#' + ${desig.id}">#101</td>
+                        <td>
+                            <div class="role-name">
+                                <i class="fas fa-id-badge"></i>
+                                <span th:text="${desig.name}">Senior Frontend Developer</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="role-dept" th:text="${desig.department != null ? desig.department.name : 'Unassigned'}">Engineering</span>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr th:if="${designations == null or designations.empty}" class="empty-state-row">
+                        <td colspan="3" style="text-align: center; padding: 3rem; color: var(--dark-text-secondary) !important; background: var(--dark-card) !important;">
+                            <i class="fas fa-user-times" style="font-size: 2rem; opacity: 0.5; margin-bottom: 10px; display: block;"></i>
+                            No roles generated yet. Please create a Designation first.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Container -->
+            <div class="pagination-container" id="paginationContainer">
+                <div class="pagination-info" id="paginationInfo">Showing 1-10 of <span th:text="${designations != null ? designations.size() : 0}">12</span> entries</div>
+                <nav>
+                    <ul class="pagination" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Common Scripts Fragment (preserved) -->
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Pagination Logic
+    let currentPage = 1;
+    const rowsPerPage = 10;
+    let allRows = [];
+    let filteredRows = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tbody = document.getElementById('tableBody');
+        if(tbody) {
+            allRows = Array.from(tbody.querySelectorAll('tr.data-row'));
+            filteredRows = [...allRows];
+            updateTotalCount();
+
+            if(allRows.length > 0) {
+                renderPagination();
+            } else {
+                document.getElementById('paginationContainer').style.display = 'none';
+            }
+        }
+    });
+
+    function renderPagination() {
+        const totalItems = filteredRows.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+        if (currentPage < 1) currentPage = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        allRows.forEach(row => row.style.display = 'none');
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = Math.min(start + rowsPerPage, totalItems);
+
+        for (let i = start; i < end; i++) {
+            if (filteredRows[i]) {
+                filteredRows[i].style.display = 'table-row';
+            }
+        }
+
+        const paginationInfo = document.getElementById('paginationInfo');
+        if (paginationInfo) {
+            if (totalItems === 0) {
+                paginationInfo.textContent = 'Showing 0 entries';
+            } else {
+                paginationInfo.textContent = `Showing ${start + 1}-${end} of ${totalItems} entries`;
+            }
+        }
+
+        const pagination = document.getElementById('pagination');
+        if (!pagination) return;
+
+        pagination.innerHTML = '';
+
+        // Previous button
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        const prevLink = document.createElement('span');
+        prevLink.className = 'page-link';
+        prevLink.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevLi.appendChild(prevLink);
+        if (currentPage > 1) {
+            prevLi.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage--;
+                renderPagination();
+            });
+        }
+        pagination.appendChild(prevLi);
+
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            const span = document.createElement('span');
+            span.className = 'page-link';
+            span.textContent = i;
+            li.appendChild(span);
+            li.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = i;
+                renderPagination();
+            });
+            pagination.appendChild(li);
+        }
+
+        // Next button
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        const nextLink = document.createElement('span');
+        nextLink.className = 'page-link';
+        nextLink.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextLi.appendChild(nextLink);
+        if (currentPage < totalPages) {
+            nextLi.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage++;
+                renderPagination();
+            });
+        }
+        pagination.appendChild(nextLi);
+    }
+
+    // Search/Filter Function
+    function filterTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase().trim();
+
+        filteredRows = allRows.filter(row => {
+            const roleId = row.cells[0].textContent.toLowerCase();
+            const roleName = row.cells[1].querySelector('span')?.textContent.toLowerCase() || '';
+            const department = row.cells[2].textContent.toLowerCase();
+
+            return roleId.includes(filter) ||
+                   roleName.includes(filter) ||
+                   department.includes(filter);
+        });
+
+        currentPage = 1;
+        updateTotalCount();
+        renderPagination();
+    }
+
+    // Update total count badge
+    function updateTotalCount() {
+        const totalCount = document.getElementById('totalCount');
+        if (totalCount) {
+            totalCount.textContent = `${filteredRows.length} total`;
+        }
+    }
+</script>
+</body>
+</html>

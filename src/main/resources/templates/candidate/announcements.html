@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --primary: #6366f1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--dark-text);
+        }
+
+        .announcement-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+
+        .announcement-card.pinned {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .announcement-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .announcement-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .announcement-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-permanent {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .badge-temporary {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .badge-low { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+        .badge-normal { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .badge-high { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .badge-urgent { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .announcement-body {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .announcement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--dark-border);
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #cbd5e1;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .pin-icon {
+            color: #f59e0b;
+            font-size: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="page-title">
+        <i class="fas fa-bullhorn"></i>
+        Announcements
+    </h1>
+
+    <div id="alert-container"></div>
+
+    <div id="announcements-list">
+        <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading announcements...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load announcements on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAnnouncements();
+    });
+
+    function loadAnnouncements() {
+        console.log('📢 Loading employee announcements...');
+
+        fetch('/api/announcements', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('✅ Announcements loaded:', data);
+            if (data.success && Array.isArray(data.data)) {
+                displayAnnouncements(data.data);
+            } else {
+                displayError('Failed to load announcements');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading announcements:', error);
+            displayError('Failed to load announcements: ' + error.message);
+        });
+    }
+
+    function displayAnnouncements(announcements) {
+        const listContainer = document.getElementById('announcements-list');
+
+        if (!announcements || announcements.length === 0) {
+            listContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h4>No Announcements</h4>
+                    <p>There are no announcements for you at the moment.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Sort by pinned first, then by date
+        const sorted = announcements.sort((a, b) => {
+            if (a.isPinned !== b.isPinned) {
+                return b.isPinned - a.isPinned;
+            }
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        listContainer.innerHTML = sorted.map(ann => `
+            <div class="announcement-card ${ann.isPinned ? 'pinned' : ''}">
+                <div class="announcement-header">
+                    <h2 class="announcement-title">
+                        ${ann.isPinned ? '<i class="fas fa-thumbtack pin-icon"></i>' : ''}
+                        ${escapeHtml(ann.title)}
+                    </h2>
+                </div>
+
+                <div class="announcement-meta">
+                    ${ann.category ? `<span><strong>Category:</strong> ${ann.category}</span>` : ''}
+                    <span>
+                        <span class="badge ${ann.type === 'PERMANENT' ? 'badge-permanent' : 'badge-temporary'}">
+                            ${ann.type || 'N/A'}
+                        </span>
+                    </span>
+                    <span>
+                        <span class="badge badge-${ann.priority?.toLowerCase() || 'normal'}">
+                            ${ann.priority || 'Normal'}
+                        </span>
+                    </span>
+                    ${ann.expiresAt ? `<span><strong>Expires:</strong> ${formatDate(ann.expiresAt)}</span>` : ''}
+                </div>
+
+                <div class="announcement-body">
+                    ${escapeHtml(ann.description)}
+                </div>
+
+                <div class="announcement-footer">
+                    <span><strong>Posted:</strong> ${formatDate(ann.createdAt)}</span>
+                    <span><strong>By:</strong> ${ann.createdByName || 'Admin'}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function displayError(message) {
+        const container = document.getElementById('alert-container');
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger';
+        alert.innerHTML = `
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${message}</span>
+        `;
+        container.appendChild(alert);
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '–';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>

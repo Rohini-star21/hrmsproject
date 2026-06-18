@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menti's IT Solutions</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        /* CSS Variables - Updated Color Scheme and Fonts */
+        :root {
+            --primary-color: #215c89;
+            --secondary-color: #10d257;
+            --accent-color: #10b981;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --hero-bg: #646b84;
+
+            /* Font Families */
+            --font-heading: 'Raleway', sans-serif;
+            --font-title: 'Montserrat', sans-serif;
+            --font-body: 'Poppins', sans-serif;
+            --font-special: 'Poppins', sans-serif;
+
+            /* Font Sizes */
+            --font-size-hero: 3rem;
+            --font-size-h1: 2.5rem;
+            --font-size-h2: 2rem;
+            --font-size-h3: 1.5rem;
+            --font-size-body: 1rem;
+            --font-size-small: 0.875rem;
+        }
+
+        /* General Styles */
+        body {
+            font-family: var(--font-body);
+            color: var(--text-color);
+            scroll-behavior: smooth;
+            line-height: 1.6;
+            font-size: var(--font-size-body);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        p, li, span, input, textarea, button {
+            font-family: var(--font-body);
+        }
+
+        a {
+            font-family: var(--font-body);
+            text-decoration: none;
+        }
+
+
+
+
+
+/* Navigation - Fixed styling with proper logo alignment */
+.navbar {
+    background-color: var(--primary-color);
+    padding: 5px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+    margin-right: 20px;
+}
+
+.brand-logo {
+    height: 70px;
+    width: auto;
+    border-radius: 8px;
+    display: none;
+    object-fit: contain;
+}
+
+.brand-text-container {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.brand-text {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: white;
+    line-height: 1.2;
+}
+
+.brand-tagline {
+    font-size: 0.7rem;
+    font-weight: 300;
+    opacity: 0.9;
+    color: white;
+    line-height: 1.2;
+}
+
+/* Navbar collapse and navigation */
+.navbar-collapse {
+    flex-grow: 0; /* Prevents stretching */
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between nav items */
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    font-family: var(--font-title);
+    font-size: 1rem;
+    padding: 8px 12px !important;
+    position: relative;
+    white-space: nowrap; /* Prevents text wrapping */
+}
+
+.nav-link:hover {
+    color: var(--accent-color) !important;
+    transform: translateY(-2px);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Underline animation */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--accent-color);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 70%;
+}
+
+/* Login Button - Properly styled and aligned */
+   .btn-login {
+            background-color: white;
+            color: var(--primary-color) !important;
+            border-radius: 30px;
+            padding: 8px 20px !important;
+            font-weight: 600;
+            font-family: var(--font-title);
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            margin-left: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-color);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+.btn-login i {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+
+
+.btn-login:hover i {
+    color: white !important;
+    transform: translateX(-2px);
+}
+
+/* Active state for login button */
+.btn-login:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero CTA Button - SMALLER SIZE with Theme Matching Colors */
+.hero-cta {
+    padding: 10px 30px; /* REDUCED from 14px 40px to 10px 30px */
+    border-radius: 40px; /* Slightly smaller radius */
+    font-weight: 600;
+    font-size: 1rem; /* REDUCED from 1.2rem to 1rem */
+    font-family: var(--font-title);
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    border: none;
+    color: white;
+    box-shadow: 0 8px 15px rgba(52, 152, 219, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px; /* Reduced letter spacing */
+}
+
+.hero-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    transition: all 0.4s ease;
+    z-index: -1;
+}
+
+.hero-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px rgba(52, 152, 219, 0.4);
+    color: white;
+}
+
+.hero-cta:hover::before {
+    left: 0;
+}
+
+.hero-cta i {
+    margin-right: 6px; /* Reduced margin */
+    font-size: 0.9rem; /* Smaller icon */
+    transition: transform 0.3s ease;
+}
+
+.hero-cta:hover i {
+    transform: translateX(5px);
+}
+
+
+
+        /* Hero Section - Fixed */
+        .hero-section {
+            background: linear-gradient(rgba(112, 156, 187, 0.85), rgba(30, 41, 59, 0.85)), url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0 80px;
+            text-align: center;
+        }
+
+        .hero-logo {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .company-name {
+            font-size: var(--font-size-hero);
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: white;
+            font-family: var(--font-heading);
+        }
+
+        .company-tagline {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 300;
+            font-family: var(--font-body);
+        }
+
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-family: var(--font-title);
+        }
+
+        .feature-item i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+    /* Updated responsive adjustments for larger logo */
+@media (max-width: 991px) {
+    .navbar {
+        min-height: auto;
+        padding: 10px 0;
+    }
+
+    .navbar-brand {
+        gap: 10px;
+    }
+
+    .brand-logo {
+        height: 55px; /* Still larger on mobile */
+    }
+
+    .brand-text {
+        font-size: 1.3rem;
+    }
+
+    .brand-tagline {
+        font-size: 0.8rem;
+    }
+
+    .navbar-nav {
+        padding: 15px 0;
+        background-color: var(--primary-color);
+    }
+
+    .nav-link {
+        padding: 12px 15px !important;
+        margin: 2px 0;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+
+    .btn-login {
+        margin: 10px auto !important;
+        text-align: center;
+        display: inline-block;
+        width: fit-content;
+        padding: 10px 30px !important;
+    }
+
+    .nav-link::after {
+        display: none;
+    }
+
+    /* Smaller button on mobile */
+    .hero-cta {
+        padding: 8px 25px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .brand-logo {
+        height: 50px;
+    }
+
+    .brand-text {
+        font-size: 1.2rem;
+    }
+
+    .hero-cta {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .brand-logo {
+        height: 45px;
+    }
+
+    .brand-text {
+        font-size: 1rem;
+    }
+
+    .brand-tagline {
+        display: none; /* Hide tagline on very small screens */
+    }
+
+    .hero-cta {
+        padding: 7px 18px;
+        font-size: 0.85rem;
+    }
+}
+
+        /* Section Titles */
+        .section-title {
+            position: relative;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-align: center;
+            font-size: var(--font-size-h2);
+            font-family: var(--font-heading);
+            color: var(--dark-color);
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: var(--font-body);
+        }
+
+        /* Section Spacing */
+        .about-section, .services-section, .jobs-section, .locations-section, .contact-section {
+            padding: 70px 0;
+        }
+
+        .about-section {
+            background-color: var(--light-color);
+        }
+
+        .about-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: var(--font-title);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            font-family: var(--font-body);
+        }
+
+        /* Service Cards */
+        .service-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            background: var(--card-bg);
+            position: relative;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .service-card .card-body {
+            padding: 30px 20px;
+            position: relative;
+            z-index: 2;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .service-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-family: var(--font-title);
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .service-card p {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-family: var(--font-body);
+        }
+
+        .service-hover-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            color: var(--primary-color);
+            transform: translateY(100%);
+            transition: all 0.3s ease;
+            opacity: 0;
+            z-index: 3;
+            text-align: center;
+        }
+
+        .service-card:hover .service-hover-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .service-hover-content .btn-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0;
+            font-family: var(--font-title);
+        }
+
+        .service-hover-content .btn-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Job Cards */
+        .jobs-section {
+            background-color: var(--light-color);
+        }
+
+        .job-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .job-header {
+            margin-bottom: 15px;
+        }
+
+        .job-header h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            font-family: var(--font-title);
+            color: var(--dark-color);
+        }
+
+        .job-description {
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .job-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        /* Location Cards */
+        .locations-section {
+            background-color: var(--light-color);
+        }
+
+        .location-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            height: 100%;
+        }
+
+        .location-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .location-header h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0;
+            font-family: var(--font-title);
+            color: var(--primary-color);
+        }
+
+        .location-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: var(--font-body);
+        }
+
+        .location-info p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+        }
+
+        .location-info i {
+            color: var(--primary-color);
+            margin-top: 4px;
+            min-width: 18px;
+            font-size: 0.9rem;
+        }
+
+        .location-map {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-form-container {
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        .form-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(16, 185, 129, 0.05) 100%);
+        }
+
+        .form-background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            opacity: 0.1;
+        }
+
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            top: -30px;
+            left: -30px;
+        }
+
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            bottom: -50px;
+            right: -50px;
+        }
+
+        .shape-3 {
+            width: 70px;
+            height: 70px;
+            top: 50%;
+            left: 70%;
+        }
+
+        .shape-4 {
+            width: 50px;
+            height: 50px;
+            bottom: 30%;
+            right: 80%;
+        }
+
+        .contact-form-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .contact-info-sidebar {
+            padding: 20px;
+            height: 100%;
+        }
+
+        .contact-info-sidebar h3 {
+            color: var(--primary-color);
+            font-family: var(--font-title);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .contact-info-sidebar p {
+            margin-bottom: 20px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+        }
+
+        .contact-details p {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+        }
+
+        .contact-icon {
+            color: var(--primary-color);
+            margin-right: 12px;
+            margin-top: 4px;
+            min-width: 20px;
+        }
+
+        .business-hours {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 20px;
+        }
+
+        .business-hours h4 {
+            color: var(--dark-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-family: var(--font-title);
+        }
+
+        .business-hours p {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .contact-form {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-form .form-label {
+            font-weight: 500;
+            color: var(--dark-color);
+            font-family: var(--font-title);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .contact-form .form-control {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .contact-form .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-send {
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-family: var(--font-title);
+            width: 100%;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #215C89;
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer h3, .footer h5 {
+            color: white;
+            margin-bottom: 20px;
+            font-family: var(--font-heading);
+        }
+
+        .footer-contact p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-family: var(--font-body);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .footer ul li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-body);
+        }
+
+        .footer ul li i {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+        }
+
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Animation for elements */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-info {
+            background-color: rgba(14, 165, 233, 0.2);
+            border-color: rgba(14, 165, 233, 0.3);
+            color: #0ea5e9;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            :root {
+                --font-size-hero: 2.5rem;
+                --font-size-h1: 2rem;
+                --font-size-h2: 1.8rem;
+            }
+
+            .navbar-brand {
+                max-width: 70%;
+            }
+
+            .brand-text {
+                font-size: 1rem;
+            }
+
+            .contact-form-container .row {
+                flex-direction: column-reverse;
+            }
+
+            .contact-info-sidebar {
+                text-align: center;
+            }
+
+            .contact-details p {
+                justify-content: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .company-name {
+                font-size: 2.2rem;
+            }
+
+            .company-tagline {
+                font-size: 1.1rem;
+            }
+
+            .hero-features {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .hero-section {
+                padding: 70px 0 50px;
+            }
+
+            .about-section, .services-section, .jobs-section, .locations-section, .contact-section {
+                padding: 50px 0;
+            }
+
+            .about-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .job-footer {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .navbar-brand {
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .brand-tagline {
+                display: none;
+            }
+
+            .location-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .contact-form-container {
+                padding: 20px;
+            }
+
+            .btn-login {
+                margin-left: 0;
+                margin-top: 10px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .job-card {
+                margin-bottom: 20px;
+            }
+
+            .footer .row > div {
+                margin-bottom: 30px;
+            }
+
+            .service-card .card-body {
+                padding: 20px 15px;
+            }
+
+            .location-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .job-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .job-tags {
+                width: 100%;
+            }
+
+            .contact-form {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation - Fixed with logo support -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img id="navbarLogo" class="brand-logo" src="" alt="Company Logo">
+            <div class="brand-text-container">
+                <span class="brand-text" id="companyNameDisplay">Menti's IT Solutions</span>
+                <span class="brand-tagline" id="companyTaglineDisplay">Innovate. Implement. Inspire.</span>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#services">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#jobs">Job Offers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#locations">Locations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/candidate/login" class="nav-link btn-login">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section - Fixed (removed duplicate) -->
+<!-- Hero Section - Fixed (removed duplicate) -->
+<section class="hero-section">
+    <div class="container">
+        <!-- The logo line has been removed from here -->
+        <h1 class="company-name" id="heroCompanyName">Menti's IT Solutions</h1>
+        <p class="company-tagline" id="heroCompanyTagline">Transforming businesses with innovative digital solutions and cutting-edge technology</p>
+        <div class="hero-features">
+            <div class="feature-item">
+                <i class="fas fa-rocket"></i>
+                <span>Fast & Reliable</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-lightbulb"></i>
+                <span>Innovative Solutions</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-headset"></i>
+                <span>24/7 Support</span>
+            </div>
+        </div>
+        <a href="#contact" class="btn btn-primary btn-lg hero-cta">
+            <i class="fas fa-paper-plane"></i> Get In Touch
+        </a>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services-section">
+    <div class="container">
+        <h2 class="section-title">Our Services</h2>
+        <p class="section-subtitle">We offer a wide range of IT services to help your business grow</p>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card fade-in">
+                    <div class="card-body text-center p-4">
+                        <div class="service-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="service-title">Digital Marketing</h3>
+                        <p>Comprehensive digital marketing strategies to boost your online presence and drive growth.</p>
+                        <div class="service-hover-content">
+                            <a href="#" class="btn btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card fade-in">
+                    <div class="card-body text-center p-4">
+                        <div class="service-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="service-title">SEO</h3>
+                        <p>Search engine optimization services to improve your visibility and organic traffic.</p>
+                        <div class="service-hover-content">
+                            <a href="#" class="btn btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card fade-in">
+                    <div class="card-body text-center p-4">
+                        <div class="service-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <h3 class="service-title">Graphic Designing</h3>
+                        <p>Creative and impactful visual designs that communicate your brand's message effectively.</p>
+                        <div class="service-hover-content">
+                            <a href="#" class="btn btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card fade-in">
+                    <div class="card-body text-center p-4">
+                        <div class="service-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="service-title">API Development</h3>
+                        <p>Robust and scalable API solutions to power your applications and integrations.</p>
+                        <div class="service-hover-content">
+                            <a href="#" class="btn btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card fade-in">
+                    <div class="card-body text-center p-4">
+                        <div class="service-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3 class="service-title">UI Development</h3>
+                        <p>Intuitive and engaging user interfaces that provide exceptional user experiences.</p>
+                        <div class="service-hover-content">
+                            <a href="#" class="btn btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card service-card fade-in">
+                    <div class="card-body text-center p-4">
+                        <div class="service-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h3 class="service-title">Full Stack Development</h3>
+                        <p>End-to-end web application development from frontend to backend solutions.</p>
+                        <div class="service-hover-content">
+                            <a href="#" class="btn btn-link">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Jobs Section -->
+<section id="jobs" class="jobs-section">
+    <div class="container">
+        <h2 class="section-title">Job Opportunities</h2>
+        <p class="text-center mb-5">Join our talented team and work on exciting projects with cutting-edge technologies.</p>
+
+        <div th:if="${jobs == null or jobs.empty}" class="alert alert-info text-center">
+            No job openings at the moment. Please check back later.
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" th:if="${jobs != null and !jobs.empty}">
+            <div class="col" th:each="job : ${jobs}">
+                <div class="job-card fade-in" th:onclick="|window.location.href='/job-description?id=' + ${job.id}|" style="cursor: pointer;">
+                    <div class="job-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0" th:text="${job.title}">Job Title</h3>
+                            <span class="badge bg-primary" th:text="${job.jobType}">Full-time</span>
+                        </div>
+                        <p class="text-muted mt-2 mb-0"><i class="fas fa-map-marker-alt me-1"></i> <span th:text="${job.location}">Location</span></p>
+                        <p class="text-muted mb-2"><i class="fas fa-briefcase me-1"></i> <span th:text="${job.experienceLevel}">Experience Level</span></p>
+                    </div>
+                    <div class="job-description">
+                        <p th:text="${#strings.abbreviate(job.description, 150)}">Job description</p>
+                        <div th:if="${job.salaryRange != null}">
+                            <p><strong>Salary:</strong> <span th:text="${job.salaryRange}">Salary Range</span></p>
+                        </div>
+                    </div>
+                    <div class="job-footer">
+                        <small class="text-muted">Posted: <span th:text="${#temporals.format(job.postedDate, 'dd MMM yyyy')}">Date</span></small>
+                    </div>
+                    <p class="mb-1"><small class="text-muted">Deadline: <span th:text="${job.applicationDeadline} ?: 'No deadline'">30 Nov 2023</span></small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Locations Section -->
+<section id="locations" class="locations-section">
+    <div class="container">
+        <h2 class="section-title">Our Locations</h2>
+        <p class="section-subtitle">Visit our offices or get in touch with our team</p>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="location-card card fade-in">
+                    <div class="card-body p-4">
+                        <div class="location-header">
+                            <h3><i class="fas fa-building me-2"></i> Guntur Office</h3>
+                            <span class="location-badge">Headquarters</span>
+                        </div>
+                        <p class="text-muted mb-3">Our headquarters where it all began</p>
+                        <div class="location-info">
+                            <p><i class="fas fa-map-marker-alt me-2"></i> Barbeque Mall Beside, Building , 3rd floor, Appanam, Lakshmipuram Main Rd, above WESTSIDE, Ashok Nagar, Guntur, Andhra Pradesh 5222112</p>
+                            <p><i class="fas fa-phone me-2"></i> +91 9866139779</p>
+                            <p><i class="fas fa-envelope me-2"></i> mentisguntur@gmail.com</p>
+                        </div>
+                        <div class="mt-3">
+                            <div class="ratio ratio-16x9 location-map">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122241.813898391!2d80.40446836953124!3d16.306652999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a4a755d8a18bee3%3A0xcbef4ccee2c4d392!2sGuntur%2C%20Andhra%20Pradesh!5e0!3m2!1sen!2sin!4v1686749976538!5m2!1sen!2sin" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="location-card card fade-in">
+                    <div class="card-body p-4">
+                        <div class="location-header">
+                            <h3><i class="fas fa-building me-2"></i> Hyderabad Office</h3>
+                            <span class="location-badge">Development Center</span>
+                        </div>
+                        <p class="text-muted mb-3">Our development center in the tech capital</p>
+                        <div class="location-info">
+                            <p><i class="fas fa-map-marker-alt me-2"></i> 5A, Grand View Tower, Gopal Nagar, KPHB, Hyderabad, Telangana</p>
+                            <p><i class="fas fa-phone me-2"></i> +91 9866139779</p>
+                            <p><i class="fas fa-envelope me-2"></i> mentishyd@gmail.com</p>
+                        </div>
+                        <div class="mt-3">
+                            <div class="ratio ratio-16x9 location-map">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15219.26170884955!2d78.37453836977537!3d17.447949999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x6d16bcd689096e09!2sHITEC%20City%2C%20Hyderabad%20Telangana!5e0!3m2!1sen!2sin!4v1686750051923!5m2!1sen!2sin" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+    <div class="container">
+        <h2 class="section-title">About Our Company</h2>
+        <div class="row">
+            <div class="col-lg-6">
+                <p class="lead">Menti's IT Solutions is a leading technology company dedicated to delivering exceptional digital experiences and innovative solutions to businesses worldwide.</p>
+                <p>Founded in 2010, we have grown into a trusted partner for businesses seeking to transform their digital presence. Our team of experts combines technical expertise with creative thinking to deliver solutions that drive growth and innovation.</p>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Projects Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">200+</span>
+                        <span class="stat-label">Happy Clients</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Experts Team</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" th:text="${jobCount != null ? jobCount : '15+'}">15+</span>
+                        <span class="stat-label">Job Openings</span>
+                    </div>
+                </div>
+                <p>We believe in building long-term relationships with our clients by providing exceptional service, cutting-edge solutions, and measurable results.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="Our Team" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+    <div class="container">
+        <h2 class="section-title">Contact Us</h2>
+        <p class="section-subtitle">We'd love to hear from you. Send us a message!</p>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-form-container">
+                    <div class="form-background">
+                        <div class="form-background-shapes">
+                            <div class="shape shape-1"></div>
+                            <div class="shape shape-2"></div>
+                            <div class="shape shape-3"></div>
+                            <div class="shape shape-4"></div>
+                        </div>
+                    </div>
+                    <div class="contact-form-content">
+                        <div class="row">
+                            <div class="col-md-6 contact-info-sidebar">
+                                <h3>Get in Touch</h3>
+                                <p>Have a project in mind or want to know more about our services? Reach out to us!</p>
+                                <div class="contact-details">
+                                    <p><i class="fas fa-map-marker-alt contact-icon"></i> Barbeque Mall Beside, Building , 3rd floor, Appanam, Lakshmipuram Main Rd, above WESTSIDE, Ashok Nagar, Guntur, Andhra Pradesh 5222112</p>
+                                    <p><i class="fas fa-phone contact-icon"></i> +91 9866139779</p>
+                                    <p><i class="fas fa-envelope contact-icon"></i> info@mentisitsolutions.com</p>
+                                </div>
+                                <div class="business-hours mt-4">
+                                    <h4>Business Hours</h4>
+                                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                                    <p>Saturday: 10:00 AM - 4:00 PM</p>
+                                    <p>Sunday: Closed</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <form class="contact-form">
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Your Name</label>
+                                        <input type="text" class="form-control" id="name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="subject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="subject" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="message" class="form-label">Message</label>
+                                        <textarea class="form-control" id="message" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-send">Send Message</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h3>Menti's IT Solutions</h3>
+                <p>Transforming businesses with innovative digital solutions and cutting-edge technology. Your success is our priority.</p>
+                <div class="footer-contact">
+                    <p><i class="fas fa-phone-alt"></i> +91 9866139734</p>
+                    <p><i class="fas fa-envelope"></i> info@mentisitsolutions.com</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Our Services</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-angle-right"></i> Digital Marketing</li>
+                    <li><i class="fas fa-angle-right"></i> SEO Optimization</li>
+                    <li><i class="fas fa-angle-right"></i> Web Development</li>
+                    <li><i class="fas fa-angle-right"></i> UI/UX Design</li>
+                    <li><i class="fas fa-angle-right"></i> API Development</li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Connect With Us</h5>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+                <div class="footer-newsletter mt-3">
+                    <h5>Stay Updated</h5>
+                    <form>
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Your Email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <hr class="mt-4 mb-4">
+        <div class="text-center">
+            <p>&copy; 2023 Menti's IT Solutions. All Rights Reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </div>
+</footer>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+</a>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Home Page JavaScript -->
+<script>
+    // Load company data from localStorage on home page
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Home page loaded, loading company data...');
+        loadCompanyData();
+
+        // Listen for storage changes (if logo updates in another tab)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'company_logo' || e.key === 'company_name' || e.key === 'company_tagline' || e.key === 'company_primary_color') {
+                console.log('Company data updated in another tab, reloading...');
+                loadCompanyData();
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTopButton = document.querySelector('.back-to-top');
+        if (backToTopButton) {
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            });
+
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Fade in animation for elements
+        const fadeElements = document.querySelectorAll('.fade-in');
+        function checkFade() {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementBottom = element.getBoundingClientRect().bottom;
+                const isVisible = (elementTop < window.innerHeight - 100) && (elementBottom > 0);
+
+                if (isVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', checkFade);
+        checkFade(); // Check on initial load
+
+        // Contact form submission
+        const contactForm = document.querySelector('.contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your message! We will get back to you soon.');
+                this.reset();
+            });
+        }
+
+        // Newsletter form submission
+        const newsletterForm = document.querySelector('.footer-newsletter form');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for subscribing to our newsletter!');
+                this.reset();
+            });
+        }
+    });
+
+    function loadCompanyData() {
+        // Load from localStorage
+        const savedLogo = localStorage.getItem('company_logo');
+        const savedName = localStorage.getItem('company_name');
+        const savedTagline = localStorage.getItem('company_tagline');
+        const savedPrimaryColor = localStorage.getItem('company_primary_color');
+
+        console.log('Loading company data:', {
+            hasLogo: !!savedLogo,
+            name: savedName,
+            tagline: savedTagline,
+            color: savedPrimaryColor
+        });
+
+        // Update navbar
+        const navbarLogo = document.getElementById('navbarLogo');
+        const companyNameDisplay = document.getElementById('companyNameDisplay');
+        const companyTaglineDisplay = document.getElementById('companyTaglineDisplay');
+
+        if (navbarLogo && savedLogo) {
+            navbarLogo.src = savedLogo;
+            navbarLogo.style.display = 'inline-block';
+        } else if (navbarLogo) {
+            navbarLogo.style.display = 'none';
+        }
+
+        if (companyNameDisplay && savedName) {
+            companyNameDisplay.textContent = savedName;
+        }
+
+        if (companyTaglineDisplay && savedTagline) {
+            companyTaglineDisplay.textContent = savedTagline;
+        }
+
+        // Update hero section
+        const heroLogo = document.getElementById('heroLogo');
+        const heroCompanyName = document.getElementById('heroCompanyName');
+        const heroCompanyTagline = document.getElementById('heroCompanyTagline');
+
+        if (heroLogo && savedLogo) {
+            heroLogo.src = savedLogo;
+            heroLogo.style.display = 'inline-block';
+        } else if (heroLogo) {
+            heroLogo.style.display = 'none';
+        }
+
+        if (heroCompanyName && savedName) {
+            heroCompanyName.textContent = savedName;
+        }
+
+        if (heroCompanyTagline && savedTagline) {
+            heroCompanyTagline.textContent = savedTagline;
+        }
+
+        // Update navbar color if primary color is saved
+        if (savedPrimaryColor) {
+            document.documentElement.style.setProperty('--primary-color', savedPrimaryColor);
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                navbar.style.backgroundColor = savedPrimaryColor;
+            }
+        }
+    }
+</script>
+</body>
+</html>

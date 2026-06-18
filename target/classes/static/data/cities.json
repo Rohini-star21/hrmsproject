@@ -1,0 +1,896 @@
+[
+  {
+    "id": 1,
+    "name": "Los Angeles",
+    "state_id": 1,
+    "country_id": 1
+  },
+  {
+    "id": 2,
+    "name": "San Francisco",
+    "state_id": 1,
+    "country_id": 1
+  },
+  {
+    "id": 3,
+    "name": "San Diego",
+    "state_id": 1,
+    "country_id": 1
+  },
+  {
+    "id": 4,
+    "name": "Sacramento",
+    "state_id": 1,
+    "country_id": 1
+  },
+  {
+    "id": 5,
+    "name": "Houston",
+    "state_id": 2,
+    "country_id": 1
+  },
+  {
+    "id": 6,
+    "name": "Dallas",
+    "state_id": 2,
+    "country_id": 1
+  },
+  {
+    "id": 7,
+    "name": "Austin",
+    "state_id": 2,
+    "country_id": 1
+  },
+  {
+    "id": 8,
+    "name": "San Antonio",
+    "state_id": 2,
+    "country_id": 1
+  },
+  {
+    "id": 9,
+    "name": "New York City",
+    "state_id": 3,
+    "country_id": 1
+  },
+  {
+    "id": 10,
+    "name": "Buffalo",
+    "state_id": 3,
+    "country_id": 1
+  },
+  {
+    "id": 11,
+    "name": "Rochester",
+    "state_id": 3,
+    "country_id": 1
+  },
+  {
+    "id": 12,
+    "name": "Albany",
+    "state_id": 3,
+    "country_id": 1
+  },
+  {
+    "id": 13,
+    "name": "Miami",
+    "state_id": 4,
+    "country_id": 1
+  },
+  {
+    "id": 14,
+    "name": "Orlando",
+    "state_id": 4,
+    "country_id": 1
+  },
+  {
+    "id": 15,
+    "name": "Tampa",
+    "state_id": 4,
+    "country_id": 1
+  },
+  {
+    "id": 16,
+    "name": "Jacksonville",
+    "state_id": 4,
+    "country_id": 1
+  },
+  {
+    "id": 17,
+    "name": "Chicago",
+    "state_id": 5,
+    "country_id": 1
+  },
+  {
+    "id": 18,
+    "name": "Aurora",
+    "state_id": 5,
+    "country_id": 1
+  },
+  {
+    "id": 19,
+    "name": "Naperville",
+    "state_id": 5,
+    "country_id": 1
+  },
+  {
+    "id": 20,
+    "name": "Seattle",
+    "state_id": 6,
+    "country_id": 1
+  },
+  {
+    "id": 21,
+    "name": "Spokane",
+    "state_id": 6,
+    "country_id": 1
+  },
+  {
+    "id": 22,
+    "name": "Tacoma",
+    "state_id": 6,
+    "country_id": 1
+  },
+  {
+    "id": 23,
+    "name": "London",
+    "state_id": 7,
+    "country_id": 2
+  },
+  {
+    "id": 24,
+    "name": "Manchester",
+    "state_id": 7,
+    "country_id": 2
+  },
+  {
+    "id": 25,
+    "name": "Birmingham",
+    "state_id": 7,
+    "country_id": 2
+  },
+  {
+    "id": 26,
+    "name": "Liverpool",
+    "state_id": 7,
+    "country_id": 2
+  },
+  {
+    "id": 27,
+    "name": "Edinburgh",
+    "state_id": 8,
+    "country_id": 2
+  },
+  {
+    "id": 28,
+    "name": "Glasgow",
+    "state_id": 8,
+    "country_id": 2
+  },
+  {
+    "id": 29,
+    "name": "Aberdeen",
+    "state_id": 8,
+    "country_id": 2
+  },
+  {
+    "id": 30,
+    "name": "Cardiff",
+    "state_id": 9,
+    "country_id": 2
+  },
+  {
+    "id": 31,
+    "name": "Swansea",
+    "state_id": 9,
+    "country_id": 2
+  },
+  {
+    "id": 32,
+    "name": "Belfast",
+    "state_id": 10,
+    "country_id": 2
+  },
+  {
+    "id": 33,
+    "name": "Derry",
+    "state_id": 10,
+    "country_id": 2
+  },
+  {
+    "id": 34,
+    "name": "Hyderabad",
+    "state_id": 11,
+    "country_id": 3
+  },
+  {
+    "id": 35,
+    "name": "Warangal",
+    "state_id": 11,
+    "country_id": 3
+  },
+  {
+    "id": 36,
+    "name": "Nizamabad",
+    "state_id": 11,
+    "country_id": 3
+  },
+  {
+    "id": 37,
+    "name": "Khammam",
+    "state_id": 11,
+    "country_id": 3
+  },
+  {
+    "id": 38,
+    "name": "Bangalore",
+    "state_id": 12,
+    "country_id": 3
+  },
+  {
+    "id": 39,
+    "name": "Mysore",
+    "state_id": 12,
+    "country_id": 3
+  },
+  {
+    "id": 40,
+    "name": "Mangalore",
+    "state_id": 12,
+    "country_id": 3
+  },
+  {
+    "id": 41,
+    "name": "Hubli",
+    "state_id": 12,
+    "country_id": 3
+  },
+  {
+    "id": 42,
+    "name": "Mumbai",
+    "state_id": 13,
+    "country_id": 3
+  },
+  {
+    "id": 43,
+    "name": "Pune",
+    "state_id": 13,
+    "country_id": 3
+  },
+  {
+    "id": 44,
+    "name": "Nagpur",
+    "state_id": 13,
+    "country_id": 3
+  },
+  {
+    "id": 45,
+    "name": "Thane",
+    "state_id": 13,
+    "country_id": 3
+  },
+  {
+    "id": 46,
+    "name": "Chennai",
+    "state_id": 14,
+    "country_id": 3
+  },
+  {
+    "id": 47,
+    "name": "Coimbatore",
+    "state_id": 14,
+    "country_id": 3
+  },
+  {
+    "id": 48,
+    "name": "Madurai",
+    "state_id": 14,
+    "country_id": 3
+  },
+  {
+    "id": 49,
+    "name": "Tiruchirappalli",
+    "state_id": 14,
+    "country_id": 3
+  },
+  {
+    "id": 50,
+    "name": "New Delhi",
+    "state_id": 15,
+    "country_id": 3
+  },
+  {
+    "id": 51,
+    "name": "Delhi",
+    "state_id": 15,
+    "country_id": 3
+  },
+  {
+    "id": 52,
+    "name": "Ahmedabad",
+    "state_id": 16,
+    "country_id": 3
+  },
+  {
+    "id": 53,
+    "name": "Surat",
+    "state_id": 16,
+    "country_id": 3
+  },
+  {
+    "id": 54,
+    "name": "Vadodara",
+    "state_id": 16,
+    "country_id": 3
+  },
+  {
+    "id": 55,
+    "name": "Rajkot",
+    "state_id": 16,
+    "country_id": 3
+  },
+  {
+    "id": 56,
+    "name": "Toronto",
+    "state_id": 17,
+    "country_id": 4
+  },
+  {
+    "id": 57,
+    "name": "Ottawa",
+    "state_id": 17,
+    "country_id": 4
+  },
+  {
+    "id": 58,
+    "name": "Mississauga",
+    "state_id": 17,
+    "country_id": 4
+  },
+  {
+    "id": 59,
+    "name": "Brampton",
+    "state_id": 17,
+    "country_id": 4
+  },
+  {
+    "id": 60,
+    "name": "Montreal",
+    "state_id": 18,
+    "country_id": 4
+  },
+  {
+    "id": 61,
+    "name": "Quebec City",
+    "state_id": 18,
+    "country_id": 4
+  },
+  {
+    "id": 62,
+    "name": "Laval",
+    "state_id": 18,
+    "country_id": 4
+  },
+  {
+    "id": 63,
+    "name": "Vancouver",
+    "state_id": 19,
+    "country_id": 4
+  },
+  {
+    "id": 64,
+    "name": "Surrey",
+    "state_id": 19,
+    "country_id": 4
+  },
+  {
+    "id": 65,
+    "name": "Burnaby",
+    "state_id": 19,
+    "country_id": 4
+  },
+  {
+    "id": 66,
+    "name": "Calgary",
+    "state_id": 20,
+    "country_id": 4
+  },
+  {
+    "id": 67,
+    "name": "Edmonton",
+    "state_id": 20,
+    "country_id": 4
+  },
+  {
+    "id": 68,
+    "name": "Red Deer",
+    "state_id": 20,
+    "country_id": 4
+  },
+  {
+    "id": 69,
+    "name": "Sydney",
+    "state_id": 21,
+    "country_id": 5
+  },
+  {
+    "id": 70,
+    "name": "Newcastle",
+    "state_id": 21,
+    "country_id": 5
+  },
+  {
+    "id": 71,
+    "name": "Wollongong",
+    "state_id": 21,
+    "country_id": 5
+  },
+  {
+    "id": 72,
+    "name": "Melbourne",
+    "state_id": 22,
+    "country_id": 5
+  },
+  {
+    "id": 73,
+    "name": "Geelong",
+    "state_id": 22,
+    "country_id": 5
+  },
+  {
+    "id": 74,
+    "name": "Ballarat",
+    "state_id": 22,
+    "country_id": 5
+  },
+  {
+    "id": 75,
+    "name": "Brisbane",
+    "state_id": 23,
+    "country_id": 5
+  },
+  {
+    "id": 76,
+    "name": "Gold Coast",
+    "state_id": 23,
+    "country_id": 5
+  },
+  {
+    "id": 77,
+    "name": "Townsville",
+    "state_id": 23,
+    "country_id": 5
+  },
+  {
+    "id": 78,
+    "name": "Perth",
+    "state_id": 24,
+    "country_id": 5
+  },
+  {
+    "id": 79,
+    "name": "Fremantle",
+    "state_id": 24,
+    "country_id": 5
+  },
+  {
+    "id": 80,
+    "name": "Munich",
+    "state_id": 25,
+    "country_id": 6
+  },
+  {
+    "id": 81,
+    "name": "Nuremberg",
+    "state_id": 25,
+    "country_id": 6
+  },
+  {
+    "id": 82,
+    "name": "Augsburg",
+    "state_id": 25,
+    "country_id": 6
+  },
+  {
+    "id": 83,
+    "name": "Cologne",
+    "state_id": 26,
+    "country_id": 6
+  },
+  {
+    "id": 84,
+    "name": "Dusseldorf",
+    "state_id": 26,
+    "country_id": 6
+  },
+  {
+    "id": 85,
+    "name": "Dortmund",
+    "state_id": 26,
+    "country_id": 6
+  },
+  {
+    "id": 86,
+    "name": "Stuttgart",
+    "state_id": 27,
+    "country_id": 6
+  },
+  {
+    "id": 87,
+    "name": "Mannheim",
+    "state_id": 27,
+    "country_id": 6
+  },
+  {
+    "id": 88,
+    "name": "Karlsruhe",
+    "state_id": 27,
+    "country_id": 6
+  },
+  {
+    "id": 89,
+    "name": "Paris",
+    "state_id": 28,
+    "country_id": 7
+  },
+  {
+    "id": 90,
+    "name": "Versailles",
+    "state_id": 28,
+    "country_id": 7
+  },
+  {
+    "id": 91,
+    "name": "Marseille",
+    "state_id": 29,
+    "country_id": 7
+  },
+  {
+    "id": 92,
+    "name": "Nice",
+    "state_id": 29,
+    "country_id": 7
+  },
+  {
+    "id": 93,
+    "name": "Cannes",
+    "state_id": 29,
+    "country_id": 7
+  },
+  {
+    "id": 94,
+    "name": "Singapore",
+    "state_id": 30,
+    "country_id": 8
+  },
+  {
+    "id": 95,
+    "name": "Dubai",
+    "state_id": 31,
+    "country_id": 9
+  },
+  {
+    "id": 96,
+    "name": "Abu Dhabi",
+    "state_id": 32,
+    "country_id": 9
+  },
+  {
+    "id": 97,
+    "name": "Sharjah",
+    "state_id": 33,
+    "country_id": 9
+  },
+  {
+    "id": 98,
+    "name": "Tokyo",
+    "state_id": 34,
+    "country_id": 10
+  },
+  {
+    "id": 99,
+    "name": "Osaka",
+    "state_id": 35,
+    "country_id": 10
+  },
+  {
+    "id": 100,
+    "name": "Kyoto",
+    "state_id": 36,
+    "country_id": 10
+  },
+  {
+    "id": 101,
+    "name": "Visakhapatnam",
+    "state_id": 37,
+    "country_id": 3
+  },
+  {
+    "id": 102,
+    "name": "Vijayawada",
+    "state_id": 37,
+    "country_id": 3
+  },
+  {
+    "id": 103,
+    "name": "Guntur",
+    "state_id": 37,
+    "country_id": 3
+  },
+  {
+    "id": 104,
+    "name": "Tirupati",
+    "state_id": 37,
+    "country_id": 3
+  },
+  {
+    "id": 105,
+    "name": "Kolkata",
+    "state_id": 38,
+    "country_id": 3
+  },
+  {
+    "id": 106,
+    "name": "Howrah",
+    "state_id": 38,
+    "country_id": 3
+  },
+  {
+    "id": 107,
+    "name": "Durgapur",
+    "state_id": 38,
+    "country_id": 3
+  },
+  {
+    "id": 108,
+    "name": "Asansol",
+    "state_id": 38,
+    "country_id": 3
+  },
+  {
+    "id": 109,
+    "name": "Jaipur",
+    "state_id": 39,
+    "country_id": 3
+  },
+  {
+    "id": 110,
+    "name": "Jodhpur",
+    "state_id": 39,
+    "country_id": 3
+  },
+  {
+    "id": 111,
+    "name": "Udaipur",
+    "state_id": 39,
+    "country_id": 3
+  },
+  {
+    "id": 112,
+    "name": "Kota",
+    "state_id": 39,
+    "country_id": 3
+  },
+  {
+    "id": 113,
+    "name": "Lucknow",
+    "state_id": 40,
+    "country_id": 3
+  },
+  {
+    "id": 114,
+    "name": "Kanpur",
+    "state_id": 40,
+    "country_id": 3
+  },
+  {
+    "id": 115,
+    "name": "Agra",
+    "state_id": 40,
+    "country_id": 3
+  },
+  {
+    "id": 116,
+    "name": "Varanasi",
+    "state_id": 40,
+    "country_id": 3
+  },
+  {
+    "id": 117,
+    "name": "Thiruvananthapuram",
+    "state_id": 41,
+    "country_id": 3
+  },
+  {
+    "id": 118,
+    "name": "Kochi",
+    "state_id": 41,
+    "country_id": 3
+  },
+  {
+    "id": 119,
+    "name": "Kozhikode",
+    "state_id": 41,
+    "country_id": 3
+  },
+  {
+    "id": 120,
+    "name": "Thrissur",
+    "state_id": 41,
+    "country_id": 3
+  },
+  {
+    "id": 121,
+    "name": "Ludhiana",
+    "state_id": 42,
+    "country_id": 3
+  },
+  {
+    "id": 122,
+    "name": "Amritsar",
+    "state_id": 42,
+    "country_id": 3
+  },
+  {
+    "id": 123,
+    "name": "Jalandhar",
+    "state_id": 42,
+    "country_id": 3
+  },
+  {
+    "id": 124,
+    "name": "Patiala",
+    "state_id": 42,
+    "country_id": 3
+  },
+  {
+    "id": 125,
+    "name": "Gurgaon",
+    "state_id": 43,
+    "country_id": 3
+  },
+  {
+    "id": 126,
+    "name": "Faridabad",
+    "state_id": 43,
+    "country_id": 3
+  },
+  {
+    "id": 127,
+    "name": "Panipat",
+    "state_id": 43,
+    "country_id": 3
+  },
+  {
+    "id": 128,
+    "name": "Ambala",
+    "state_id": 43,
+    "country_id": 3
+  },
+  {
+    "id": 129,
+    "name": "Philadelphia",
+    "state_id": 44,
+    "country_id": 1
+  },
+  {
+    "id": 130,
+    "name": "Pittsburgh",
+    "state_id": 44,
+    "country_id": 1
+  },
+  {
+    "id": 131,
+    "name": "Allentown",
+    "state_id": 44,
+    "country_id": 1
+  },
+  {
+    "id": 132,
+    "name": "Columbus",
+    "state_id": 45,
+    "country_id": 1
+  },
+  {
+    "id": 133,
+    "name": "Cleveland",
+    "state_id": 45,
+    "country_id": 1
+  },
+  {
+    "id": 134,
+    "name": "Cincinnati",
+    "state_id": 45,
+    "country_id": 1
+  },
+  {
+    "id": 135,
+    "name": "Atlanta",
+    "state_id": 46,
+    "country_id": 1
+  },
+  {
+    "id": 136,
+    "name": "Savannah",
+    "state_id": 46,
+    "country_id": 1
+  },
+  {
+    "id": 137,
+    "name": "Augusta",
+    "state_id": 46,
+    "country_id": 1
+  },
+  {
+    "id": 138,
+    "name": "Boston",
+    "state_id": 47,
+    "country_id": 1
+  },
+  {
+    "id": 139,
+    "name": "Worcester",
+    "state_id": 47,
+    "country_id": 1
+  },
+  {
+    "id": 140,
+    "name": "Springfield",
+    "state_id": 47,
+    "country_id": 1
+  },
+  {
+    "id": 141,
+    "name": "Phoenix",
+    "state_id": 48,
+    "country_id": 1
+  },
+  {
+    "id": 142,
+    "name": "Tucson",
+    "state_id": 48,
+    "country_id": 1
+  },
+  {
+    "id": 143,
+    "name": "Mesa",
+    "state_id": 48,
+    "country_id": 1
+  },
+  {
+    "id": 144,
+    "name": "Denver",
+    "state_id": 49,
+    "country_id": 1
+  },
+  {
+    "id": 145,
+    "name": "Colorado Springs",
+    "state_id": 49,
+    "country_id": 1
+  },
+  {
+    "id": 146,
+    "name": "Aurora",
+    "state_id": 49,
+    "country_id": 1
+  },
+  {
+    "id": 147,
+    "name": "Las Vegas",
+    "state_id": 50,
+    "country_id": 1
+  },
+  {
+    "id": 148,
+    "name": "Henderson",
+    "state_id": 50,
+    "country_id": 1
+  },
+  {
+    "id": 149,
+    "name": "Reno",
+    "state_id": 50,
+    "country_id": 1
+  }
+]

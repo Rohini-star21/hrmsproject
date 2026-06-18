@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Menti's IT Solutions</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg: #0f172a; --dark-card: #1e293b; --dark-border: #334155;
+            --dark-text: #f8fafc; --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1; --primary-hover: #4f46e5;
+            --sidebar-bg: #0f172a; --sidebar-hover: #1e293b;
+            --transition: all 0.2s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: var(--dark-text); font-size: 13px; }
+
+        /* Layout components */
+       /* === SIDEBAR STYLES === */
+      .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, .2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+       .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.25rem;
+    position: sticky;
+    top: 0;
+    background: var(--sidebar-bg);
+    z-index: 10;
+}
+
+.brand-icon {
+    width: 64px;
+    height: 64px;
+    background: #fff;
+    color: var(--sidebar-bg);
+    border-radius: 8px;
+    display: grid;
+    place-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+        .nav-section {
+            padding: 1.2rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.8rem;
+            color: var(--primary); /* Makes the section icon blue */
+            opacity: 0.8;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.65rem 1.5rem;
+            margin: 0 0.5rem 0.25rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+            transform: translateX(2px); /* Adds the nice slide effect on hover */
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--primary); /* Makes the link icons blue */
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover i,
+        .nav-link.active i {
+            color: #fff; /* Turns icon white when hovered or active */
+        }
+
+        .nav-badge {
+            margin-left: auto; background: var(--primary); color: white;
+            padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem;
+            font-weight: 600; min-width: 24px; text-align: center;
+        }
+
+        .nav-badge.success { background: var(--success); }
+        .nav-badge.warning { background: var(--warning); }
+
+        .sidebar-content {
+            height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05); border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+      /* ===== TOP HEADER STYLES (From Fragment) ===== */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: .6rem .75rem .6rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: .875rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .top-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            color: var(--dark-text);
+            border-color: var(--primary);
+        }
+
+        .user-profile-menu .dropdown-toggle {
+            height: 36px;
+            border-radius: 6px;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            border: 2px solid var(--dark-card);
+        }
+/* ===== MAIN CONTENT LAYOUT ===== */
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+}
+
+.content-area {
+    padding: 1.5rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-title i {
+    color: var(--primary);
+    font-size: 1.3rem;
+}
+
+
+
+        /* Enhanced Table Styles for Dark Theme */
+        .table-container { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 8px; overflow: hidden; margin-top: 1rem; }
+        .table { margin: 0; width: 100%; border-collapse: collapse; }
+        .table thead { background: rgba(0, 0, 0, 0.3); }
+        .table thead th {
+            border-bottom: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary) !important;
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            background: transparent !important;
+        }
+        .table tbody tr { border-bottom: 1px solid var(--dark-border); transition: var(--transition); }
+        .table tbody td {
+            padding: 1rem 1.25rem;
+            color: var(--dark-text) !important;
+            vertical-align: middle;
+            background: var(--dark-card) !important;
+            border: none;
+        }
+        .table tbody tr:hover td { background: rgba(255, 255, 255, 0.05) !important; }
+
+        .dept-name { font-weight: 600; display: flex; align-items: center; gap: 0.75rem; color: var(--dark-text) !important; font-size: 0.95rem; }
+        .dept-name i { color: var(--primary); font-size: 1.1rem; }
+        .text-muted-dark { color: var(--dark-text-secondary) !important; }
+
+        /* Pagination Styles */
+        .pagination-container { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 6px; font-size: 0.8rem; margin-top: 1rem; }
+        .pagination-info { color: var(--dark-text-secondary); }
+        .pagination { margin: 0; gap: 0.2rem; display: flex; list-style: none; padding: 0; }
+        .page-link { background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: var(--transition); user-select: none; }
+        .page-link:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .page-item.active .page-link { background: var(--primary); border-color: var(--primary); }
+        .page-item.disabled .page-link { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+        .sidebar-content { height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px; }
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar('offer-candidates')}"></div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <header th:replace="~{fragments/layout :: topbar}"></header>
+
+
+
+
+    <div class="content-area">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-tags"></i> Categories (Departments)</h1>
+        </div>
+
+        <!-- DYNAMIC TABLE DIRECT FROM DATABASE -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 15%;">Category ID</th>
+                    <th style="width: 35%;">Category Name</th>
+                    <th style="width: 50%;">Description</th>
+                </tr>
+                </thead>
+                <tbody id="tableBody">
+                <!-- Loop through database departments -->
+                <tr th:each="dept : ${departments}" class="data-row">
+                    <td th:text="'#' + ${dept.id}" class="text-muted-dark" style="font-weight: 600; font-size: 0.9rem;">#1</td>
+                    <td>
+                        <div class="dept-name">
+                            <i class="fas fa-building"></i>
+                            <span th:text="${dept.name}">Name</span>
+                        </div>
+                    </td>
+                    <td class="text-muted-dark" th:text="${dept.description != null ? dept.description : 'No description provided.'}">Description</td>
+                </tr>
+                <!-- Empty State -->
+                <tr th:if="${departments == null or departments.empty}" class="empty-state-row">
+                    <td colspan="3" style="text-align: center; padding: 3rem; color: var(--dark-text-secondary) !important; background: var(--dark-card) !important;">
+                        <i class="fas fa-folder-open" style="font-size: 2rem; opacity: 0.5; margin-bottom: 10px; display: block;"></i>
+                        No categories generated yet. Please create a Department first.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION CONTAINER -->
+        <div class="pagination-container" id="paginationContainer" style="display: none;">
+            <div class="pagination-info" id="paginationInfo">Showing 1-10 of 0 entries</div>
+            <nav>
+                <ul class="pagination" id="pagination">
+                    <!-- Pagination buttons injected via JS -->
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+</div>
+<div th:replace="~{fragments/layout :: common-scripts}"></div>
+<script>
+    function toggleSettingsOrg() {
+        const submenu = document.getElementById('settingsOrgSubmenu');
+        const arrow = document.getElementById('settingsOrgArrow');
+        if (submenu.style.display === 'none') {
+            submenu.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            submenu.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // Pagination Logic
+    let currentPage = 1;
+    const rowsPerPage = 10;
+    let allRows =[];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tbody = document.getElementById('tableBody');
+        if(tbody) {
+            allRows = Array.from(tbody.querySelectorAll('tr.data-row'));
+            if(allRows.length > 0) {
+                document.getElementById('paginationContainer').style.display = 'flex';
+                renderTablePage();
+            }
+        }
+    });
+
+    function renderTablePage() {
+        const totalItems = allRows.length;
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+        // Hide all
+        allRows.forEach(row => row.style.display = 'none');
+
+        // Show only current page
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = Math.min(start + rowsPerPage, totalItems);
+        for (let i = start; i < end; i++) {
+            allRows[i].style.display = 'table-row';
+        }
+
+        // Update Info text
+        document.getElementById('paginationInfo').textContent = `Showing ${start + 1}-${end} of ${totalItems} entries`;
+
+        // Update Buttons
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+
+        // Prev
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<span class="page-link">Prev</span>`;
+        if (currentPage > 1) prevLi.onclick = () => { currentPage--; renderTablePage(); };
+        pagination.appendChild(prevLi);
+
+        // Numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<span class="page-link">${i}</span>`;
+            li.onclick = () => { currentPage = i; renderTablePage(); };
+            pagination.appendChild(li);
+        }
+
+        // Next
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<span class="page-link">Next</span>`;
+        if (currentPage < totalPages) nextLi.onclick = () => { currentPage++; renderTablePage(); };
+        pagination.appendChild(nextLi);
+    }
+</script>
+</body>
+</html>

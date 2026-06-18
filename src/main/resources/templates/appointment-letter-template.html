@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Letter - Mentis IT Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa;
+            padding: 40px 20px;
+        }
+
+        .letter-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-wave-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .wave-darkest {
+            position: absolute;
+            width: 580px;
+            height: 480px;
+            background: #1e2d44;
+            border-radius: 0 0 0 100%;
+            top: -210px;
+            right: -110px;
+            transform: rotate(-25deg);
+        }
+
+        .wave-dark-blue {
+            position: absolute;
+            width: 520px;
+            height: 430px;
+            background: #2b4a8f;
+            border-radius: 0 0 0 100%;
+            top: -195px;
+            right: -95px;
+            transform: rotate(-25deg);
+        }
+
+        .wave-medium-blue {
+            position: absolute;
+            width: 460px;
+            height: 380px;
+            background: #3b6fd9;
+            border-radius: 0 0 0 100%;
+            top: -180px;
+            right: -80px;
+            transform: rotate(-25deg);
+        }
+
+        .wave-light-blue {
+            position: absolute;
+            width: 380px;
+            height: 320px;
+            background: #0ea5e9;
+            border-radius: 0 0 0 100%;
+            top: -165px;
+            right: -65px;
+            transform: rotate(-25deg);
+        }
+
+        .header-section {
+            background: transparent;
+            padding: 40px 50px 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-box {
+            width: 140px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            position: relative;
+            z-index: 10;
+            padding: 5px;
+        }
+
+        .contact-info {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+            line-height: 1.6;
+        }
+
+        .contact-info .address-line {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .contact-info .contact-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .contact-info .separator {
+            color: #d1d5db;
+        }
+
+        .header-bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .bubble-1 {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #7dd3fc, #0ea5e9);
+            top: 25px;
+            right: 280px;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+            border: 4px solid rgba(125, 211, 252, 0.6);
+        }
+
+        .bubble-2 {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #60a5fa, #3b6fd9);
+            top: 70px;
+            right: 220px;
+            box-shadow: 0 3px 10px rgba(59, 111, 217, 0.3);
+        }
+
+        .bubble-3 {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #93c5fd, #2b4a8f);
+            top: 45px;
+            right: 350px;
+            box-shadow: 0 2px 8px rgba(43, 74, 143, 0.3);
+        }
+
+        .content-section {
+            padding: 40px 50px 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .letter-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        .date-text {
+            color: #6b7280;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .recipient-name {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .recipient-address {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .greeting {
+            color: #6b7280;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .letter-body {
+            color: #6b7280;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .letter-body strong {
+            color: #000000;
+            font-weight: 700;
+        }
+
+        .closing {
+            color: #6b7280;
+            font-size: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .signature-text {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 42px;
+            color: #4b5563;
+            margin-bottom: 10px;
+        }
+
+        .sender-name {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .footer-links {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .acceptance-section {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #ddd;
+        }
+
+        .acceptance-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .signature-fields {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .signature-field {
+            flex: 1;
+        }
+
+        .signature-field-line {
+            border-bottom: 1px solid #333;
+            width: 100%;
+            margin-bottom: 5px;
+            height: 30px;
+        }
+
+        .signature-field-label {
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="letter-container">
+    <div class="header-wave-container">
+        <div class="wave-darkest"></div>
+        <div class="wave-dark-blue"></div>
+        <div class="wave-medium-blue"></div>
+        <div class="wave-light-blue"></div>
+    </div>
+
+    <div class="header-bubbles">
+        <div class="bubble bubble-1"></div>
+        <div class="bubble bubble-2"></div>
+        <div class="bubble bubble-3"></div>
+    </div>
+
+    <div class="header-section">
+        <div class="logo-box">
+            <!-- Logo placeholder -->
+        </div>
+        <div class="contact-info">
+            <div class="address-line">
+                <strong>Gopal Nagar, HPHB Colony, Hyderabad, Telangana 500085</strong>
+            </div>
+            <div class="contact-details">
+                <span>📧 hr@mentisit.com</span>
+                <span class="separator">|</span>
+                <span>📞 +91 9876543210</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h1 class="letter-title">Appointment Letter</h1>
+
+        <div class="date-text" th:text="${today}">November 24, 2025</div>
+        <div class="recipient-name" th:text="${offer.candidateName}">Rohini Ancha</div>
+        <div class="recipient-address" th:text="${offer.candidateEmail}">rohini.ancha@email.com</div>
+
+        <div class="greeting">Dear <strong th:text="${offer.candidateName}">Rohini</strong>,</div>
+
+        <div class="letter-body">
+            <strong>Subject: Appointment as <span th:text="${offer.designation}">Software Developer</span></strong>
+        </div>
+
+        <div class="letter-body">
+            We are pleased to appoint you as a <strong th:text="${offer.designation}">Software Developer</strong> at <strong>Mentis IT Solutions</strong>. This appointment is based on your qualifications, experience, and the impressive performance during our selection process. We are confident that you will make significant contributions to our organization.
+        </div>
+
+        <div class="letter-body">
+            <strong>Appointment Details:</strong><br>
+            You are hereby appointed as a <strong th:text="${offer.designation}">Software Developer</strong> at our <strong th:text="${offer.workLocation}">Hyderabad</strong> office, effective from <strong th:text="${offer.joiningDate}">December 15, 2025</strong>. You will report directly to <strong th:text="${offer.reportingManager}">Mr. Rajesh Kumar, Project Manager</strong>.
+        </div>
+
+        <div class="letter-body">
+            <strong>Compensation and Benefits:</strong><br>
+            Your annual compensation package will be <strong th:text="${offer.currency}">₹</strong> <strong th:text="${offer.annualSalary}">8,50,000</strong>. Your compensation package includes comprehensive health insurance, statutory benefits including Provident Fund (PF) and Employee State Insurance (ESI), paid leave, performance-linked incentives, and professional development programs.
+        </div>
+
+        <div class="letter-body">
+            <strong>Roles and Responsibilities:</strong><br>
+            As a <span th:text="${offer.designation}">Software Developer</span>, your primary responsibilities will include designing, developing, and maintaining software applications; collaborating with cross-functional teams on project requirements; writing clean, efficient, and well-documented code; troubleshooting and resolving technical issues; and contributing to technical documentation.
+        </div>
+
+        <div class="letter-body" th:if="${offer.probationPeriod}">
+            Your probation period will be <strong th:text="${offer.probationPeriod}">6 months</strong> from the date of joining. Upon satisfactory completion of the probation period, your appointment will be confirmed in writing.
+        </div>
+
+        <div class="letter-body" th:if="${offer.additionalNotes}">
+            <strong>Additional Terms:</strong> <span th:text="${offer.additionalNotes}"></span>
+        </div>
+
+        <div class="letter-body">
+            Please confirm your acceptance of this appointment by signing and returning the duplicate copy of this letter. Our HR Manager will coordinate your onboarding process and assist with any queries.
+        </div>
+
+        <div class="letter-body">
+            We believe your skills and expertise will be valuable assets to our organization, and we look forward to a long and mutually rewarding association. Welcome to the Mentis IT Solutions family!
+        </div>
+
+        <!-- In the signature section of appointment-letter-template.html -->
+        <div class="closing">Best regards,</div>
+
+        <!-- Signature Image -->
+        <div th:if="${showSignature}" class="signature-image">
+            <img th:src="${signature}" alt="HR Signature" style="max-width: 200px; height: auto; margin: 10px 0;">
+        </div>
+
+        <div class="sender-name">Srikanth<br>Head of Human Resources<br>Mentis IT Solutions</div>
+        <div class="acceptance-section">
+            <div class="acceptance-title">ACCEPTANCE OF APPOINTMENT</div>
+            <div class="letter-body">
+                I, <strong th:text="${offer.candidateName}">Rohini Ancha</strong>, hereby accept the appointment with Mentis IT Solutions as outlined in this letter. I understand and agree to the terms and conditions stated above.
+            </div>
+            <div class="signature-fields">
+                <div class="signature-field">
+                    <div class="signature-field-line"></div>
+                    <div class="signature-field-label">Candidate Signature</div>
+                </div>
+                <div class="signature-field" style="max-width: 200px;">
+                    <div class="signature-field-line"></div>
+                    <div class="signature-field-label">Date</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <strong>Confidential & Proprietary - Mentis IT Solutions © <span th:text="${currentYear}">2025</span></strong>
+        </div>
+    </div>
+</div>
+</body>
+</html>

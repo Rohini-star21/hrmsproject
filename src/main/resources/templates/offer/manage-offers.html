@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Offers - HRMS</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #121826;
+            --dark-card: #1a2235;
+            --dark-border: #2a3655;
+            --dark-text: #e2e8f0;
+            --dark-text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ---------- SIDEBAR STYLES ---------- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,.2);
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.25rem;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            z-index: 10;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            color: var(--sidebar-bg);
+            border-radius: 6px;
+            display: grid;
+            place-content: center;
+        }
+
+        .nav-section {
+            padding: 1rem 1.5rem 0.5rem;
+            color: #94a3b8;
+            font-size: .75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: .5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type {
+            margin-top: 0.5rem;
+        }
+
+        .nav-section i {
+            font-size: 0.9rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: .75rem 1.5rem;
+            margin: 0 .5rem;
+            width: calc(100% - 1rem);
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge.success {
+            background: var(--success);
+        }
+
+        .nav-badge.warning {
+            background: var(--warning);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            padding: .75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0 0 .25rem 0;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: .875rem;
+        }
+
+        .breadcrumb-item { color: var(--dark-text-secondary); }
+        .breadcrumb-item.active { color: var(--primary); }
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--dark-text-secondary); }
+
+        .btn-header {
+            padding: .6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: .875rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,.05);
+            color: var(--dark-text);
+        }
+
+        .content-area { padding: 1.5rem; }
+
+        /* Original Styles */
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-card-hover: #2d3748;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-light: rgba(59, 130, 246, 0.1);
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --info: #0ea5e9;
+            --info-light: rgba(14, 165, 233, 0.1);
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+        }
+
+        .content-area {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--dark-border);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header h2 i {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-card-hover);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert i {
+            font-size: 1.1rem;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            text-align: center;
+            border: 1px solid var(--dark-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .empty-state h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            color: var(--dark-text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Card Styles */
+        .offer-card {
+            background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 16px;
+            border: 1px solid var(--dark-border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-bottom: 1px solid var(--dark-border);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        .card-footer {
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid var(--dark-border);
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* Table Styles */
+        .table {
+            background: transparent;
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        .table th {
+            border-color: var(--dark-border);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+            color: var(--dark-text-secondary);
+        }
+
+        .table td {
+            border-color: var(--dark-border);
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        /* Badge Styles */
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bg-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
+            color: white;
+        }
+
+        .bg-warning {
+            background: rgba(245, 158, 11, 0.2) !important;
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .bg-success {
+            background: rgba(16, 185, 129, 0.2) !important;
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .bg-info {
+            background: rgba(14, 165, 233, 0.2) !important;
+            color: var(--info);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .bg-secondary {
+            background: rgba(148, 163, 184, 0.2) !important;
+            color: var(--dark-text-secondary);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        /* Button Styles */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 0.6rem 1.2rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .btn-outline-success {
+            border: 1px solid var(--success);
+            color: var(--success);
+            background: transparent;
+        }
+
+        .btn-outline-success:hover {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .btn-outline-info {
+            border: 1px solid var(--info);
+            color: var(--info);
+            background: transparent;
+        }
+
+        .btn-outline-info:hover {
+            background: var(--info);
+            border-color: var(--info);
+            color: white;
+        }
+
+        .btn-group {
+            gap: 0.4rem;
+        }
+
+        /* Mobile sidebar toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .top-header {
+                padding-left: 4rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .table-responsive {
+                border-radius: 8px;
+                border: 1px solid var(--dark-border);
+            }
+
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ----------- SIDEBAR ----------- -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-users"></i></div>
+        <span>Menti's IT Solutions</span>
+    </div>
+
+    <div class="sidebar-content">
+        <nav class="mt-3">
+            <!-- Dashboard Section -->
+            <div class="nav-section">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Recruitment Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-tie"></i>
+                Recruitment Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/job-form">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Job Postings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Applications</span>
+                        <span class="nav-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/interview-management">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interview Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard/offer-candidates">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Offer Letters</span>
+                        <span class="nav-badge warning">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hired-candidates">
+                        <i class="fas fa-user-check"></i>
+                        <span>Hired Candidates</span>
+                        <span class="nav-badge success">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Employee Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-users-cog"></i>
+                Employee Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-employee">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/employees">
+                        <i class="fas fa-id-card"></i>
+                        <span>All Employees</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/onboarding">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Onboarding</span>
+                        <span class="nav-badge warning">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/attendance">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/leave-management">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Leave Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/performance">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Review</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Organization Structure Section -->
+            <div class="nav-section">
+                <i class="fas fa-building"></i>
+                Organization
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Company Information</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-structure">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Organization Chart</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-department">
+                        <i class="fas fa-plus-square"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/locations">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Administration Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-shield"></i>
+                Administration
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/user-management">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/role-permissions">
+                        <i class="fas fa-user-tag"></i>
+                        <span>Roles & Permissions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/access-control">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Access Control</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Finance Section -->
+            <div class="nav-section">
+                <i class="fas fa-money-bill-wave"></i>
+                Finance
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/payroll">
+                        <i class="fas fa-wallet"></i>
+                        <span>Payroll Management</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- System Section -->
+            <div class="nav-section">
+                <i class="fas fa-cogs"></i>
+                System
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/system-settings">
+                        <i class="fas fa-cog"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/audit-log">
+                        <i class="fas fa-history"></i>
+                        <span>Audit Log</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- ----------- MAIN CONTENT ----------- -->
+<div class="main-content">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <header class="top-header">
+        <div class="header-wrapper">
+            <div>
+                <h1 class="page-title">Manage Offers</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/dashboard/offer-candidates">Offer Letters</a></li>
+                        <li class="breadcrumb-item active">Manage Offers</li>
+                    </ol>
+                </nav>
+            </div>
+            <a th:href="@{/dashboard/hired-candidates}" class="btn-header btn-back">
+                <i class="fas fa-arrow-left"></i><span>Back to Hired Candidates</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="content-area">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <h2><i class="fas fa-file-contract"></i> Manage Offers</h2>
+                <a th:href="@{/dashboard/hired-candidates}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Hired Candidates
+                </a>
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert">&times;</button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert">&times;</button>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${offers.empty}" class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-file-contract"></i>
+            </div>
+            <h4>No Offers Generated</h4>
+            <p>Generate an offer letter to get started with the hiring process.</p>
+            <a th:href="@{/dashboard/generate-offer/{id}(id=${applicationId})}"
+               class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i> Generate New Offer
+            </a>
+        </div>
+
+        <!-- Offers List -->
+        <div th:if="${!offers.empty}">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card offer-card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-list me-2"></i>Generated Offers</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Offer Type</th>
+                                        <th>Candidate</th>
+                                        <th>Designation</th>
+                                        <th>Status</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="offer : ${offers}">
+                                        <td>
+                                            <span class="badge bg-primary" th:text="${offer.offerType}">
+                                                OFFER
+                                            </span>
+                                        </td>
+                                        <td th:text="${offer.candidateName}">John Doe</td>
+                                        <td th:text="${offer.designation}">Software Engineer</td>
+                                        <td>
+                                            <span class="badge"
+                                                  th:classappend="${offer.status == 'GENERATED'} ? 'bg-warning' :
+                                                              (${offer.status == 'SENT'} ? 'bg-success' :
+                                                              (${offer.status == 'SIGNED'} ? 'bg-info' : 'bg-secondary'))">
+                                                <span th:text="${offer.status}">Status</span>
+                                            </span>
+                                        </td>
+                                        <td th:text="${#temporals.format(offer.createdDate, 'dd MMM yyyy')}">
+                                            11 Dec 2025
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a th:href="@{/dashboard/view-offer/{id}(id=${offer.id})}"
+                                                   target="_blank"
+                                                   class="btn btn-sm btn-outline-primary"
+                                                   title="View Offer PDF">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                                <button th:if="${offer.status == 'GENERATED'}"
+                                                        th:onclick="|sendOfferEmail(${offer.id})|"
+                                                        class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-paper-plane"></i> Send
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a th:href="@{/dashboard/generate-offer/{id}(id=${applicationId})}"
+                               class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i> Generate New Offer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile sidebar toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    });
+</script>
+<script>
+    // Auto-download PDF when offer is generated
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if we have an offer ID in flash attributes
+        const successAlert = document.querySelector('.alert-success');
+
+        if (successAlert) {
+            const successText = successAlert.textContent;
+
+            // Try to extract offer ID from success message
+            if (successText.includes('generated successfully') || window.location.href.includes('offerId=')) {
+                // Wait 1 second then show download prompt
+                setTimeout(function() {
+                    const offerId = extractOfferIdFromUrl();
+                    if (offerId) {
+                        downloadOfferPdf(offerId);
+                    } else {
+                        promptDownload();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Function to extract offer ID from URL
+        function extractOfferIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('offerId');
+        }
+
+        // Function to download PDF
+        function downloadOfferPdf(offerId) {
+            if (!offerId) return;
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = '/dashboard/download-offer/' + offerId;
+            downloadLink.download = 'offer-letter.pdf';
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            // Show message
+            showToast('Downloading offer letter PDF...', 'info');
+        }
+
+        // Function to prompt user to download
+        function promptDownload() {
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn btn-primary mt-3';
+            downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Offer Letter PDF';
+            downloadBtn.onclick = function() {
+                // Find the first offer in the table and download it
+                const firstOfferRow = document.querySelector('tbody tr');
+                if (firstOfferRow) {
+                    const offerId = firstOfferRow.querySelector('td:nth-child(1)')?.textContent?.trim();
+                    if (offerId) {
+                        downloadOfferPdf(offerId);
+                    }
+                }
+            };
+
+            // Add to success alert
+            if (successAlert) {
+                successAlert.appendChild(document.createElement('br'));
+                successAlert.appendChild(downloadBtn);
+            }
+        }
+
+        // Toast function
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 3000);
+        }
+    });
+</script>
+
+<script>
+    // Auto-download PDF when redirected with offerId
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const offerId = urlParams.get('offerId');
+        const success = urlParams.get('success');
+
+        if (success && offerId) {
+            // Show success alert
+            const successAlert = document.createElement('div');
+            successAlert.className = 'alert alert-success alert-dismissible fade show';
+            successAlert.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <strong>Success!</strong> ${success}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            // Insert at top of content area
+            const contentArea = document.querySelector('.content-area');
+            if (contentArea) {
+                contentArea.insertBefore(successAlert, contentArea.firstChild);
+            }
+
+            // Auto-download PDF after 1 second
+            setTimeout(() => {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = '/dashboard/download-offer/' + offerId;
+                downloadLink.download = 'offer-letter.pdf';
+                downloadLink.style.display = 'none';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }, 1000);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentis AI Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(8px);
+            color: var(--dark-text);
+            font-size: 14px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .ai-popup {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            animation: modalSlideDown 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            background: var(--dark-card);
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .popup-header h3 i {
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+
+        .close-btn:hover { color: var(--danger); }
+
+        .popup-body {
+            padding: 1.5rem;
+        }
+
+        /* Icon Row */
+        .icon-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .ai-icon-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 55px;
+            width: 55px;
+            height: 55px;
+        }
+
+        .ai-icon-btn i {
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .ai-icon-btn span {
+            font-size: 0.55rem;
+            font-weight: 500;
+        }
+
+        .ai-icon-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        /* Icon Colors */
+        .ai-icon-btn.icon-meeting i { color: #10b981; }
+        .ai-icon-btn.icon-maintenance i { color: #f59e0b; }
+        .ai-icon-btn.icon-event i { color: #8b5cf6; }
+        .ai-icon-btn.icon-celebration i { color: #ec4899; }
+        .ai-icon-btn.icon-holiday i { color: #0ea5e9; }
+        .ai-icon-btn.icon-hr-policy i { color: #6366f1; }
+        .ai-icon-btn.icon-employee-policy i { color: #14b8a6; }
+        .ai-icon-btn.icon-leave-policy i { color: #f97316; }
+        .ai-icon-btn.icon-accountants i { color: #a855f7; }
+        .ai-icon-btn.icon-achievements i { color: #fbbf24; }
+
+        /* Input Area */
+        .ai-input-area {
+            margin-top: 0.5rem;
+        }
+
+        .ai-input-area label {
+            font-size: 0.7rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .input-with-btn {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .input-with-btn input {
+            flex: 1;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .input-with-btn input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .ai-generate-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .ai-generate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .generating-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark-card);
+            border-left: 4px solid var(--success);
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: var(--dark-text);
+            z-index: 10001;
+            animation: slideInRight 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="ai-popup">
+    <div class="popup-header">
+        <h3>
+            <i class="fas fa-robot"></i>
+            Mentis AI Assistant
+        </h3>
+        <button class="close-btn" id="closePopupBtn">&times;</button>
+    </div>
+
+    <div class="popup-body">
+        <!-- Icon Row -->
+        <div class="icon-row">
+            <div class="ai-icon-btn icon-meeting" data-prompt="Team meeting scheduled to discuss project updates" title="Meeting">
+                <i class="fas fa-users"></i>
+                <span>Meeting</span>
+            </div>
+            <div class="ai-icon-btn icon-maintenance" data-prompt="Urgent server maintenance, system downtime scheduled" title="Maintenance">
+                <i class="fas fa-tools"></i>
+                <span>Maintenance</span>
+            </div>
+            <div class="ai-icon-btn icon-event" data-prompt="Company event announcement, all employees invited" title="Event">
+                <i class="fas fa-calendar-check"></i>
+                <span>Event</span>
+            </div>
+            <div class="ai-icon-btn icon-celebration" data-prompt="Company celebration announcement, team party" title="Celebrations">
+                <i class="fas fa-birthday-cake"></i>
+                <span>Celebration</span>
+            </div>
+            <div class="ai-icon-btn icon-holiday" data-prompt="Company holiday announcement, office closed" title="Holidays">
+                <i class="fas fa-umbrella-beach"></i>
+                <span>Holiday</span>
+            </div>
+            <div class="ai-icon-btn icon-hr-policy" data-prompt="New HR policy update effective from next month" title="HR Policy">
+                <i class="fas fa-address-card"></i>
+                <span>HR Policy</span>
+            </div>
+            <div class="ai-icon-btn icon-employee-policy" data-prompt="Employee policy update regarding work rules" title="Employee Policy">
+                <i class="fas fa-user-tie"></i>
+                <span>Emp Policy</span>
+            </div>
+            <div class="ai-icon-btn icon-leave-policy" data-prompt="Leave policy update, new leave rules announced" title="Leave Policy">
+                <i class="fas fa-calendar-week"></i>
+                <span>Leave Policy</span>
+            </div>
+            <div class="ai-icon-btn icon-accountants" data-prompt="Accountants team meeting and policy update" title="Accountants">
+                <i class="fas fa-calculator"></i>
+                <span>Accounts</span>
+            </div>
+            <div class="ai-icon-btn icon-achievements" data-prompt="Company achievements announcement, celebrating milestones" title="Achievements">
+                <i class="fas fa-trophy"></i>
+                <span>Achievement</span>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="ai-input-area">
+            <label>📝 Describe your announcement</label>
+            <div class="input-with-btn">
+                <input type="text" id="aiPromptInput" placeholder="e.g., New Year holiday on Jan 1st, office closed" autocomplete="off">
+                <button class="ai-generate-btn" id="aiGenerateBtn">
+                    <i class="fas fa-sparkles"></i> Generate
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    const aiGenerateBtn = document.getElementById('aiGenerateBtn');
+    const aiPromptInput = document.getElementById('aiPromptInput');
+
+    function closePopup() {
+        const overlay = window.parent?.document.getElementById('aiModalOverlay');
+        if (overlay) overlay.remove();
+        else window.close();
+    }
+
+    if (closePopupBtn) closePopupBtn.addEventListener('click', closePopup);
+
+    function showToast(message, type = 'success') {
+        const existing = document.querySelector('.toast-notification');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.style.borderLeftColor = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : '#f59e0b');
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    }
+
+    // AI Generation via Backend API
+    async function generateWithAI(prompt) {
+        if (!prompt.trim()) {
+            showToast('Please describe your announcement', 'warning');
+            return false;
+        }
+
+        const originalHtml = aiGenerateBtn.innerHTML;
+        aiGenerateBtn.innerHTML = '<span class="generating-spinner"></span> Generating with AI...';
+        aiGenerateBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/ai/generate-announcement', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || `Server error: ${response.status}`);
+            }
+
+            const generatedData = await response.json();
+
+            // Send to parent window
+            if (window.parent && window.parent.loadGeneratedAnnouncementForm) {
+                window.parent.loadGeneratedAnnouncementForm(generatedData);
+                closePopup();
+            } else {
+                // Fallback - store in localStorage
+                localStorage.setItem('ai_generated_announcement', JSON.stringify(generatedData));
+                window.location.href = '/announcement/generated-form';
+            }
+
+            showToast('Announcement generated by AI!', 'success');
+            return true;
+
+        } catch (error) {
+            console.error('Generation Error:', error);
+            showToast('AI generation failed: ' + error.message, 'error');
+            return false;
+        } finally {
+            aiGenerateBtn.innerHTML = originalHtml;
+            aiGenerateBtn.disabled = false;
+        }
+    }
+
+    // Generate button click
+    if (aiGenerateBtn) {
+        aiGenerateBtn.addEventListener('click', () => generateWithAI(aiPromptInput.value));
+    }
+
+    // Enter key
+    if (aiPromptInput) {
+        aiPromptInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateWithAI(aiPromptInput.value);
+        });
+    }
+
+    // Icon clicks
+    document.querySelectorAll('.ai-icon-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const prompt = btn.getAttribute('data-prompt');
+            if (prompt) {
+                aiPromptInput.value = prompt;
+                generateWithAI(prompt);
+            }
+        });
+    });
+</script>
+</body>
+</html>
